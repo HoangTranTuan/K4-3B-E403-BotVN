@@ -1,0 +1,255 @@
+{
+  "metadata": {
+    "project": "StoryboardAI - Lesson Studio (Track C · C4)",
+    "team": "K4-3B-E403-BotVN",
+    "version": "1.0",
+    "total_cases": 20,
+    "distribution": {
+      "layer_1_grounding": 3,
+      "layer_2_abstract": 4,
+      "layer_3_constraints": 4,
+      "layer_4_domain_symbols": 4,
+      "common_cases": 3,
+      "rare_cases": 2
+    },
+    "pass_criteria": {
+      "on_screen_text_max_len": 40,
+      "safe_zone_bounds": {
+        "x_min": 80,
+        "x_max": 1840,
+        "y_min": 250,
+        "y_max": 960
+      },
+      "no_hallucinated_metrics": true,
+      "valid_json_structure": true
+    }
+  },
+  "test_cases": [
+    {
+      "id": "TC01",
+      "layer": "Layer 1: Grounding & Source of Truth",
+      "complexity": "medium",
+      "input_text": "Kinh tế số Việt Nam ghi nhận sự bứt phá mạnh mẽ trong những năm gần đây, đóng góp ngày càng lớn vào sự thịnh vượng chung của cả quốc gia.",
+      "intent": "Kiểm tra xem AI có tự bịa ra tỷ lệ % hoặc số tỷ USD tăng trưởng mà văn bản gốc không hề có.",
+      "expected_rules": {
+        "text_max_len": 40,
+        "must_not_contain_invented_numbers": true,
+        "expected_theme": "kinh tế số, phát triển"
+      }
+    },
+    {
+      "id": "TC02",
+      "layer": "Layer 1: Grounding & Source of Truth",
+      "complexity": "medium",
+      "input_text": "Thuật toán QuickSort cho tốc độ thực thi vượt trội trên tập dữ liệu lớn so với thuật toán sắp xếp nổi bọt BubbleSort.",
+      "intent": "Kiểm tra AI không tự chế ra số miligiây cụ thể (như 12ms vs 150ms) nếu kịch bản chỉ so sánh định tính.",
+      "expected_rules": {
+        "text_max_len": 40,
+        "must_not_contain_invented_numbers": true,
+        "expected_theme": "so sánh thuật toán"
+      }
+    },
+    {
+      "id": "TC03",
+      "layer": "Layer 1: Grounding & Source of Truth",
+      "complexity": "medium",
+      "input_text": "Khảo sát nội bộ cho thấy đa số học viên cảm thấy các bài giảng có minh họa chuyển động trực quan giúp họ tập trung và hiểu sâu hơn.",
+      "intent": "Kiểm tra AI không tự đổi chữ 'đa số' thành '85%' hay '90%' trên màn hình on_screen_text.",
+      "expected_rules": {
+        "text_max_len": 40,
+        "must_not_contain_invented_numbers": true,
+        "expected_theme": "khảo sát học viên"
+      }
+    },
+    {
+      "id": "TC04",
+      "layer": "Layer 2: Abstract & Ambiguous Concepts",
+      "complexity": "high",
+      "input_text": "Con trỏ trong C++ bản chất là một biến lưu trữ địa chỉ của một ô nhớ khác trong thanh RAM máy tính.",
+      "intent": "Chuyển hóa khái niệm trừu tượng con trỏ RAM thành ẩn dụ trực quan (hộp thư, số nhà, ngón tay trỏ vào địa chỉ hex).",
+      "expected_rules": {
+        "text_max_len": 40,
+        "require_visual_metaphor": true,
+        "expected_symbol": "Pointer arrow / Memory address box"
+      }
+    },
+    {
+      "id": "TC05",
+      "layer": "Layer 2: Abstract & Ambiguous Concepts",
+      "complexity": "high",
+      "input_text": "Văn hóa doanh nghiệp Agile không chỉ là quy trình Scrum hay Kanban, mà là tư duy cởi mở, chấp nhận sai sót sớm để liên tục cải tiến.",
+      "intent": "Khái niệm tư duy Agile trừu tượng cần được mô phỏng bằng bánh đà phản hồi lặp tuần hoàn (feedback loop).",
+      "expected_rules": {
+        "text_max_len": 40,
+        "require_visual_metaphor": true,
+        "expected_symbol": "Iterative loop / Kanban board"
+      }
+    },
+    {
+      "id": "TC06",
+      "layer": "Layer 2: Abstract & Ambiguous Concepts",
+      "complexity": "high",
+      "input_text": "Sóng hấp dẫn được sinh ra khi hai lỗ đen sáp nhập, tạo ra những gợn sóng uốn cong chính kết cấu không-thời gian của vũ trụ.",
+      "intent": "Khái niệm vật lý thiên văn trừu tượng cần được thể hiện bằng ẩn dụ tấm lưới không gian cong võng.",
+      "expected_rules": {
+        "text_max_len": 40,
+        "require_visual_metaphor": true,
+        "expected_symbol": "Spacetime grid curvature / Gravitational ripples"
+      }
+    },
+    {
+      "id": "TC07",
+      "layer": "Layer 2: Abstract & Ambiguous Concepts",
+      "complexity": "high",
+      "input_text": "Hiệu ứng cánh bướm trong lý thuyết hỗn loạn mô tả việc một dao động cực nhỏ ban đầu có thể dẫn đến hệ quả khổng lồ không thể lường trước ở tương lai.",
+      "intent": "Trực quan hóa sự khuếch đại phi tuyến tính từ cánh bướm tới cơn bão lớn.",
+      "expected_rules": {
+        "text_max_len": 40,
+        "require_visual_metaphor": true,
+        "expected_symbol": "Butterfly flutter amplifying into vortex"
+      }
+    },
+    {
+      "id": "TC08",
+      "layer": "Layer 3: Constraints & Cognitive Overload",
+      "complexity": "extreme",
+      "input_text": "Theo định luật bảo toàn và chuyển hóa năng lượng thì năng lượng không tự nhiên sinh ra cũng không tự nhiên mất đi mà nó chỉ chuyển từ dạng này sang dạng khác hoặc truyền từ vật này sang vật khác trong một hệ cô lập khép kín.",
+      "intent": "Câu định lý kinh điển dài 49 từ. Ép AI không được bê nguyên văn vào on_screen_text mà phải rút gọn <= 40 ký tự.",
+      "expected_rules": {
+        "text_max_len": 40,
+        "cognitive_load_cap": true
+      }
+    },
+    {
+      "id": "TC09",
+      "layer": "Layer 3: Constraints & Cognitive Overload",
+      "complexity": "extreme",
+      "input_text": "Quy trình xác thực JWT bao gồm việc client gửi thông tin đăng nhập, server xác thực thành công sẽ sinh token được ký bằng secret key và gửi lại cho client lưu vào localStorage hoặc cookie an toàn, sau đó mỗi request client đính kèm token trong Authorization header để server giải mã kiểm tra tính hợp lệ và thời hạn hết hạn.",
+      "intent": "Đoạn văn 65 từ nhồi nhét 4-5 bước kỹ thuật. AI bắt buộc phải chia thành các frame nhỏ và giữ on_screen_text <= 40 ký tự mỗi frame.",
+      "expected_rules": {
+        "text_max_len": 40,
+        "min_frames": 2
+      }
+    },
+    {
+      "id": "TC10",
+      "layer": "Layer 3: Constraints & Cognitive Overload",
+      "complexity": "high",
+      "input_text": "Hệ thống microservices với hàng trăm dịch vụ nhỏ trao đổi qua lại khiến việc gỡ lỗi phân tán trở nên cực kỳ gian nan nếu không có distributed tracing và centralized logging.",
+      "intent": "Ép câu thoại dài nhiều thuật ngữ vào tiêu đề đồ họa ngắn gọn (<= 40 ký tự).",
+      "expected_rules": {
+        "text_max_len": 40
+      }
+    },
+    {
+      "id": "TC11",
+      "layer": "Layer 3: Constraints & Cognitive Overload",
+      "complexity": "high",
+      "input_text": "Hãy đưa khối mã nguồn sau lên giữa khung hình: def calculate_fibonacci(n): if n <= 1: return n else: return calculate_fibonacci(n-1) + calculate_fibonacci(n-2) rồi giải thích chi tiết từng dòng.",
+      "intent": "Người dùng yêu cầu đưa đoạn code dài vào màn hình. AI phải tóm tắt hoặc biểu diễn thành luồng hàm đệ quy, on_screen_text không được nhét cả hàm code.",
+      "expected_rules": {
+        "text_max_len": 40,
+        "safe_zone_compliant": true
+      }
+    },
+    {
+      "id": "TC12",
+      "layer": "Layer 4: Domain Specificity & Visual Symbols",
+      "complexity": "high",
+      "input_text": "Các dịch vụ thanh toán sẽ đẩy thông điệp giao dịch vào hàng đợi Apache Kafka để các worker xử lý bất đồng bộ.",
+      "intent": "Tuân thủ biểu tượng chuẩn domain: Kafka / Message Queue = băng chuyền thông điệp phát sáng.",
+      "expected_rules": {
+        "text_max_len": 40,
+        "expected_symbol": "Message queue / Kafka conveyor stream"
+      }
+    },
+    {
+      "id": "TC13",
+      "layer": "Layer 4: Domain Specificity & Visual Symbols",
+      "complexity": "high",
+      "input_text": "Hệ thống sử dụng bộ cân bằng tải Load Balancer để phân phối lưu lượng đều sang cụm Server và đồng bộ dữ liệu về Database PostgreSQL.",
+      "intent": "Tuân thủ biểu tượng chuẩn Stylebook: Load Balancer tam giác điều hướng, Server khối hộp chữ nhật LED xanh, Database hình trụ 3 tầng.",
+      "expected_rules": {
+        "text_max_len": 40,
+        "expected_symbol": "Database cylinder & Server rack"
+      }
+    },
+    {
+      "id": "TC14",
+      "layer": "Layer 4: Domain Specificity & Visual Symbols",
+      "complexity": "medium",
+      "input_text": "Hệ thống tường lửa Firewall dựng lên lá chắn phân tách vùng mạng nội bộ an toàn và mạng Internet công cộng nhiều rủi ro.",
+      "intent": "Tuân thủ biểu tượng bảo mật: Bức tường gạch phát sáng ngăn chặn gói tin xâm nhập.",
+      "expected_rules": {
+        "text_max_len": 40,
+        "expected_symbol": "Firewall shield barrier"
+      }
+    },
+    {
+      "id": "TC15",
+      "layer": "Layer 4: Domain Specificity & Visual Symbols",
+      "complexity": "high",
+      "input_text": "Cơ chế Garbage Collector tự động quét bộ nhớ Heap để thu hồi các vùng nhớ của những đối tượng không còn được trỏ tới.",
+      "intent": "Tuân thủ biểu tượng: Quét rác dọn dẹp các khối object mờ đục trong bộ nhớ Heap.",
+      "expected_rules": {
+        "text_max_len": 40,
+        "expected_symbol": "Garbage collector sweep / Heap memory blocks"
+      }
+    },
+    {
+      "id": "TC16",
+      "layer": "Common Happy Path",
+      "complexity": "low",
+      "input_text": "Chào mừng các bạn đến với khóa học Trí tuệ Nhân tạo cơ bản. Trong bài học mở đầu hôm nay, chúng ta sẽ cùng khám phá Mạng nơ-ron nhân tạo là gì.",
+      "intent": "Intro bài giảng chuẩn, tạo ấn tượng mở đầu chuyên nghiệp với biểu tượng mạng nơ-ron phát sáng.",
+      "expected_rules": {
+        "text_max_len": 40,
+        "expected_symbol": "Neural network graph"
+      }
+    },
+    {
+      "id": "TC17",
+      "layer": "Common Happy Path",
+      "complexity": "medium",
+      "input_text": "So sánh giữa CPU và GPU: CPU sở hữu ít lõi nhưng xung nhịp cực cao cho xử lý tuần tự, còn GPU chứa hàng ngàn lõi nhỏ tối ưu cho tính toán ma trận song song.",
+      "intent": "Bố cục đối sánh 2 nửa màn hình (Split screen) chuẩn Safe Zone.",
+      "expected_rules": {
+        "text_max_len": 40,
+        "expected_symbol": "CPU vs GPU split-core layout"
+      }
+    },
+    {
+      "id": "TC18",
+      "layer": "Common Happy Path",
+      "complexity": "medium",
+      "input_text": "Vòng đời phát triển phần mềm gồm 5 giai đoạn: Thu thập yêu cầu, Thiết kế kiến trúc, Viết mã lệnh, Kiểm thử chất lượng và Triển khai vận hành.",
+      "intent": "Quy trình đường ống 5 bước tuần tự liên kết với nhau.",
+      "expected_rules": {
+        "text_max_len": 40,
+        "expected_symbol": "Linear pipeline / SDLC chevron stages"
+      }
+    },
+    {
+      "id": "TC19",
+      "layer": "Rare Edge Case: Minimal Input",
+      "complexity": "high",
+      "input_text": "Docker.",
+      "intent": "Đầu vào cực ngắn (1 từ duy nhất). AI phải biết mở rộng phân cảnh hợp lý (hình ảnh chú cá voi xanh chở các container) mà không bị lỗi crash hoặc rỗng.",
+      "expected_rules": {
+        "text_max_len": 40,
+        "require_non_empty_frames": true
+      }
+    },
+    {
+      "id": "TC20",
+      "layer": "Rare Edge Case: Out of Domain Input",
+      "complexity": "high",
+      "input_text": "Dự báo thời tiết chiều nay tại Hà Nội: trời nhiều mây, có mưa rào rải rác vài nơi, nhiệt độ dao động trong khoảng từ 24 đến 28 độ C, học viên đi học nhớ mang áo mưa.",
+      "intent": "Đoạn văn bản lạc đề, mang tính thông báo đời sống. AI vẫn phải dựng phân cảnh an toàn, tuân thủ đúng độ dài chữ và safe zone.",
+      "expected_rules": {
+        "text_max_len": 40,
+        "safe_zone_compliant": true
+      }
+    }
+  ]
+}

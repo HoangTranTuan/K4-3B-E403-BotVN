@@ -1,66 +1,94 @@
-﻿# Kế Hoạch Hình Ảnh & Bản Mock Bấm Được (Deliverable CP2)
+# Tài Liệu Kỹ Thuật & Hướng Dẫn Thực Thi Prototype (CP2 & CP3)
 
 **Người thực hiện:** Phạm Đình Hải (2A202602482)  
 **Nhánh:** `hai`  
 **Dự án:** Track C · Đề C4: StoryboardAI — Agent dựng kịch bản hình ảnh cho video bài giảng  
-**Nhóm:** `K4-3B-E403-BotVN` (Hoàng · Hải · Đại)
+**Nhóm:** `K4-3B-E403-BotVN` (Hoàng · Hải · Đại)  
 
 ---
 
 ## 📌 Nội dung bàn giao trong Pull Request
 
-### 1. File Prototype: `mockup-cp2.html`
-Bản mock bấm được tương tác hoàn chỉnh (Clickable Prototype) đáp ứng 100% tiêu chí của **Checkpoint 2 (CP2)** theo yêu cầu của BTC Hackathon.
+Thư mục `codebase/` bao gồm nguyên mẫu tương tác và module AI thật phục vụ cho cả **Checkpoint 2 (CP2)** và **Checkpoint 3 (CP3)**:
 
-* **Cách mở:** Nhấp đúp chuột vào file `mockup-cp2.html` hoặc chuột phải chọn *Open with Chrome / Edge*. Không cần cài đặt thêm thư viện (chạy offline độc lập).
-* **Các tính năng đã hoàn thiện:**
-  1. **Bước 1 — Nạp kịch bản & Sổ quy ước (Stylebook):**
-     * Hỗ trợ dữ liệu JSON `loi-doc-d1-2.json` có mốc thời gian từng từ (`mocTu`, `chuoiMocTu`).
-     * Khóa cứng Sổ quy ước: Bảng màu ngữ nghĩa (Semantic Palette), Thư viện ký hiệu (Database hình trụ 3 tầng, Server đèn LED), và nguyên tắc không bịa số liệu ảo.
-  2. **Bước 2 — Bảng duyệt Storyboard (Visual Board):**
-     * Khung hình chuẩn 1920×1080 @ 30fps.
-     * **Lưới Vùng An Toàn (Safe Zone):** Chuẩn xác tọa độ nhóm quy định ($x \in [80, 1840]$, $y \in [250, 960]$), chừa dải trên cho HUD và dải đáy cho phụ đề. Có công tắc bật/tắt trực quan.
-     * **Cụm từ kích hoạt (Trigger Words):** Được highlight vàng cam nổi bật kèm mốc thời gian.
-     * **Tự soát chữ màn hình:** Bộ đếm ký tự thời gian thực báo xanh khi $\le 40$ ký tự, báo đỏ khi vượt quá.
-     * **Sửa cục bộ 1 cảnh (Granular Edit):** Bấm *✏ Góp ý cảnh này* ở Cảnh 02 $\rightarrow$ Chỉ riêng Cảnh 02 phát sáng và cập nhật sang hình đám mây/khiên, các cảnh khác giữ nguyên 100% (bảo toàn ngữ cảnh).
-     * **Đổi phong cách giữ nguyên ý:** Chuyển đổi giữa *Tech Blueprint*, *Hand-drawn Chalkboard* (Bảng phấn), và *Minimal 2D* mà không làm mất ý sư phạm.
-  3. **Bước 3 — Trình phát Animatic xem thử:**
-     * Chạy thử mô phỏng video player theo dòng thời gian, đồng bộ nhịp đọc và phụ đề ở đáy trước khi tốn chi phí dựng video.
-  4. **Bước 4 — Bàn giao thông số kỹ thuật (Handoff Spec):**
-     * Xuất file Storyboard Spec JSON chuẩn chỉnh cho Motion Designer / Coding Agent (Remotion/Manim).
-     * Xuất Báo cáo kiểm định Sổ quy ước (Audit Log) minh chứng không vi phạm quy chuẩn BTC.
+| File | Vai trò & Mục đích | Trạng thái |
+|---|---|:---:|
+| `mockup-cp2.html` | Bản mock bấm được 4 bước (Clickable Interactive Prototype) | Hoàn tất CP2 |
+| `storyboard_agent.py` | Module trung tâm gọi Live Gemini AI tạo phân cảnh JSON chuẩn Stylebook | Hoàn tất CP3 |
+| `app_demo.py` | Script tương tác dòng lệnh phục vụ quay Video 30 giây trực tiếp | Hoàn tất CP3 |
 
 ---
 
-## 🗺️ Sơ đồ luồng hoạt động (Dành cho Slide / Form nộp CP2)
+## 🤖 1. Module Quyết Định AI Trung Tâm (`storyboard_agent.py`)
+
+Đây là mắt xích cốt lõi của sản phẩm thực thi nhiệm vụ chuyển hóa bài giảng thành kịch bản phân cảnh:
+- **Mô hình AI:** Tích hợp trực tiếp Google Gemini API (`gemini-flash-lite-latest`) với độ trễ thấp (~1.8s) và tính tuân thủ cao.
+- **Ràng buộc Stylebook tự động (System Prompt):**
+  1. `on_screen_text` $\le 40$ ký tự (ngăn ngừa quá tải nhận thức học viên).
+  2. Vùng hiển thị an toàn `safe_zone`: $X \in [80, 1840], Y \in [250, 960]$ (chừa khoảng trống cho HUD và phụ đề).
+  3. Chống ảo giác (Non-hallucination): Cấm bịa đặt số liệu/tỷ lệ phần trăm khi kịch bản gốc chỉ có tính định tính.
+  4. Quy chuẩn biểu tượng trực quan: Chuẩn hóa ký hiệu Database, Server rack, Cache chip, Kafka Queue.
+- **Tự động hậu kiểm (Deterministic Verification):** Hàm `validate_storyboard` thực hiện kiểm toán nghiêm ngặt từng frame trước khi xuất dữ liệu.
+
+### Cách chạy thử nhanh module AI:
+```powershell
+python codebase/storyboard_agent.py
+```
+
+---
+
+## 🎬 2. Giao Diện Tương Tác Quay Video 30s (`app_demo.py`)
+
+Cung cấp công cụ chạy demo trực quan phục vụ yêu cầu quay video 30 giây cho CP3:
+- Cho phép chọn 3 kịch bản mẫu điển hình (Caching, Con trỏ RAM, Microservices) hoặc tự nhập kịch bản mới.
+- Hiển thị trực quan quá trình gửi và nhận dữ liệu từ AI.
+- In kết quả từng Frame (Chữ hiển thị, Biểu tượng, Tọa độ Safe Zone) và bảng nghiệm thu Stylebook.
+
+### Cách chạy demo:
+```powershell
+python codebase/app_demo.py
+```
+
+---
+
+## 🎨 3. Bản Mock Bấm Được (`mockup-cp2.html`)
+
+Bản prototype tương tác độc lập (chạy offline trên trình duyệt):
+* **Cách mở:** Nhấp đúp chuột vào file `mockup-cp2.html` hoặc chuột phải chọn *Open with Chrome / Edge*.
+* **4 bước trải nghiệm hoàn chỉnh:**
+  1. **Bước 1 — Nạp kịch bản & Sổ quy ước (Stylebook):** Nạp transcript, khóa cứng quy chuẩn Safe Zone và giới hạn ký tự.
+  2. **Bước 2 — Bảng duyệt Storyboard:** Khung hình 1920×1080 @ 30fps, lưới Safe Zone bật/tắt, sửa cục bộ từng cảnh (*Granular Edit*), đổi style giữ nguyên ý.
+  3. **Bước 3 — Trình phát Animatic xem thử:** Xem trước chuyển động và nhịp đọc audio.
+  4. **Bước 4 — Bàn giao thông số kỹ thuật (Handoff Spec):** Xuất file JSON chuẩn cho Remotion/Manim và nhật ký kiểm định quy chuẩn.
+
+---
+
+## 🗺️ Sơ đồ luồng hoạt động tổng thể
 
 ```mermaid
 flowchart TD
-    subgraph G1 ["Bước 1: Nạp JSON & Stylebook (Trần Tuấn Hoàng)"]
-        U(["Người viết kịch bản"]) --> S1["Nạp file JSON kịch bản (mocTu, chuoiMocTu)"]
-        S1 --> S2["Áp dụng Sổ Quy Ước: Màu ngữ nghĩa & Biểu tượng chuẩn"]
-        S2 --> S3["Khóa ràng buộc: Safe-zone x:80-1840, y:250-960 & Chữ <= 40 ký tự"]
-        S3 --> S4["Bấm '🚀 Tạo Kế Hoạch Hình Cho Cả Video'"]
+    subgraph G1 ["Bước 1: Nạp Kịch Bản & Stylebook"]
+        U(["Giảng viên / ID"]) --> S1["Nhập kịch bản bài giảng / Audio Transcript"]
+        S1 --> S2["Khóa cứng Stylebook: Safe Zone + Chữ <= 40 ký tự + Biểu tượng chuẩn"]
     end
 
-    subgraph G2 ["Bước 2: AI Pipeline & Xử lý Ca Khó (Phạm Đình Hải)"]
-        S4 --> P1["Bóc tách 'Ý sư phạm cần thấy' độc lập phong cách vẽ"]
-        P1 --> P2["Gắn Trigger Words đồng bộ mốc thời gian đọc"]
-        P2 --> P3["Kiểm soát Non-hallucination: Không tự bịa số liệu ảo"]
-        P3 --> P4["Sinh ảnh phác 1920x1080 chuẩn Safe-zone"]
+    subgraph G2 ["Bước 2: Module AI Trung Tâm (storyboard_agent.py)"]
+        S2 --> P1["Gọi Live Gemini API (gemini-flash-lite-latest)"]
+        P1 --> P2["Phân tích ngữ nghĩa & chia tách Scene/Frames"]
+        P2 --> P3["Kiểm soát Non-hallucination & ép chữ <= 40 chars"]
+        P3 --> P4["Tự động hậu kiểm (Deterministic Validator)"]
     end
 
-    subgraph G3 ["Bước 3: Bảng Duyệt & Sửa Cảnh (Nguyễn Văn Đại)"]
-        P4 --> B1["Bảng Storyboard: Khung 16:9 + Trigger Word + Chữ màn hình"]
-        B1 --> B2{"Thao tác người duyệt:"}
-        B2 -->|"Góp ý 1 cảnh"| EDIT1["AI vẽ lại DUY NHẤT cảnh đó (Cảnh khác giữ nguyên)"]
-        B2 -->|"Đổi style"| EDIT2["Đổi nét vẽ (Ý sư phạm giữ nguyên)"]
-        B2 -->|"Xem thử"| PLAY["Chạy thử Animatic theo nhịp thời gian"]
-        B2 -->|"Chốt kịch bản"| APP["Bấm 'Hoàn tất & Bàn giao'"]
+    subgraph G3 ["Bước 3: Bảng Duyệt & Tương Tác"]
+        P4 --> B1["Bảng duyệt Storyboard trực quan 1920x1080"]
+        B1 --> B2{"Thao tác người dùng:"}
+        B2 -->|"Sửa cục bộ"| EDIT1["AI vẽ lại DUY NHẤT cảnh được chọn"]
+        B2 -->|"Đổi phong cách"| EDIT2["Đổi style trực quan (giữ nguyên ý sư phạm)"]
+        B2 -->|"Chạy thử"| PLAY["Trình phát Animatic preview"]
     end
 
-    subgraph G4 ["Bước 4: Bàn Giao Handoff"]
-        APP --> OUT1["Storyboard Spec (JSON) cho Motion Designer / Coding Agent"]
-        APP --> OUT2["Báo cáo Kiểm định Sổ quy ước & Lưới an toàn"]
+    subgraph G4 ["Bước 4: Bàn Giao Handoff & Kiểm Thử"]
+        B2 -->|"Hoàn tất"| OUT1["Xuất Handoff Spec JSON cho Remotion/Manim"]
+        OUT1 --> EVAL["Chạy bộ kiểm thử Golden Set (eval/run_eval.py)"]
     end
 ```
