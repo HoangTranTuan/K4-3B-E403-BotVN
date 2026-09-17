@@ -1,4 +1,4 @@
-# Mini Hackathon AI — Batch 04 · Lớp 3A
+# Mini Hackathon AI — Batch 04 · Lớp 3B
 
 **SPEC → Prototype → Demo.** Đây không phải cuộc thi code — đây là cuộc thi **tư duy sản phẩm AI**.
 
@@ -6,11 +6,11 @@
 
 **Lớp:** 3A · **Phòng:** ____ · **Cụm:** ____ · **Track:** ____
 
-| Họ và Tên | Mã Học Viên | Vai trò chính | Phần việc đảm nhiệm trong dự án |
+| Họ và Tên | Mã Học Viên |
 |---|---|---|---|
-|Phạm Đình Hải|2A202602482||  |
-|Trần Tuấn Hoàng|2A202602832|Trưởng nhóm|  |
-|Nguyễn Văn Đại|2A202602477|  |  |
+|Phạm Đình Hải|2A202602482|
+|Trần Tuấn Hoàng|2A202602832|Trưởng nhóm|
+|Nguyễn Văn Đại|2A202602477|
 
 > Nhóm copy nguyên file README này về repo của mình, rồi điền bảng trên. Cột **Phần việc đảm nhiệm** ghi càng cụ thể càng tốt.
 
