@@ -10,7 +10,7 @@
 |---|---|---|---|
 | Phạm Đình Hải | 2A202602482 | Developer | Lập trình lõi hệ thống (gọi API AI thật), chuẩn bị video demo sản phẩm (CP3). Chịu trách nhiệm viết **§4** (Giới hạn hệ thống, Mức độ Automation & HAX/PAIR) trong AI Spec. |
 | Trần Tuấn Hoàng | 2A202602832 | Trưởng nhóm | Phân công công việc, hoàn thiện Checkpoint 1, kiểm thử tổng thể. Chịu trách nhiệm chốt AI Spec và trực tiếp viết **§1, §2, §5, §6, §8, §9** (Bài toán, Bằng chứng, Kịch bản rủi ro 4 lớp, Changelog). |
-| Nguyễn Văn Đại | 2A202602477 | Data & Đánh giá | Thiết kế sơ đồ luồng (CP2), xây dựng bộ kiểm thử Golden Set 20+ cases. Chịu trách nhiệm viết **§3, §7** (Phân tích sản phẩm tương tự, Định nghĩa chiều chất lượng & Khóa ngưỡng Quality Bar) trong AI Spec. |
+| Nguyễn Văn Đại | 2A202602477 | Tester | Thiết kế sơ đồ luồng (CP2), xây dựng bộ kiểm thử Golden Set 20+ cases. Chịu trách nhiệm viết **§3, §7** (Phân tích sản phẩm tương tự, Định nghĩa chiều chất lượng & Khóa ngưỡng Quality Bar) trong AI Spec. |
 
 > Nhóm copy nguyên file README này về repo của mình, rồi điền bảng trên. Cột **Phần việc đảm nhiệm** ghi càng cụ thể càng tốt.
 
