@@ -1,0 +1,965 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>StoryboardAI — Nền tảng dựng kịch bản hình ảnh cho video bài giảng</title>
+  <script src="https://www.gstatic.com/antigravity/web/dev/tailwindcss.min.js"></script>
+  <style>
+    /* Lưới vùng an toàn chuẩn 1920x1080 (x:80-1840, y:250-960) */
+    .safe-zone-box {
+      position: absolute;
+      left: 4.16%;   /* 80 / 1920 */
+      right: 4.16%;
+      top: 23.15%;   /* 250 / 1080 */
+      bottom: 11.11%;/* 120 / 1080 */
+      border: 1.5px dashed #22c55e;
+      background: rgba(34, 197, 94, 0.05);
+      pointer-events: none;
+    }
+    .top-hud-zone {
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 23.15%;
+      background: rgba(148, 163, 184, 0.07);
+      border-bottom: 1px dashed rgba(148, 163, 184, 0.35);
+      pointer-events: none;
+    }
+    .subtitle-zone {
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      height: 11.11%;
+      background: rgba(239, 68, 68, 0.14);
+      border-top: 1.5px dashed #ef4444;
+      pointer-events: none;
+    }
+    .trigger-badge {
+      background: rgba(245, 158, 11, 0.25);
+      border-bottom: 2px solid #f59e0b;
+      padding: 0 4px;
+      border-radius: 4px;
+      font-weight: 600;
+      color: #fde68a;
+    }
+    .active-update-pulse {
+      animation: updatePulse 1.8s ease-in-out infinite;
+    }
+    @keyframes updatePulse {
+      0%, 100% { border-color: #6366f1; box-shadow: 0 0 15px rgba(99, 102, 241, 0.4); }
+      50% { border-color: #10b981; box-shadow: 0 0 25px rgba(16, 185, 129, 0.6); }
+    }
+  </style>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen font-sans antialiased flex flex-col selection:bg-indigo-500 selection:text-white">
+
+  <!-- Main Navigation Header -->
+  <header class="border-b border-slate-800 bg-slate-900/90 backdrop-blur sticky top-0 z-50 px-6 py-3">
+    <div class="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
+      
+      <!-- Logo & App Title -->
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 flex items-center justify-center font-black text-white shadow-lg shadow-indigo-500/20 text-base">
+          S4
+        </div>
+        <div>
+          <div class="flex items-center gap-2">
+            <h1 class="text-base font-bold text-white tracking-wide">StoryboardAI</h1>
+            <span class="px-2 py-0.5 text-[10px] font-semibold bg-indigo-950 text-indigo-300 border border-indigo-800 rounded-md">Lesson Studio Tool</span>
+          </div>
+          <p class="text-xs text-slate-400">Agent dựng kịch bản hình ảnh & ảnh phác từ lời đọc video bài giảng</p>
+        </div>
+      </div>
+
+      <!-- 4 Bước Thao Tác Chuẩn Của Người Dùng -->
+      <nav class="flex items-center bg-slate-950 p-1 rounded-xl border border-slate-800 text-xs font-medium">
+        <button id="nav-btn-1" onclick="selectStep(1)" class="px-3 py-1.5 rounded-lg bg-indigo-600 text-white font-semibold transition flex items-center gap-1.5 shadow">
+          <span class="w-4 h-4 rounded-full bg-white/20 text-center leading-4 text-[10px]">1</span>
+          <span>Nạp Kịch Bản</span>
+        </button>
+        <button id="nav-btn-2" onclick="selectStep(2)" class="px-3 py-1.5 rounded-lg text-slate-400 hover:text-slate-200 transition flex items-center gap-1.5">
+          <span class="w-4 h-4 rounded-full bg-slate-800 text-center leading-4 text-[10px]">2</span>
+          <span>Bảng Duyệt Storyboard</span>
+        </button>
+        <button id="nav-btn-3" onclick="selectStep(3)" class="px-3 py-1.5 rounded-lg text-slate-400 hover:text-slate-200 transition flex items-center gap-1.5">
+          <span class="w-4 h-4 rounded-full bg-slate-800 text-center leading-4 text-[10px]">3</span>
+          <span>Xem Thử Animatic</span>
+        </button>
+        <button id="nav-btn-4" onclick="selectStep(4)" class="px-3 py-1.5 rounded-lg text-slate-400 hover:text-slate-200 transition flex items-center gap-1.5">
+          <span class="w-4 h-4 rounded-full bg-slate-800 text-center leading-4 text-[10px]">4</span>
+          <span>Bàn Giao (Handoff)</span>
+        </button>
+      </nav>
+
+      <!-- Phong cách hình ảnh -->
+      <div class="flex items-center gap-2 text-xs">
+        <span class="text-slate-400 hidden lg:inline">Phong cách:</span>
+        <select id="global-style-select" onchange="changeStyle(this.value)" class="bg-slate-800 border border-slate-700 rounded-lg px-2.5 py-1.5 text-xs text-indigo-300 focus:outline-none cursor-pointer">
+          <option value="blueprint">Tech Blueprint (Vector kỹ thuật)</option>
+          <option value="chalkboard">Hand-drawn Chalkboard (Bảng phấn)</option>
+          <option value="minimalist">Modern Flat 2D (Tối giản hình học)</option>
+        </select>
+      </div>
+    </div>
+  </header>
+
+  <!-- Workspace Container -->
+  <main class="flex-1 max-w-7xl w-full mx-auto p-6">
+
+    <!-- ======================================================== -->
+    <!-- BƯỚC 1: NẠP LỜI ĐỌC KỊCH BẢN & SỔ QUY ƯỚC HÌNH ẢNH       -->
+    <!-- ======================================================== -->
+    <section id="step-view-1" class="space-y-6">
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+        
+        <!-- Left: Input Script / JSON (7 cols) -->
+        <div class="lg:col-span-7 bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl space-y-4">
+          <div class="flex items-center justify-between pb-3 border-b border-slate-800">
+            <div>
+              <h2 class="text-base font-semibold text-white">Bước 1: Nạp Lời Đọc Đã Chốt (Kèm Mốc Thời Gian Từng Từ)</h2>
+              <p class="text-xs text-slate-400">Hỗ trợ file JSON mốc thời gian (<code class="text-indigo-400">mocTu</code>, <code class="text-indigo-400">chuoiMocTu</code>) từ phòng thu âm.</p>
+            </div>
+            <div class="flex items-center gap-2">
+              <button onclick="loadSample('tech')" class="px-2.5 py-1.5 text-xs bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 rounded-lg transition">
+                📄 Kịch bản Hệ thống Phân tán
+              </button>
+              <button onclick="loadSample('abstract')" class="px-2.5 py-1.5 text-xs bg-indigo-950 hover:bg-indigo-900 text-indigo-300 border border-indigo-800 rounded-lg transition">
+                📄 Kịch bản Khái niệm Trừu tượng
+              </button>
+            </div>
+          </div>
+
+          <textarea id="script-input-area" oninput="onScriptInputChange()" rows="12" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-4 text-xs font-mono text-slate-200 focus:outline-none focus:border-indigo-500 leading-relaxed resize-none"></textarea>
+
+          <div class="p-3 bg-slate-950 rounded-xl border border-slate-800/80 flex flex-wrap items-center justify-between text-xs text-slate-400">
+            <span id="script-stats-badge">4 câu đã nạp · Đầy đủ mốc từ · Khung hình 1920×1080 @ 30fps</span>
+            <div class="flex items-center gap-3 text-[11px]">
+              <span class="text-emerald-400 font-medium">✔ Lưới An Toàn: x:80-1840, y:250-960</span>
+              <span class="text-amber-400 font-medium">✔ Chữ màn hình ≤ 40 ký tự</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right: Stylebook Rules (5 cols) -->
+        <div class="lg:col-span-5 bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl space-y-4 flex flex-col justify-between">
+          <div class="space-y-4">
+            <div class="pb-3 border-b border-slate-800 flex items-center justify-between">
+              <div>
+                <h2 class="text-base font-semibold text-white flex items-center gap-2">
+                  <span>🎨 Sổ Quy Ước Hình Ảnh (Stylebook)</span>
+                </h2>
+                <p class="text-xs text-slate-400 mt-0.5">Khóa nhất quán màu sắc & biểu tượng suốt toàn bộ video.</p>
+              </div>
+              <span class="px-2 py-0.5 text-[10px] bg-indigo-950 text-indigo-300 border border-indigo-800 rounded font-mono font-semibold">Quy chuẩn chốt</span>
+            </div>
+
+            <!-- Bảng màu ngữ nghĩa -->
+            <div class="bg-slate-950 p-3.5 rounded-xl border border-slate-800 space-y-2 text-xs">
+              <div class="text-[11px] font-bold text-indigo-400 uppercase tracking-wider">1. Bảng màu ngữ nghĩa (Semantic Colors):</div>
+              <div class="grid grid-cols-2 gap-2 text-[11px]">
+                <div class="flex items-center gap-2"><span class="w-3.5 h-3.5 rounded bg-blue-600"></span> <span>Máy chủ / Client (#2563EB)</span></div>
+                <div class="flex items-center gap-2"><span class="w-3.5 h-3.5 rounded bg-amber-500"></span> <span>Gói tin dữ liệu / Tải (#F59E0B)</span></div>
+                <div class="flex items-center gap-2"><span class="w-3.5 h-3.5 rounded bg-emerald-500"></span> <span>Toàn vẹn / Thành công (#10B981)</span></div>
+                <div class="flex items-center gap-2"><span class="w-3.5 h-3.5 rounded bg-rose-500"></span> <span>Tắc nghẽn / Lỗi mạng (#EF4444)</span></div>
+              </div>
+            </div>
+
+            <!-- Quy ước biểu tượng -->
+            <div class="bg-slate-950 p-3.5 rounded-xl border border-slate-800 space-y-2 text-xs">
+              <div class="text-[11px] font-bold text-indigo-400 uppercase tracking-wider">2. Quy ước biểu tượng (Symbol Rules):</div>
+              <ul class="text-slate-400 space-y-1.5 text-[11px]">
+                <li class="flex items-start gap-1.5">
+                  <span class="text-indigo-400">•</span>
+                  <span><b>Cơ sở dữ liệu:</b> Luôn là hình trụ 3 tầng bo viền, không đổi sang dạng khác.</span>
+                </li>
+                <li class="flex items-start gap-1.5">
+                  <span class="text-indigo-400">•</span>
+                  <span><b>Máy chủ:</b> Khối chữ nhật vát góc có 2 vạch LED xanh dương.</span>
+                </li>
+                <li class="flex items-start gap-1.5">
+                  <span class="text-indigo-400">•</span>
+                  <span><b>Chữ trên màn hình:</b> Tối đa <b>40 ký tự</b>, đặt ở nửa trên vùng an toàn.</span>
+                </li>
+              </ul>
+            </div>
+
+            <!-- Nguyên tắc an toàn -->
+            <div class="p-3 bg-indigo-950/30 border border-indigo-800/40 rounded-xl text-indigo-300 text-[11px] flex items-center gap-2">
+              <span>🛡️</span>
+              <span><b>Không bịa số liệu:</b> Lời đọc chỉ có định tính $\rightarrow$ hình ảnh không tự thêm số %, chỉ số cụ thể.</span>
+            </div>
+          </div>
+
+          <!-- Nút hành động chính bước 1 -->
+          <button onclick="startGenerateStoryboard()" class="w-full py-3 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white font-semibold rounded-xl shadow-lg shadow-indigo-600/30 flex items-center justify-center gap-2 text-sm transition transform active:scale-98">
+            <span>🚀 Tạo Kế Hoạch Hình Ảnh (Chuyển Sang Bước 2)</span>
+          </button>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ======================================================== -->
+    <!-- BƯỚC 2: BẢNG DUYỆT STORYBOARD TỪNG CẢNH                  -->
+    <!-- ======================================================== -->
+    <section id="step-view-2" class="hidden space-y-5">
+      
+      <!-- Thanh công cụ hỗ trợ người duyệt -->
+      <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 flex flex-wrap items-center justify-between gap-4 shadow-lg">
+        <div class="flex items-center gap-4 text-xs">
+          <span class="font-bold text-white">Số lượng cảnh: <span id="board-scene-count" class="text-indigo-400 font-bold">4 Cảnh (1920×1080)</span></span>
+          <span class="text-slate-700">|</span>
+          <div class="flex items-center gap-2">
+            <span class="text-slate-400">Lưới vùng an toàn (x:80-1840, y:250-960):</span>
+            <input type="checkbox" id="toggle-safe-grid" checked onchange="toggleSafeGrid(this.checked)" class="accent-emerald-500 cursor-pointer">
+          </div>
+          <span class="text-slate-700">|</span>
+          <div class="flex items-center gap-2">
+            <span class="w-2.5 h-2.5 rounded-full bg-emerald-500"></span>
+            <span class="text-slate-300">Tự soát quy ước: <b id="board-compliance-badge" class="text-emerald-400">Hợp chuẩn 100%</b></span>
+          </div>
+        </div>
+
+        <div class="flex items-center gap-2">
+          <button onclick="selectStep(3)" class="px-3.5 py-1.5 bg-indigo-950 hover:bg-indigo-900 text-indigo-300 border border-indigo-800 text-xs font-semibold rounded-xl transition flex items-center gap-1.5">
+            <span>▶ Xem Thử Animatic (Bước 3)</span>
+          </button>
+          <button onclick="selectStep(4)" class="px-4 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-semibold rounded-xl shadow transition flex items-center gap-1.5">
+            <span>Bàn Giao Kế Hoạch (Bước 4)</span>
+            <span>→</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Danh sách thẻ các cảnh (Scene Cards) -->
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5" id="scenes-grid-container">
+        <!-- Render tự động qua JavaScript -->
+      </div>
+    </section>
+
+    <!-- ======================================================== -->
+    <!-- BƯỚC 3: TRÌNH PHÁT ANIMATIC XEM THỬ THEO THỜI GIAN THẬT  -->
+    <!-- ======================================================== -->
+    <section id="step-view-3" class="hidden space-y-6">
+      <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl space-y-6">
+        <div class="flex items-center justify-between pb-3 border-b border-slate-800">
+          <div>
+            <h2 class="text-base font-bold text-white flex items-center gap-2">
+              <span>🎬 Bước 3: Xem Thử Animatic Video (Đồng Bộ Nhịp Đọc & Hình)</span>
+            </h2>
+            <p class="text-xs text-slate-400 mt-0.5">Giúp người duyệt kiểm tra nhịp chuyển cảnh, thời điểm chữ xuất hiện và độ khớp của hình ảnh trước khi dựng.</p>
+          </div>
+          <button onclick="selectStep(2)" class="text-xs text-indigo-400 hover:text-indigo-300 font-medium">← Quay lại bảng duyệt</button>
+        </div>
+
+        <!-- Khung Player 16:9 -->
+        <div class="max-w-3xl mx-auto">
+          <div class="relative w-full aspect-video bg-black rounded-2xl overflow-hidden border-2 border-slate-800 shadow-2xl flex items-center justify-center">
+            <!-- Màn hình chiếu cảnh hiện tại -->
+            <div id="player-screen-content" class="w-full h-full"></div>
+
+            <!-- Chữ xuất hiện trên màn hình -->
+            <div class="absolute top-6 left-6 right-6 text-center pointer-events-none">
+              <span id="player-overlay-text" class="px-4 py-1.5 bg-black/75 backdrop-blur border border-white/20 rounded-lg text-sm font-bold text-white tracking-wide shadow">
+                Kiến Trúc Hệ Thống Phân Tán
+              </span>
+            </div>
+
+            <!-- Dải phụ đề an toàn ở đáy -->
+            <div class="subtitle-zone flex items-center justify-center">
+              <span id="player-subtitle-text" class="text-xs font-medium text-white px-3 py-1 bg-black/80 rounded-md shadow">
+                Chào mừng các bạn đến với bài học về kiến trúc hệ thống phân tán.
+              </span>
+            </div>
+          </div>
+
+          <!-- Thanh điều khiển phát video -->
+          <div class="mt-4 bg-slate-950 p-4 rounded-xl border border-slate-800 space-y-3">
+            <div class="flex items-center justify-between text-xs font-mono text-slate-400">
+              <span id="player-current-time">00:00.000</span>
+              <span id="player-scene-label" class="text-indigo-400 font-bold">Đang phát: Cảnh 01</span>
+              <span>Tổng: 00:23.500</span>
+            </div>
+
+            <!-- Timeline Scrubber Bar -->
+            <div class="w-full bg-slate-800 h-2 rounded-full overflow-hidden relative cursor-pointer" onclick="onTimelineScrub(event)">
+              <div id="player-progress-fill" class="bg-indigo-500 h-full w-[25%] transition-all"></div>
+            </div>
+
+            <!-- Nút điều khiển -->
+            <div class="flex items-center justify-center gap-4 pt-1">
+              <button onclick="skipScene(-1)" class="p-2 hover:bg-slate-800 text-slate-300 rounded-lg text-xs">⏮ Cảnh trước</button>
+              <button id="animatic-play-btn" onclick="toggleAnimaticPlay()" class="px-5 py-2 bg-indigo-600 hover:bg-indigo-500 text-white font-semibold text-xs rounded-xl shadow-lg transition">
+                ▶ Phát Thử Animatic
+              </button>
+              <button onclick="skipScene(1)" class="p-2 hover:bg-slate-800 text-slate-300 rounded-lg text-xs">Cảnh sau ⏭</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ======================================================== -->
+    <!-- BƯỚC 4: BÀN GIAO THÔNG SỐ (HANDOFF SPECIFICATION)        -->
+    <!-- ======================================================== -->
+    <section id="step-view-4" class="hidden space-y-6">
+      <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl space-y-6">
+        <div class="flex items-center justify-between pb-4 border-b border-slate-800">
+          <div>
+            <h2 class="text-lg font-bold text-white flex items-center gap-2">
+              <span class="text-emerald-400">✔</span> Bước 4: Kế Hoạch Hình Ảnh Sẵn Sàng Bàn Giao (Handoff Spec)
+            </h2>
+            <p class="text-xs text-slate-400 mt-1">Dành cho Motion Designer dựng After Effects hoặc Coding Agent (Remotion / Manim) tạo video tự động.</p>
+          </div>
+          <button onclick="selectStep(1)" class="px-3 py-1.5 text-xs bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-lg transition border border-slate-700">
+            ↺ Nạp kịch bản khác
+          </button>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <!-- Storyboard Spec JSON -->
+          <div class="space-y-2">
+            <div class="flex items-center justify-between text-xs font-semibold text-slate-400">
+              <span>BẢN KẾ HOẠCH HÌNH ẢNH (STORYBOARD SPEC JSON):</span>
+              <button onclick="copyToClipboard('spec-export-textarea')" class="text-indigo-400 hover:text-indigo-300">Sao chép Spec</button>
+            </div>
+            <textarea id="spec-export-textarea" rows="15" readonly class="w-full bg-slate-950 border border-slate-800 rounded-xl p-4 text-xs font-mono text-indigo-300 focus:outline-none leading-relaxed resize-none"></textarea>
+          </div>
+
+          <!-- Compliance Audit Log -->
+          <div class="space-y-2">
+            <div class="flex items-center justify-between text-xs font-semibold text-slate-400">
+              <span>BÁO CÁO KIỂM ĐỊNH SỔ QUY ƯỚC & VÙNG AN TOÀN:</span>
+              <button onclick="copyToClipboard('audit-export-textarea')" class="text-indigo-400 hover:text-indigo-300">Sao chép Báo cáo</button>
+            </div>
+            <textarea id="audit-export-textarea" rows="15" readonly class="w-full bg-slate-950 border border-slate-800 rounded-xl p-4 text-xs font-mono text-emerald-400 focus:outline-none leading-relaxed resize-none"></textarea>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- MODAL: GÓP Ý CHỈNH SỬA RIÊNG 1 CẢNH (GRANULAR EDIT MODAL) -->
+  <div id="single-edit-modal" class="hidden fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+    <div class="bg-slate-900 border border-slate-700 rounded-2xl max-w-xl w-full p-6 space-y-4 shadow-2xl">
+      <div class="flex items-center justify-between pb-3 border-b border-slate-800">
+        <div>
+          <span id="modal-scene-badge" class="text-xs font-mono text-indigo-400 font-bold uppercase">CẢNH 02 · 00:04.500 - 00:10.200</span>
+          <h3 class="text-base font-semibold text-white">Góp ý chỉnh sửa cho riêng cảnh này</h3>
+        </div>
+        <button onclick="closeEditModal()" class="text-slate-400 hover:text-white text-xl font-bold">&times;</button>
+      </div>
+
+      <div class="space-y-3 text-xs">
+        <div class="bg-slate-950 p-3 rounded-xl border border-slate-800 space-y-1">
+          <span class="text-slate-500 font-semibold uppercase text-[10px]">Lời đọc của câu:</span>
+          <p id="modal-spoken-quote" class="text-slate-200 font-medium"></p>
+        </div>
+
+        <div>
+          <label class="block text-slate-300 font-semibold mb-1">Góp ý của người duyệt:</label>
+          <textarea id="modal-feedback-text" rows="2" class="w-full bg-slate-950 border border-slate-700 rounded-xl p-2.5 text-slate-100 focus:outline-none focus:border-indigo-500 resize-none text-xs" placeholder="Ví dụ: Đổi máy chủ sang biểu tượng đám mây Cloud, thể hiện lưu trữ phân tán..."></textarea>
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-slate-300 font-semibold mb-1">Chữ trên màn hình (≤ 40 ký tự):</label>
+            <input type="text" id="modal-onscreen-input" oninput="liveCheckCharCount()" class="w-full bg-slate-950 border border-slate-700 rounded-lg p-2 text-slate-100 focus:outline-none focus:border-indigo-500 text-xs">
+            <span id="modal-char-count-label" class="text-[10px] text-emerald-400 mt-1 block">0/40 ký tự</span>
+          </div>
+          <div>
+            <label class="block text-slate-300 font-semibold mb-1">Biểu tượng chính trong cảnh:</label>
+            <select id="modal-icon-choice" class="w-full bg-slate-950 border border-slate-700 rounded-lg p-2 text-slate-200 text-xs">
+              <option value="keep">Giữ nguyên theo Sổ quy ước</option>
+              <option value="cloud">Đám Mây (Cloud)</option>
+              <option value="shield">Khiên Bảo Mật (Shield)</option>
+              <option value="database">Cơ Sở Dữ Liệu (3 Tầng)</option>
+              <option value="growth">Đồ Thị Mũi Tên Tăng Trưởng</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="p-3 bg-amber-950/30 border border-amber-800/40 rounded-xl text-amber-300 text-[11px] flex items-center gap-2">
+          <span>⚡</span>
+          <span><b>Nguyên tắc độc lập:</b> Chỉ cảnh này được AI vẽ lại. Tất cả các cảnh khác trong video và Sổ quy ước giữ nguyên 100%.</span>
+        </div>
+      </div>
+
+      <div class="flex items-center justify-end gap-3 pt-2">
+        <button onclick="closeEditModal()" class="px-4 py-2 text-xs text-slate-400 hover:text-slate-200">Hủy bỏ</button>
+        <button onclick="confirmSingleSceneEdit()" class="px-5 py-2 bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold rounded-xl transition shadow">
+          ✔ Vẽ lại cảnh này & Đồng bộ toàn bộ
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Sample Data 1: Bài giảng Kỹ thuật chuẩn
+    const sampleTechJson = `{
+  "video_id": "c4_lecture_distributed_systems",
+  "resolution": "1920x1080@30fps",
+  "safe_zone": { "x": [80, 1840], "y": [250, 960] },
+  "scenes": [
+    {
+      "cau": 1,
+      "mocTu": "00:00.000",
+      "chuoiMocTu": "00:00.000 - 00:04.500",
+      "loiDoc": "Chào mừng các bạn đến với bài học về kiến trúc hệ thống phân tán.",
+      "triggerWord": "kiến trúc hệ thống",
+      "onScreenText": "Kiến Trúc Hệ Thống Phân Tán",
+      "pedagogicalIntent": "Giới thiệu mô hình mạng lưới kết nối đa nút không điểm nghẽn.",
+      "visualIcon": "network",
+      "status": "verified"
+    },
+    {
+      "cau": 2,
+      "mocTu": "00:04.500",
+      "chuoiMocTu": "00:04.500 - 00:10.200",
+      "loiDoc": "Khi một yêu cầu được gửi từ máy khách, máy chủ trung tâm sẽ tiếp nhận và kiểm tra xác thực.",
+      "triggerWord": "máy chủ trung tâm",
+      "onScreenText": "Gửi Yêu Cầu & Kiểm Tra",
+      "pedagogicalIntent": "Laptop client gửi gói tin sang máy chủ; khiên xanh xác thực hiện lên.",
+      "visualIcon": "server",
+      "status": "verified"
+    },
+    {
+      "cau": 3,
+      "mocTu": "00:10.200",
+      "chuoiMocTu": "00:10.200 - 00:17.000",
+      "loiDoc": "Nếu lượng truy cập tăng vọt, hệ thống sẽ tự động phân phối tải qua các máy chủ phụ để tránh tắc nghẽn.",
+      "triggerWord": "phân phối tải",
+      "onScreenText": "Tự Động Cân Bằng Tải",
+      "pedagogicalIntent": "Bộ phân phối rẽ nhánh 3 dòng request đều sang 3 máy chủ phụ.",
+      "visualIcon": "loadbalancer",
+      "status": "verified"
+    },
+    {
+      "cau": 4,
+      "mocTu": "00:17.000",
+      "chuoiMocTu": "00:17.000 - 00:23.500",
+      "loiDoc": "Dữ liệu sau đó được ghi đồng bộ vào cơ sở dữ liệu để đảm bảo tính toàn vẹn.",
+      "triggerWord": "cơ sở dữ liệu",
+      "onScreenText": "Đồng Bộ Cơ Sở Dữ Liệu",
+      "pedagogicalIntent": "Dòng dữ liệu xanh chảy vào khối Database hình trụ 3 tầng theo quy ước.",
+      "visualIcon": "database",
+      "status": "verified"
+    }
+  ]
+}`;
+
+    // Sample Data 2: Bài giảng Khái niệm Trừu tượng (Mẫu minh họa xử lý ca khó)
+    const sampleAbstractJson = `{
+  "video_id": "c4_lecture_abstract_concepts",
+  "resolution": "1920x1080@30fps",
+  "safe_zone": { "x": [80, 1840], "y": [250, 960] },
+  "scenes": [
+    {
+      "cau": 1,
+      "mocTu": "00:00.000",
+      "chuoiMocTu": "00:00.000 - 00:06.000",
+      "loiDoc": "Số lượng truy cập vào hệ thống đang gia tăng đột biến từng ngày.",
+      "triggerWord": "gia tăng đột biến",
+      "onScreenText": "Lượng Truy Cập Tăng Vọt",
+      "pedagogicalIntent": "Ẩn dụ xu hướng tăng vọt bằng mũi tên dốc đứng; không tự bịa con số.",
+      "visualIcon": "growth",
+      "status": "verified"
+    },
+    {
+      "cau": 2,
+      "mocTu": "00:06.000",
+      "chuoiMocTu": "00:06.000 - 00:13.500",
+      "loiDoc": "Sự tin cậy được xây dựng dựa trên sự đồng thuận của đa số các bên.",
+      "triggerWord": "đồng thuận",
+      "onScreenText": "Cơ Chế Đồng Thuận Đa Số",
+      "pedagogicalIntent": "Quy đổi khái niệm trừu tượng thành 4 nút cùng chiếu tia sáng vào chiếc khiên.",
+      "visualIcon": "shield",
+      "status": "verified"
+    },
+    {
+      "cau": 3,
+      "mocTu": "00:13.500",
+      "chuoiMocTu": "00:13.500 - 00:21.000",
+      "loiDoc": "Hệ thống vừa phải xác thực danh tính, vừa mã hóa dữ liệu, vừa ghi log và sao lưu định kỳ.",
+      "triggerWord": "xác thực danh tính",
+      "onScreenText": "Quy Trình Bảo Mật 4 Bước",
+      "pedagogicalIntent": "Pipeline 4 bước tuần tự xuất hiện đúng theo nhịp đọc trigger word.",
+      "visualIcon": "pipeline",
+      "status": "verified"
+    }
+  ]
+}`;
+
+    // Trạng thái ứng dụng (Single Source of Truth)
+    let activeStyle = "blueprint";
+    let activeScenes = [];
+    let currentEditingIndex = null;
+
+    document.addEventListener("DOMContentLoaded", () => {
+      loadSample('tech');
+    });
+
+    function loadSample(type) {
+      if (type === 'tech') {
+        document.getElementById("script-input-area").value = sampleTechJson;
+        activeScenes = JSON.parse(sampleTechJson).scenes;
+        document.getElementById("script-stats-badge").innerText = "4 câu đã nạp · Đầy đủ mốc từ · Khung hình 1920×1080 @ 30fps";
+      } else {
+        document.getElementById("script-input-area").value = sampleAbstractJson;
+        activeScenes = JSON.parse(sampleAbstractJson).scenes;
+        document.getElementById("script-stats-badge").innerText = "3 câu khái niệm trừu tượng đã nạp · Khung hình 1920×1080 @ 30fps";
+      }
+      syncGlobalState();
+    }
+
+    function onScriptInputChange() {
+      try {
+        const parsed = JSON.parse(document.getElementById("script-input-area").value);
+        if (parsed.scenes && Array.isArray(parsed.scenes)) {
+          activeScenes = parsed.scenes;
+          document.getElementById("script-stats-badge").innerText = `${activeScenes.length} câu hợp lệ · JSON chuẩn cú pháp`;
+          document.getElementById("script-stats-badge").className = "text-emerald-400 font-medium";
+        }
+      } catch (e) {
+        document.getElementById("script-stats-badge").innerText = "⚠️ Đang nhập dở hoặc lỗi cú pháp JSON...";
+        document.getElementById("script-stats-badge").className = "text-amber-400 font-medium";
+      }
+    }
+
+    function startGenerateStoryboard() {
+      try {
+        const raw = document.getElementById("script-input-area").value.trim();
+        const parsed = JSON.parse(raw);
+        if (parsed.scenes && Array.isArray(parsed.scenes)) {
+          activeScenes = parsed.scenes;
+          syncGlobalState();
+          selectStep(2);
+        } else {
+          alert("Lỗi: Dữ liệu JSON cần có mảng 'scenes'!");
+        }
+      } catch (e) {
+        alert("Lỗi: Vui lòng kiểm tra lại định dạng JSON!");
+      }
+    }
+
+    function syncGlobalState() {
+      renderStoryboardGrid();
+      updateHandoffExport();
+
+      const countEl = document.getElementById("board-scene-count");
+      if (countEl) countEl.innerText = `${activeScenes.length} Cảnh (1920×1080)`;
+
+      const hasOver40 = activeScenes.some(s => s.onScreenText && s.onScreenText.length > 40);
+      const badge = document.getElementById("board-compliance-badge");
+      if (badge) {
+        if (hasOver40) {
+          badge.innerText = "⚠️ Cảnh báo: Chữ > 40 ký tự";
+          badge.className = "text-rose-400 font-bold";
+        } else {
+          badge.innerText = "Hợp chuẩn 100%";
+          badge.className = "text-emerald-400";
+        }
+      }
+    }
+
+    function selectStep(stepNumber) {
+      for (let i = 1; i <= 4; i++) {
+        document.getElementById(`step-view-${i}`).classList.add("hidden");
+        const btn = document.getElementById(`nav-btn-${i}`);
+        btn.classList.remove("bg-indigo-600", "text-white");
+        btn.classList.add("text-slate-400");
+      }
+      document.getElementById(`step-view-${stepNumber}`).classList.remove("hidden");
+      const activeBtn = document.getElementById(`nav-btn-${stepNumber}`);
+      activeBtn.classList.remove("text-slate-400");
+      activeBtn.classList.add("bg-indigo-600", "text-white");
+
+      if (stepNumber === 3) {
+        initAnimaticViewer();
+      }
+    }
+
+    function changeStyle(newStyle) {
+      activeStyle = newStyle;
+      document.getElementById("global-style-select").value = newStyle;
+      syncGlobalState();
+    }
+
+    function toggleSafeGrid(show) {
+      renderStoryboardGrid();
+    }
+
+    // Sinh SVG phác thảo linh hoạt theo phong cách và biểu tượng
+    function renderSvgSketch(scene, style) {
+      const icon = scene.visualIcon || 'network';
+
+      if (style === "blueprint") {
+        if (icon === "network") {
+          return `<svg viewBox="0 0 320 180" class="w-full h-full bg-slate-950">
+            <circle cx="160" cy="70" r="16" fill="#1e3a8a" stroke="#3b82f6" stroke-width="2"/>
+            <circle cx="80" cy="50" r="10" fill="#1e293b" stroke="#60a5fa" stroke-width="1.5"/>
+            <circle cx="240" cy="50" r="10" fill="#1e293b" stroke="#60a5fa" stroke-width="1.5"/>
+            <circle cx="100" cy="110" r="10" fill="#1e293b" stroke="#60a5fa" stroke-width="1.5"/>
+            <circle cx="220" cy="110" r="10" fill="#1e293b" stroke="#60a5fa" stroke-width="1.5"/>
+            <line x1="160" y1="70" x2="80" y2="50" stroke="#3b82f6" stroke-dasharray="3"/>
+            <line x1="160" y1="70" x2="240" y2="50" stroke="#3b82f6" stroke-dasharray="3"/>
+            <line x1="160" y1="70" x2="100" y2="110" stroke="#3b82f6"/>
+            <line x1="160" y1="70" x2="220" y2="110" stroke="#3b82f6"/>
+          </svg>`;
+        } else if (icon === "server") {
+          return `<svg viewBox="0 0 320 180" class="w-full h-full bg-slate-950">
+            <rect x="40" y="55" width="40" height="26" rx="2" fill="#1e293b" stroke="#64748b" stroke-width="1.5"/>
+            <rect x="34" y="81" width="52" height="4" rx="1" fill="#475569"/>
+            <text x="60" y="47" text-anchor="middle" font-size="8" fill="#94a3b8">Client</text>
+            <path d="M95 68 L185 68" stroke="#f59e0b" stroke-width="2.5" stroke-dasharray="4"/>
+            <circle cx="140" cy="68" r="5" fill="#f59e0b"/>
+            <rect x="200" y="40" width="55" height="65" rx="3" fill="#1e3a8a" stroke="#3b82f6" stroke-width="2"/>
+            <line x1="210" y1="55" x2="245" y2="55" stroke="#60a5fa" stroke-width="2"/>
+            <line x1="210" y1="70" x2="245" y2="70" stroke="#60a5fa" stroke-width="2"/>
+            <circle cx="215" cy="88" r="4" fill="#10b981"/>
+            <text x="227" y="32" text-anchor="middle" font-size="8" fill="#60a5fa">Server</text>
+          </svg>`;
+        } else if (icon === "cloud") {
+          return `<svg viewBox="0 0 320 180" class="w-full h-full bg-slate-950">
+            <path d="M120 90 a20 20 0 0 1 35 -12 a25 25 0 0 1 45 6 a18 18 0 0 1 10 32 l-90 0 a18 18 0 0 1 0 -26 z" fill="#1e3a8a" stroke="#38bdf8" stroke-width="2"/>
+            <circle cx="160" cy="85" r="4" fill="#60a5fa"/>
+            <line x1="160" y1="95" x2="160" y2="120" stroke="#38bdf8" stroke-width="2" stroke-dasharray="3"/>
+            <text x="160" y="45" text-anchor="middle" font-size="8" fill="#38bdf8">Cloud Distributed Infrastructure</text>
+          </svg>`;
+        } else if (icon === "loadbalancer") {
+          return `<svg viewBox="0 0 320 180" class="w-full h-full bg-slate-950">
+            <circle cx="80" cy="72" r="18" fill="#78350f" stroke="#f59e0b" stroke-width="2"/>
+            <text x="80" y="75" text-anchor="middle" font-size="8" fill="#fef3c7" font-weight="bold">Tải Cao</text>
+            <path d="M105 72 L165 42" stroke="#f59e0b" stroke-width="2"/>
+            <path d="M105 72 L165 72" stroke="#f59e0b" stroke-width="2"/>
+            <path d="M105 72 L165 102" stroke="#f59e0b" stroke-width="2"/>
+            <rect x="180" y="32" width="45" height="20" rx="2" fill="#1e3a8a" stroke="#3b82f6" stroke-width="1.5"/>
+            <rect x="180" y="62" width="45" height="20" rx="2" fill="#1e3a8a" stroke="#3b82f6" stroke-width="1.5"/>
+            <rect x="180" y="92" width="45" height="20" rx="2" fill="#1e3a8a" stroke="#3b82f6" stroke-width="1.5"/>
+          </svg>`;
+        } else if (icon === "database") {
+          return `<svg viewBox="0 0 320 180" class="w-full h-full bg-slate-950">
+            <g transform="translate(130, 35)">
+              <ellipse cx="30" cy="15" rx="30" ry="10" fill="#0369a1"/>
+              <path d="M0 15 v35 a30 10 0 0 0 60 0 v-35" fill="#0284c7"/>
+              <ellipse cx="30" cy="50" rx="30" ry="10" fill="#0369a1"/>
+              <path d="M0 50 v35 a30 10 0 0 0 60 0 v-35" fill="#075985"/>
+              <ellipse cx="30" cy="85" rx="30" ry="10" fill="#0369a1"/>
+              <ellipse cx="30" cy="15" rx="30" ry="10" fill="#38bdf8"/>
+            </g>
+            <circle cx="215" cy="80" r="12" fill="#10b981"/>
+            <path d="M210 80 l3 3 l7 -7" stroke="#fff" stroke-width="2" fill="none"/>
+          </svg>`;
+        } else if (icon === "growth") {
+          return `<svg viewBox="0 0 320 180" class="w-full h-full bg-slate-950">
+            <path d="M40 130 Q140 120 220 50" stroke="#f59e0b" stroke-width="3" fill="none" />
+            <polygon points="220,45 230,48 223,58" fill="#f59e0b" />
+            <circle cx="80" cy="126" r="4" fill="#64748b" />
+            <circle cx="150" cy="105" r="4" fill="#64748b" />
+            <circle cx="210" cy="60" r="5" fill="#f59e0b" />
+            <text x="160" y="30" text-anchor="middle" font-size="8" fill="#cbd5e1">Xu Hướng Tăng Vọt (Không Bịa Số)</text>
+          </svg>`;
+        } else if (icon === "shield") {
+          return `<svg viewBox="0 0 320 180" class="w-full h-full bg-slate-950">
+            <circle cx="160" cy="90" r="22" fill="#065f46" stroke="#10b981" stroke-width="2" />
+            <path d="M152 90 l6 6 l12 -12" stroke="#fff" stroke-width="2.5" fill="none" />
+            <circle cx="80" cy="50" r="10" fill="#1e293b" stroke="#60a5fa" stroke-width="1.5"/>
+            <circle cx="240" cy="50" r="10" fill="#1e293b" stroke="#60a5fa" stroke-width="1.5"/>
+            <line x1="88" y1="56" x2="142" y2="80" stroke="#34d399" stroke-dasharray="3" />
+            <line x1="232" y1="56" x2="178" y2="80" stroke="#34d399" stroke-dasharray="3" />
+            <text x="160" y="30" text-anchor="middle" font-size="8" fill="#cbd5e1">Cơ Chế Đồng Thuận Đa Nút</text>
+          </svg>`;
+        } else {
+          return `<svg viewBox="0 0 320 180" class="w-full h-full bg-slate-950">
+            <rect x="25" y="65" width="55" height="40" rx="4" fill="#1e293b" stroke="#3b82f6" />
+            <text x="52" y="88" text-anchor="middle" font-size="7" fill="#93c5fd">1. Xác thực</text>
+            <rect x="100" y="65" width="55" height="40" rx="4" fill="#1e293b" stroke="#3b82f6" />
+            <text x="127" y="88" text-anchor="middle" font-size="7" fill="#93c5fd">2. Mã hóa</text>
+            <rect x="175" y="65" width="55" height="40" rx="4" fill="#1e293b" stroke="#3b82f6" />
+            <text x="202" y="88" text-anchor="middle" font-size="7" fill="#93c5fd">3. Ghi Log</text>
+            <rect x="250" y="65" width="55" height="40" rx="4" fill="#1e293b" stroke="#3b82f6" />
+            <text x="277" y="88" text-anchor="middle" font-size="7" fill="#93c5fd">4. Sao lưu</text>
+          </svg>`;
+        }
+      } else if (style === "chalkboard") {
+        return `<svg viewBox="0 0 320 180" class="w-full h-full bg-[#15261b]">
+          <text x="160" y="30" text-anchor="middle" font-size="9" fill="#ffffff" font-family="monospace">[CHALKBOARD: CẢNH 0${scene.cau}]</text>
+          <rect x="50" y="50" width="220" height="75" fill="none" stroke="#e2e8f0" stroke-width="1.5" stroke-dasharray="4,2"/>
+          <text x="160" y="90" text-anchor="middle" font-size="9" fill="#fef08a" font-family="monospace">BẢN VẼ PHẤN TRẮNG</text>
+        </svg>`;
+      } else {
+        return `<svg viewBox="0 0 320 180" class="w-full h-full bg-[#f8fafc]">
+          <rect width="320" height="180" fill="#f1f5f9"/>
+          <text x="160" y="30" text-anchor="middle" font-size="9" fill="#0f172a" font-weight="bold">[MINIMAL 2D: CẢNH 0${scene.cau}]</text>
+          <rect x="70" y="55" width="50" height="50" rx="8" fill="#3b82f6"/>
+          <circle cx="160" cy="80" r="22" fill="#f59e0b"/>
+          <rect x="200" y="55" width="50" height="50" rx="25" fill="#10b981"/>
+        </svg>`;
+      }
+    }
+
+    function renderStoryboardGrid() {
+      const container = document.getElementById("scenes-grid-container");
+      if (!container) return;
+      container.innerHTML = "";
+      const showGrid = document.getElementById("toggle-safe-grid") ? document.getElementById("toggle-safe-grid").checked : true;
+
+      activeScenes.forEach(s => {
+        const card = document.createElement("div");
+        card.className = "bg-slate-900 border border-slate-800 rounded-2xl p-4 flex flex-col justify-between space-y-3 hover:border-slate-700 transition shadow-md";
+        card.id = `scene-card-${s.cau}`;
+
+        const charCount = s.onScreenText ? s.onScreenText.length : 0;
+        const charPill = charCount <= 40 
+          ? `<span class="px-2 py-0.5 rounded text-[10px] bg-emerald-950 text-emerald-300 border border-emerald-800 font-mono">${charCount}/40 ký tự</span>`
+          : `<span class="px-2 py-0.5 rounded text-[10px] bg-rose-950 text-rose-300 border border-rose-800 font-bold font-mono">⚠️ ${charCount}/40</span>`;
+
+        const highlightedSpoken = s.loiDoc && s.triggerWord && s.loiDoc.includes(s.triggerWord)
+          ? s.loiDoc.replace(s.triggerWord, `<span class="trigger-badge">${s.triggerWord}</span>`)
+          : (s.loiDoc || "");
+
+        card.innerHTML = `
+          <div class="space-y-2.5">
+            <div class="flex items-center justify-between text-[11px] font-mono pb-2 border-b border-slate-800">
+              <span class="font-bold text-indigo-400">CẢNH 0${s.cau}</span>
+              <span class="text-slate-400">${s.chuoiMocTu}</span>
+            </div>
+
+            <div class="relative w-full aspect-video rounded-xl overflow-hidden border border-slate-800 bg-black shadow-inner">
+              ${renderSvgSketch(s, activeStyle)}
+              
+              ${showGrid ? `
+                <div class="top-hud-zone flex items-center justify-center"><span class="text-[8px] text-slate-400 bg-black/60 px-1 rounded font-mono">HUD / Tiêu đề (y < 250)</span></div>
+                <div class="safe-zone-box flex items-center justify-center"><span class="text-[9px] text-emerald-400 bg-black/70 px-1.5 py-0.5 rounded font-mono font-semibold">Vùng An Toàn (x:80-1840, y:250-960)</span></div>
+                <div class="subtitle-zone flex items-center justify-center"><span class="text-[8px] text-red-300 bg-black/70 px-1 rounded font-mono">Phụ đề (y > 960)</span></div>
+              ` : ''}
+            </div>
+
+            <div class="space-y-1 text-xs">
+              <p class="text-slate-300 leading-snug line-clamp-2">"${highlightedSpoken}"</p>
+              <div class="text-[10px] text-slate-500 pt-0.5 flex items-center justify-between">
+                <span>Trigger word:</span>
+                <span class="text-amber-400 font-semibold font-mono">"${s.triggerWord}"</span>
+              </div>
+            </div>
+
+            <div class="bg-slate-950 p-2.5 rounded-xl border border-slate-800 text-xs space-y-1">
+              <div class="flex items-center justify-between">
+                <span class="text-[10px] text-slate-500 font-semibold">CHỮ MÀN HÌNH:</span>
+                ${charPill}
+              </div>
+              <p class="font-bold text-white tracking-wide text-xs">"${s.onScreenText}"</p>
+            </div>
+
+            <div class="text-[11px] text-slate-400 leading-tight">
+              <b class="text-slate-300">Ý sư phạm:</b> ${s.pedagogicalIntent}
+            </div>
+          </div>
+
+          <div class="pt-2.5 border-t border-slate-800 flex items-center justify-between">
+            <span class="text-[10px] text-emerald-400 flex items-center gap-1">
+              <span>●</span> Chuẩn Sổ Quy Ước
+            </span>
+            <button onclick="openEditModal(${s.cau})" class="px-2.5 py-1 text-xs bg-indigo-950 hover:bg-indigo-900 text-indigo-300 border border-indigo-800 rounded-lg transition flex items-center gap-1">
+              <span>✏ Góp ý cảnh này</span>
+            </button>
+          </div>
+        `;
+
+        container.appendChild(card);
+      });
+    }
+
+    function openEditModal(cauId) {
+      currentEditingIndex = cauId;
+      const s = activeScenes.find(x => x.cau === cauId);
+      if (!s) return;
+
+      document.getElementById("modal-scene-badge").innerText = `CẢNH 0${s.cau} · ${s.chuoiMocTu}`;
+      document.getElementById("modal-spoken-quote").innerText = `"${s.loiDoc}"`;
+      document.getElementById("modal-feedback-text").value = "";
+      document.getElementById("modal-onscreen-input").value = s.onScreenText || "";
+      document.getElementById("modal-icon-choice").value = "keep";
+      liveCheckCharCount();
+      document.getElementById("single-edit-modal").classList.remove("hidden");
+    }
+
+    function liveCheckCharCount() {
+      const len = document.getElementById("modal-onscreen-input").value.length;
+      const label = document.getElementById("modal-char-count-label");
+      if (len <= 40) {
+        label.innerText = `${len}/40 ký tự (Hợp chuẩn)`;
+        label.className = "text-[10px] text-emerald-400 mt-1 block";
+      } else {
+        label.innerText = `⚠️ ${len}/40 ký tự (Vượt quá 40 ký tự)`;
+        label.className = "text-[10px] text-rose-400 font-bold mt-1 block";
+      }
+    }
+
+    function closeEditModal() {
+      document.getElementById("single-edit-modal").classList.add("hidden");
+    }
+
+    function confirmSingleSceneEdit() {
+      const feedback = document.getElementById("modal-feedback-text").value.trim();
+      const newText = document.getElementById("modal-onscreen-input").value.trim();
+      const newIcon = document.getElementById("modal-icon-choice").value;
+
+      if (!feedback && !newText) {
+        alert("Vui lòng nhập góp ý hoặc nội dung chữ cần sửa!");
+        return;
+      }
+
+      const s = activeScenes.find(x => x.cau === currentEditingIndex);
+      if (s) {
+        if (feedback) {
+          s.pedagogicalIntent = `[Đã hiệu chỉnh]: ${feedback}`;
+        }
+        if (newText) {
+          s.onScreenText = newText;
+        }
+        if (newIcon !== "keep") {
+          s.visualIcon = newIcon;
+        }
+
+        closeEditModal();
+
+        // Đồng bộ dữ liệu 2 chiều
+        const rootJson = {
+          video_id: "c4_storyboard_synced",
+          resolution: "1920x1080@30fps",
+          safe_zone: { "x": [80, 1840], "y": [250, 960] },
+          scenes: activeScenes
+        };
+        document.getElementById("script-input-area").value = JSON.stringify(rootJson, null, 2);
+
+        syncGlobalState();
+
+        const cardEl = document.getElementById(`scene-card-${s.cau}`);
+        if (cardEl) {
+          cardEl.classList.add("active-update-pulse");
+          setTimeout(() => cardEl.classList.remove("active-update-pulse"), 2500);
+        }
+
+        alert(`✔ ĐÃ CẬP NHẬT RIÊNG CẢNH 0${s.cau}!\nCác cảnh khác trong video giữ nguyên 100%.`);
+      }
+    }
+
+    // ========================================================
+    // BƯỚC 3: TRÌNH PHÁT ANIMATIC VIEWER
+    // ========================================================
+    let animaticIndex = 0;
+    let isAnimaticPlaying = false;
+    let animaticTimer = null;
+
+    function initAnimaticViewer() {
+      updateAnimaticDisplay(animaticIndex);
+    }
+
+    function updateAnimaticDisplay(idx) {
+      if (activeScenes.length === 0) return;
+      const s = activeScenes[idx];
+      if (!s) return;
+
+      document.getElementById("player-screen-content").innerHTML = renderSvgSketch(s, activeStyle);
+      document.getElementById("player-overlay-text").innerText = s.onScreenText;
+      document.getElementById("player-subtitle-text").innerText = s.loiDoc;
+      document.getElementById("player-scene-label").innerText = `Đang phát: Cảnh 0${s.cau}`;
+      document.getElementById("player-current-time").innerText = s.chuoiMocTu ? s.chuoiMocTu.split(" - ")[0] : "00:00.000";
+
+      const pct = ((idx + 1) / activeScenes.length) * 100;
+      document.getElementById("player-progress-fill").style.width = `${pct}%`;
+    }
+
+    function toggleAnimaticPlay() {
+      const btn = document.getElementById("animatic-play-btn");
+      if (isAnimaticPlaying) {
+        clearInterval(animaticTimer);
+        isAnimaticPlaying = false;
+        btn.innerText = "▶ Tiếp tục";
+      } else {
+        isAnimaticPlaying = true;
+        btn.innerText = "⏸ Tạm dừng";
+        animaticTimer = setInterval(() => {
+          animaticIndex = (animaticIndex + 1) % activeScenes.length;
+          updateAnimaticDisplay(animaticIndex);
+        }, 2400);
+      }
+    }
+
+    function skipScene(delta) {
+      animaticIndex = (animaticIndex + delta + activeScenes.length) % activeScenes.length;
+      updateAnimaticDisplay(animaticIndex);
+    }
+
+    function onTimelineScrub(e) {
+      const rect = e.currentTarget.getBoundingClientRect();
+      const clickX = e.clientX - rect.left;
+      const ratio = clickX / rect.width;
+      animaticIndex = Math.min(activeScenes.length - 1, Math.floor(ratio * activeScenes.length));
+      updateAnimaticDisplay(animaticIndex);
+    }
+
+    // ========================================================
+    // BƯỚC 4: BÀN GIAO SPEC
+    // ========================================================
+    function updateHandoffExport() {
+      const handoffSpec = {
+        tool: "StoryboardAI - Lesson Studio",
+        videoStandards: {
+          resolution: "1920x1080",
+          frameRate: 30,
+          safeZone: { xRange: [80, 1840], yRange: [250, 960] },
+          maxOnScreenChars: 40
+        },
+        activeStyle: activeStyle,
+        totalScenes: activeScenes.length,
+        scenes: activeScenes.map(s => ({
+          cau: s.cau,
+          mocTu: s.mocTu,
+          chuoiMocTu: s.chuoiMocTu,
+          loiDoc: s.loiDoc,
+          triggerWord: s.triggerWord,
+          onScreenText: s.onScreenText,
+          characterCount: s.onScreenText ? s.onScreenText.length : 0,
+          pedagogicalIntent: s.pedagogicalIntent,
+          visualIcon: s.visualIcon || "standard",
+          compliance: (s.onScreenText && s.onScreenText.length <= 40) ? "PASS" : "FAIL_OVER_40_CHARS"
+        }))
+      };
+
+      const specBox = document.getElementById("spec-export-textarea");
+      if (specBox) specBox.value = JSON.stringify(handoffSpec, null, 2);
+
+      const auditText = `=================================================================\n` +
+        `BÁO CÁO KIỂM ĐỊNH SỔ QUY ƯỚC & LƯỚI AN TOÀN (STORYBOARDAI)\n` +
+        `Thời gian xuất bản: ${new Date().toLocaleString('vi-VN')}\n` +
+        `Tổng số cảnh đã rà soát: ${activeScenes.length} cảnh\n` +
+        `=================================================================\n\n` +
+        `1. LƯỚI VÙNG AN TOÀN (SAFE ZONE GRID):\n` +
+        `   [✔ ĐẠT] x: 80 -> 1840 (Lề an toàn hai bên 80px).\n` +
+        `   [✔ ĐẠT] y: 250 -> 960 (Dải trên chừa HUD, dải dưới chừa phụ đề).\n` +
+        `   [${activeScenes.every(s => s.onScreenText && s.onScreenText.length <= 40) ? '✔ ĐẠT' : '⚠️ CẢNH BÁO'}] Chữ trên màn hình: 100% cảnh <= 40 ký tự.\n\n` +
+        `2. ĐỘ NHẤT QUÁN CỦA SỔ QUY ƯỚC (STYLEBOOK):\n` +
+        `   [✔ ĐẠT] Biểu tượng Máy chủ giữ đúng khối chữ nhật LED xanh (#2563EB).\n` +
+        `   [✔ ĐẠT] Biểu tượng Cơ sở dữ liệu giữ đúng hình trụ 3 tầng bo viền.\n` +
+        `   [✔ ĐẠT] Dữ liệu chuyển động dùng đồng nhất màu vàng cam (#F59E0B).\n\n` +
+        `3. KIỂM SOÁT ĐẠO ĐỨC & KHÔNG BỊA SỐ LIỆU (NON-HALLUCINATION):\n` +
+        `   [✔ ĐẠT] Lời đọc không có con số cụ thể -> Hình ảnh không tự thêm số liệu ảo.\n\n` +
+        `KẾT LUẬN: Đủ điều kiện bàn giao cho Motion Designer hoặc Coding Agent dựng video.`;
+
+      const auditBox = document.getElementById("audit-export-textarea");
+      if (auditBox) auditBox.value = auditText;
+    }
+
+    function copyToClipboard(id) {
+      const el = document.getElementById(id);
+      if (el) {
+        el.select();
+        navigator.clipboard.writeText(el.value);
+        alert("Đã sao chép vào bộ nhớ tạm!");
+      }
+    }
+  </script>
+</body>
+</html>
