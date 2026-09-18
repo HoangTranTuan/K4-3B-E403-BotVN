@@ -1,33 +1,56 @@
-﻿# Kế Hoạch Hình Ảnh & Bản Mock Bấm Được (Deliverable CP2)
+# Tài Liệu Kỹ Thuật StoryboardAI — Live Prototype (Track C · Đề C4)
 
 **Người thực hiện:** Phạm Đình Hải (2A202602482)  
 **Nhánh:** `hai`  
 **Dự án:** Track C · Đề C4: StoryboardAI — Agent dựng kịch bản hình ảnh cho video bài giảng  
-**Nhóm:** `K4-3B-E403-BotVN` (Hoàng · Hải · Đại)
+**Nhóm:** `K4-3B-E403-BotVN` (Hoàng · Hải · Đại)  
 
 ---
 
-## 📌 Nội dung bàn giao trong Pull Request
+## 📌 Nội dung hoàn thiện trong phiên bản nâng cấp
 
-### 1. File Prototype: `mockup-cp2.html`
-Bản mock bấm được tương tác hoàn chỉnh (Clickable Prototype) đáp ứng 100% tiêu chí của **Checkpoint 2 (CP2)** theo yêu cầu của BTC Hackathon.
+Thư mục `codebase/` đã được chuyển hóa hoàn toàn từ mô phỏng sang **Hệ thống AI Động 100% (Dynamic AI Visual Engine)**:
 
-* **Cách mở:** Nhấp đúp chuột vào file `mockup-cp2.html` hoặc chuột phải chọn *Open with Chrome / Edge*. Không cần cài đặt thêm thư viện (chạy offline độc lập).
-* **Các tính năng đã hoàn thiện:**
-  1. **Bước 1 — Nạp kịch bản & Sổ quy ước (Stylebook):**
-     * Hỗ trợ dữ liệu JSON `loi-doc-d1-2.json` có mốc thời gian từng từ (`mocTu`, `chuoiMocTu`).
-     * Khóa cứng Sổ quy ước: Bảng màu ngữ nghĩa (Semantic Palette), Thư viện ký hiệu (Database hình trụ 3 tầng, Server đèn LED), và nguyên tắc không bịa số liệu ảo.
-  2. **Bước 2 — Bảng duyệt Storyboard (Visual Board):**
-     * Khung hình chuẩn 1920×1080 @ 30fps.
-     * **Lưới Vùng An Toàn (Safe Zone):** Chuẩn xác tọa độ nhóm quy định ($x \in [80, 1840]$, $y \in [250, 960]$), chừa dải trên cho HUD và dải đáy cho phụ đề. Có công tắc bật/tắt trực quan.
-     * **Cụm từ kích hoạt (Trigger Words):** Được highlight vàng cam nổi bật kèm mốc thời gian.
-     * **Tự soát chữ màn hình:** Bộ đếm ký tự thời gian thực báo xanh khi $\le 40$ ký tự, báo đỏ khi vượt quá.
-     * **Sửa cục bộ 1 cảnh (Granular Edit):** Bấm *✏ Góp ý cảnh này* ở Cảnh 02 $\rightarrow$ Chỉ riêng Cảnh 02 phát sáng và cập nhật sang hình đám mây/khiên, các cảnh khác giữ nguyên 100% (bảo toàn ngữ cảnh).
-     * **Đổi phong cách giữ nguyên ý:** Chuyển đổi giữa *Tech Blueprint*, *Hand-drawn Chalkboard* (Bảng phấn), và *Minimal 2D* mà không làm mất ý sư phạm.
-  3. **Bước 3 — Trình phát Animatic xem thử:**
-     * Chạy thử mô phỏng video player theo dòng thời gian, đồng bộ nhịp đọc và phụ đề ở đáy trước khi tốn chi phí dựng video.
-  4. **Bước 4 — Bàn giao thông số kỹ thuật (Handoff Spec):**
-     * Xuất file Storyboard Spec JSON chuẩn chỉnh cho Motion Designer / Coding Agent (Remotion/Manim).
-     * Xuất Báo cáo kiểm định Sổ quy ước (Audit Log) minh chứng không vi phạm quy chuẩn BTC.
+| File | Vai trò & Năng lực mới | Trạng thái |
+|---|---|:---:|
+| `index.html` | **Giao diện Web App tương tác hoàn chỉnh:** Hiển thị 16:9 Digital Concept Art chuẩn Studio, badge chữ màn hình Safe Zone tinh tế, tích hợp Modal Sửa Cục Bộ bằng AI (Granular Edit), Loading Skeleton & Bộ Demo 4 kịch bản mẫu & 3 Ca Khó | Hoàn thiện 100% |
+| `app_server.py` | **Local Web Server (Python):** Cung cấp API `/api/generate`, `/api/edit_frame` kết nối Live Gemini AI | Hoàn thiện 100% |
+| `storyboard_agent.py` | **Senior Storyboard Art Director:** Điều phối kịch bản, viết Image Prompt điện ảnh 16:9, ép chữ $\le 40$ ký tự, khóa Safe Zone, kiểm soát Zero Nudity và kích hoạt Image Generation Engine động 100% | Hoàn thiện 100% |
+| `app_demo.py` | Demo phiên bản dòng lệnh tương tác trực tiếp (CLI) phục vụ Video thao tác 30s | Hoàn thiện 100% |
+| `mockup-cp2.html` | Bản Mockup tương tác tĩnh đã nộp tại Checkpoint 2 (CP2) | Lưu trữ nguyên vẹn |
 
 ---
+
+## 🎯 4 Điểm Đột Phá Kỹ Thuật
+
+### 1. Studio-Grade 16:9 Digital Concept Art Engine (Sinh ảnh AI động 100% không hardcode)
+- Chuyển hóa toàn bộ kịch bản bài giảng thành tranh vẽ concept art 16:9 giàu chiều sâu, phù hợp chuẩn mực sư phạm.
+- Tích hợp Engine sinh ảnh AI động với cơ chế Seed ngẫu nhiên độc bản và Negative Prompt chặn tuyệt đối nội dung nhạy cảm, khỏa thân.
+- Cơ chế Tải Tuần Tự Giãn Cách (Staggered Loader) kết hợp Loading Skeleton chống nghẽn mạng và lỗi 429.
+- Chế độ hiển thị dự phòng thông minh (Wireframe Blueprint) bảo toàn thông tin sư phạm khi mất kết nối mạng.
+- Lớp phủ chữ màn hình (`on_screen_text`) được thiết kế dạng HUD badge tinh tế ở góc trên trong Safe Zone, hoàn toàn không che khuất tác phẩm nghệ thuật.
+
+### 2. Sửa Cục Bộ Bằng Live AI (Granular Live AI Edit)
+- Đáp ứng đúng Lát Cắt Một Câu trong Canvas CP1: *"người viết sửa một câu thì chỉ đúng ảnh phác thảo của câu đó được cập nhật bằng AI, giữ nguyên các câu khác"*.
+- Trên mỗi thẻ cảnh, bấm *✏ Góp ý cảnh này* $\rightarrow$ AI thực thi lệnh gọi riêng biệt để vẽ lại cảnh đó $\rightarrow$ Cảnh được cập nhật và nhấp nháy viền xanh lá, toàn bộ các cảnh khác được giữ nguyên 100%.
+
+### 3. Phòng Thí Nghiệm 3 Ca Khó Của Phạm Đình Hải (Edge Cases Lab)
+- Được tích hợp 1-click ngay tại Bước 1 để kiểm chứng năng lực xử lý biên trước ban giám khảo:
+  * **Ca 1 (Câu 29 - Khái niệm trừu tượng):** *"Sóng hấp dẫn sinh ra khi hai lỗ đen sáp nhập..."* $\rightarrow$ AI chuyển hóa thành mô hình uốn cong không-thời gian.
+  * **Ca 2 (Câu 31 - Câu nhồi nhét nhiều ý):** *"Theo định luật bảo toàn năng lượng 49 từ..."* $\rightarrow$ AI tách cảnh và ép chữ $\le 40$ ký tự.
+  * **Ca 3 (Câu 13 - Ám chỉ số liệu không có số thật):** *"Kinh tế số Việt Nam bứt phá mạnh mẽ..."* $\rightarrow$ AI tuân thủ nguyên tắc không bịa % ảo.
+
+### 4. Bàn Giao Handoff & Kiểm Định Tự Động
+- Xuất file Handoff Spec JSON chuẩn xác cho Remotion / Manim / Motion Designer.
+- Xuất Báo cáo kiểm định Sổ quy ước (Audit Log) minh chứng 100% cảnh nằm trong Safe Zone $x: [80, 1840], y: [250, 960]$ và chữ màn hình $\le 40$ ký tự.
+
+---
+
+## 🚀 Hướng Dẫn Khởi Chạy
+
+- **Cách 1-Click (Khuyên dùng):** Nhấp đúp chuột vào file **`run_demo.bat`** tại thư mục gốc dự án.
+- **Cách gõ lệnh:**
+  ```powershell
+  python codebase/app_server.py
+  ```
+  Trình duyệt web sẽ tự động mở tại `http://localhost:8501`.
