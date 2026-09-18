@@ -1,0 +1,69 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: dark;
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  background: #07101f;
+  color: #eef2ff;
+}
+
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  margin: 0;
+  min-width: 320px;
+  min-height: 100vh;
+  background:
+    radial-gradient(circle at 12% -10%, rgba(99,102,241,.22), transparent 24%),
+    radial-gradient(circle at 88% 0%, rgba(34,211,238,.10), transparent 22%),
+    linear-gradient(180deg, #07101f 0%, #08111f 45%, #07101c 100%);
+}
+button, input, textarea, select { font: inherit; }
+::selection { background: rgba(129,140,248,.36); }
+::-webkit-scrollbar { width: 9px; height: 9px; }
+::-webkit-scrollbar-thumb { background: #28354d; border-radius: 999px; }
+::-webkit-scrollbar-track { background: #07101f; }
+
+@layer components {
+  .glass {
+    @apply border border-slate-700/60 bg-slate-900/65 backdrop-blur-xl;
+  }
+  .panel {
+    @apply glass rounded-2xl shadow-2xl shadow-black/10;
+  }
+  .panel-strong {
+    @apply rounded-2xl border border-slate-700/70 bg-[#0c1526]/95 shadow-2xl shadow-black/20;
+  }
+  .eyebrow {
+    @apply text-[11px] font-black uppercase tracking-[0.18em] text-indigo-300;
+  }
+  .btn-primary {
+    @apply inline-flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-indigo-500 via-violet-500 to-fuchsia-500 px-4 py-2.5 text-sm font-extrabold text-white shadow-lg shadow-violet-950/30 transition duration-200 hover:-translate-y-0.5 hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:translate-y-0;
+  }
+  .btn-secondary {
+    @apply inline-flex items-center justify-center gap-2 rounded-xl border border-slate-700 bg-slate-900/80 px-4 py-2.5 text-sm font-semibold text-slate-200 transition hover:border-slate-600 hover:bg-slate-800;
+  }
+  .btn-ghost {
+    @apply inline-flex items-center justify-center gap-2 rounded-xl border border-slate-700/70 bg-transparent px-4 py-2.5 text-sm font-semibold text-slate-300 transition hover:bg-slate-900;
+  }
+  .field {
+    @apply w-full rounded-xl border border-slate-700 bg-[#07101d] px-4 py-3 text-sm text-slate-100 outline-none transition placeholder:text-slate-600 focus:border-indigo-400/80 focus:ring-4 focus:ring-indigo-500/10;
+  }
+  .chip {
+    @apply inline-flex items-center gap-1.5 rounded-full border border-slate-700/70 bg-slate-900/80 px-2.5 py-1 text-[11px] font-semibold text-slate-400;
+  }
+  .rule-card {
+    @apply rounded-xl border border-slate-800 bg-[#070d18]/90 p-4;
+  }
+}
+
+@keyframes pulsebar {
+  0%,100% { opacity: .35; transform: scaleX(.96); }
+  50% { opacity: 1; transform: scaleX(1); }
+}
+
+.animatic-glow {
+  box-shadow: inset 0 0 90px rgba(56,189,248,.06), 0 30px 80px rgba(0,0,0,.34);
+}
