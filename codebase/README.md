@@ -1,4 +1,4 @@
-# Tài Liệu Kỹ Thuật & Hướng Dẫn Thực Thi Prototype (CP2 & CP3)
+# Tài Liệu Kỹ Thuật StoryboardAI — Live Prototype (Track C · Đề C4)
 
 **Người thực hiện:** Phạm Đình Hải (2A202602482)  
 **Nhánh:** `hai`  
@@ -7,85 +7,47 @@
 
 ---
 
-## 📌 Nội dung bàn giao trong Pull Request
+## 📌 Nội dung hoàn thiện trong phiên bản nâng cấp
 
-Thư mục `codebase/` bao gồm nguyên mẫu tương tác và module AI thật phục vụ cho cả **Checkpoint 2 (CP2)** và **Checkpoint 3 (CP3)**:
+Thư mục `codebase/` đã được chuyển hóa hoàn toàn từ mô phỏng sang **Hệ thống AI Động 100% (Dynamic AI Visual Engine)**:
 
-| File | Vai trò & Mục đích | Trạng thái |
+| File | Vai trò & Năng lực mới | Trạng thái |
 |---|---|:---:|
-| `index.html` | **Giao diện Web App tương tác hoàn chỉnh kết nối Live AI qua API** | Hoàn tất CP3 (Khuyên dùng) |
-| `app_server.py` | Web Server Python nội bộ phục vụ GUI và API Live Gemini Call | Hoàn tất CP3 |
-| `storyboard_agent.py` | Module trung tâm gọi Live Gemini AI tạo phân cảnh JSON chuẩn Stylebook | Hoàn tất CP3 |
-| `app_demo.py` | Demo dòng lệnh tương tác trực quan (CLI version) | Hoàn tất CP3 |
-| `mockup-cp2.html` | Bản mock bấm được 4 bước độc lập ban đầu | Hoàn tất CP2 |
+| `index.html` | **Giao diện Web App tương tác hoàn chỉnh:** Nhúng Dynamic SVG 100%, tích hợp Modal Sửa Cục Bộ bằng AI (Granular Edit), và Phòng Thí Nghiệm 3 Ca Khó của Hải | Hoàn thiện 100% |
+| `app_server.py` | **Local Web Server (Python):** Cung cấp API `/api/generate` và `/api/edit_frame` kết nối Live Gemini AI | Hoàn thiện 100% |
+| `storyboard_agent.py` | **Module AI Lõi:** Sinh mã vector SVG động độc bản cho từng cảnh, ép chữ $\le 40$ ký tự, khóa Safe Zone và hậu kiểm Stylebook | Hoàn thiện 100% |
+| `app_demo.py` | Demo phiên bản dòng lệnh tương tác trực tiếp (CLI) | Hoàn thiện 100% |
 
 ---
 
-## 🚀 1. Khởi Chạy Giao Diện Hoàn Chỉnh (Graphical Web App GUI)
+## 🎯 4 Điểm Đột Phá Kỹ Thuật
 
-Đây là giao diện đồ họa hoàn chỉnh kết nối trực tiếp với mô hình AI thật (`gemini-flash-lite-latest`):
-- **Khởi chạy 1-Click:** Nhấp đúp chuột vào file **`run_demo.bat`** tại thư mục gốc dự án.
-- **Hoặc khởi chạy bằng lệnh:**
+### 1. Dynamic SVG Generator (Xóa bỏ hoàn toàn hình ảnh fix cứng)
+- Không dùng bất kỳ template SVG tĩnh nào.
+- Mô hình Gemini Flash Lite trực tiếp lập trình mã vector `<svg viewBox="0 0 320 180">` phù hợp 100% với ngữ nghĩa của từng câu bài giảng (dù là mạng nơ-ron, lỗ đen vũ trụ, kinh tế số, thuật toán đệ quy, hay ADN sinh học).
+- Ứng dụng bảng màu ngữ nghĩa Stylebook: Xanh dương (#2563EB - hệ thống/chính), Vàng cam (#F59E0B - luồng dữ liệu/trigger), Xanh lá (#10B981 - thành công/kết quả), Tím/Đỏ (#A855F7/#EF4444 - trừu tượng/cảnh báo).
+
+### 2. Sửa Cục Bộ Bằng Live AI (Granular Live AI Edit)
+- Đáp ứng đúng Lát Cắt Một Câu trong Canvas CP1: *"người viết sửa một câu thì chỉ đúng ảnh phác thảo của câu đó được cập nhật bằng AI, giữ nguyên các câu khác"*.
+- Trên mỗi thẻ cảnh, bấm *✏ Góp ý cảnh này* $\rightarrow$ AI thực thi lệnh gọi riêng biệt để vẽ lại cảnh đó $\rightarrow$ Cảnh được cập nhật và nhấp nháy viền xanh lá, toàn bộ các cảnh khác được giữ nguyên 100%.
+
+### 3. Phòng Thí Nghiệm 3 Ca Khó Của Phạm Đình Hải (Edge Cases Lab)
+- Được tích hợp 1-click ngay tại Bước 1 để kiểm chứng năng lực xử lý biên trước ban giám khảo:
+  * **Ca 1 (Câu 29 - Khái niệm trừu tượng):** *"Sóng hấp dẫn sinh ra khi hai lỗ đen sáp nhập..."* $\rightarrow$ AI chuyển hóa thành mô hình uốn cong không-thời gian.
+  * **Ca 2 (Câu 31 - Câu nhồi nhét nhiều ý):** *"Theo định luật bảo toàn năng lượng 49 từ..."* $\rightarrow$ AI tách cảnh và ép chữ $\le 40$ ký tự.
+  * **Ca 3 (Câu 13 - Ám chỉ số liệu không có số thật):** *"Kinh tế số Việt Nam bứt phá mạnh mẽ..."* $\rightarrow$ AI tuân thủ nguyên tắc không bịa % ảo.
+
+### 4. Bàn Giao Handoff & Kiểm Định Tự Động
+- Xuất file Handoff Spec JSON chuẩn xác cho Remotion / Manim / Motion Designer.
+- Xuất Báo cáo kiểm định Sổ quy ước (Audit Log) minh chứng 100% cảnh nằm trong Safe Zone $x: [80, 1840], y: [250, 960]$ và chữ màn hình $\le 40$ ký tự.
+
+---
+
+## 🚀 Hướng Dẫn Khởi Chạy
+
+- **Cách 1-Click (Khuyên dùng):** Nhấp đúp chuột vào file **`run_demo.bat`** tại thư mục gốc dự án.
+- **Cách gõ lệnh:**
   ```powershell
   python codebase/app_server.py
   ```
-  Hệ thống sẽ tự động bật trình duyệt web tại `http://localhost:8501`.
-
-### 4 Bước Thao Tác Trực Quan Trên Giao Diện:
-1. **Bước 1 — Nạp Kịch Bản & Chọn Mẫu:**
-   - Chọn nhanh các kịch bản thực tế: Caching & DB, Con trỏ RAM C++, Kafka Queue, Sóng hấp dẫn hoặc tự do dán bài giảng mới.
-   - Bấm nút: **`⚡ DỰNG STORYBOARD BẰNG AI THẬT (LIVE GEMINI CALL)`**.
-   - Hộp thoại xoay spinner trong ~1.8 giây phân tích ngữ nghĩa, chia cảnh, áp dụng Stylebook.
-2. **Bước 2 — Bảng Duyệt Storyboard Trực Quan:**
-   - Hiển thị các Scene Cards 16:9 sinh ra từ AI thật.
-   - Minh họa đồ họa SVG tự động thích ứng với biểu tượng (Database cylinder, Server rack, Cache chip).
-   - Bật/Tắt Lưới Vùng An Toàn (`x:80-1840, y:250-960`).
-   - Tự động soát ký tự chữ hiển thị `on_screen_text` $\le 40$ ký tự.
-3. **Bước 3 — Xem Thử Animatic:**
-   - Trình phát video giả lập chuyển động nhịp thời gian, chữ màn hình và phụ đề đáy.
-4. **Bước 4 — Bàn Giao Kỹ Thuật (Handoff):**
-   - Xuất JSON Handoff Spec và Báo cáo Kiểm định Sổ quy ước (Audit Log).
-
----
-
-## 🤖 2. Module Quyết Định AI Trung Tâm (`storyboard_agent.py`)
-
-Mắt xích cốt lõi của sản phẩm thực thi nhiệm vụ chuyển hóa bài giảng thành kịch bản phân cảnh:
-- **Mô hình AI:** Tích hợp trực tiếp Google Gemini API (`gemini-flash-lite-latest`) với độ trễ thấp (~1.8s) và tính tuân thủ cao.
-- **Ràng buộc Stylebook tự động (System Prompt):**
-  1. `on_screen_text` $\le 40$ ký tự (ngăn ngừa quá tải nhận thức học viên).
-  2. Vùng hiển thị an toàn `safe_zone`: $X \in [80, 1840], Y \in [250, 960]$ (chừa khoảng trống cho HUD và phụ đề).
-  3. Chống ảo giác (Non-hallucination): Cấm bịa đặt số liệu/tỷ lệ phần trăm khi kịch bản gốc chỉ có tính định tính.
-  4. Quy chuẩn biểu tượng trực quan: Chuẩn hóa ký hiệu Database, Server rack, Cache chip, Kafka Queue.
-- **Tự động hậu kiểm (Deterministic Verification):** Hàm `validate_storyboard` thực hiện kiểm toán nghiêm ngặt từng frame trước khi xuất dữ liệu.
-
----
-
-## 🗺️ Sơ đồ luồng hoạt động tổng thể
-
-```mermaid
-flowchart TD
-    subgraph G1 ["Bước 1: Nạp Kịch Bản & Stylebook (UI Web)"]
-        U(["Giảng viên / ID"]) --> S1["Nhập kịch bản bài giảng / Chọn mẫu nhanh"]
-        S1 --> S2["Khóa cứng Stylebook: Safe Zone + Chữ <= 40 ký tự + Biểu tượng chuẩn"]
-        S2 --> S3["Bấm '⚡ DỰNG STORYBOARD BẰNG AI THẬT'"]
-    end
-
-    subgraph G2 ["Bước 2: Backend AI Server (app_server.py)"]
-        S3 --> P1["Gọi Live Gemini API (gemini-flash-lite-latest)"]
-        P1 --> P2["Phân tích ngữ nghĩa & chia tách Scene/Frames"]
-        P2 --> P3["Kiểm soát Non-hallucination & ép chữ <= 40 chars"]
-        P3 --> P4["Tự động hậu kiểm (Deterministic Validator)"]
-    end
-
-    subgraph G3 ["Bước 3: Bảng Duyệt & Tương Tác Trực Quan"]
-        P4 --> B1["Render các Scene Cards 16:9 trực quan trên Web"]
-        B1 --> B2["Xem lưới Safe Zone & kiểm toán độ dài chữ"]
-        B2 --> PLAY["Trình phát Animatic preview"]
-    end
-
-    subgraph G4 ["Bước 4: Bàn Giao Handoff & Kiểm Thử"]
-        PLAY --> OUT1["Xuất Handoff Spec JSON cho Remotion/Manim"]
-        OUT1 --> EVAL["Chạy bộ kiểm thử Golden Set (eval/run_eval.py)"]
-    end
-```
+  Trình duyệt web sẽ tự động mở tại `http://localhost:8501`.

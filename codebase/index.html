@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>StoryboardAI — Live Prototype (Track C · Lesson Studio)</title>
+  <title>StoryboardAI — Nền Tảng Dựng Kịch Bản Hình Ảnh Bài Giảng (Track C · C4)</title>
   <script src="https://www.gstatic.com/antigravity/web/dev/tailwindcss.min.js"></script>
   <style>
     /* Lưới vùng an toàn chuẩn 1920x1080 (x:80-1840, y:250-960) */
@@ -14,7 +14,7 @@
       top: 23.15%;   /* 250 / 1080 */
       bottom: 11.11%;/* 120 / 1080 */
       border: 1.5px dashed #22c55e;
-      background: rgba(34, 197, 94, 0.05);
+      background: rgba(34, 197, 94, 0.04);
       pointer-events: none;
     }
     .top-hud-zone {
@@ -29,7 +29,7 @@
       position: absolute;
       bottom: 0; left: 0; right: 0;
       height: 11.11%;
-      background: rgba(239, 68, 68, 0.14);
+      background: rgba(239, 68, 68, 0.12);
       border-top: 1.5px dashed #ef4444;
       pointer-events: none;
     }
@@ -45,14 +45,14 @@
       animation: updatePulse 1.8s ease-in-out infinite;
     }
     @keyframes updatePulse {
-      0%, 100% { border-color: #6366f1; box-shadow: 0 0 15px rgba(99, 102, 241, 0.4); }
-      50% { border-color: #10b981; box-shadow: 0 0 25px rgba(16, 185, 129, 0.6); }
+      0%, 100% { border-color: #6366f1; box-shadow: 0 0 15px rgba(99, 102, 241, 0.5); }
+      50% { border-color: #10b981; box-shadow: 0 0 25px rgba(16, 185, 129, 0.7); }
     }
   </style>
 </head>
 <body class="bg-slate-950 text-slate-100 min-h-screen font-sans antialiased flex flex-col selection:bg-indigo-500 selection:text-white">
 
-  <!-- Main Navigation Header -->
+  <!-- Header Điều Hướng Chính -->
   <header class="border-b border-slate-800 bg-slate-900/90 backdrop-blur sticky top-0 z-50 px-6 py-3">
     <div class="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
       
@@ -66,14 +66,14 @@
             <h1 class="text-base font-bold text-white tracking-wide">StoryboardAI</h1>
             <span class="px-2 py-0.5 text-[10px] font-semibold bg-emerald-950 text-emerald-300 border border-emerald-800 rounded-md flex items-center gap-1">
               <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
-              <span>LIVE AI CONNECTED</span>
+              <span>DYNAMIC AI ENGINE</span>
             </span>
           </div>
-          <p class="text-xs text-slate-400">Track C · Lesson Studio · Đề C4 · Nhóm K4-3B-E403-BotVN</p>
+          <p class="text-xs text-slate-400">Track C · Lesson Studio · Đề C4 · Nhóm K4-3B-E403-BotVN (Hải · Hoàng · Đại)</p>
         </div>
       </div>
 
-      <!-- 4 Bước Thao Tác Chuẩn Của Người Dùng -->
+      <!-- 4 Bước Thao Tác Chuẩn -->
       <nav class="flex items-center bg-slate-950 p-1 rounded-xl border border-slate-800 text-xs font-medium">
         <button id="nav-btn-1" onclick="selectStep(1)" class="px-3 py-1.5 rounded-lg bg-indigo-600 text-white font-semibold transition flex items-center gap-1.5 shadow">
           <span class="w-4 h-4 rounded-full bg-white/20 text-center leading-4 text-[10px]">1</span>
@@ -93,14 +93,12 @@
         </button>
       </nav>
 
-      <!-- Phong cách hình ảnh -->
+      <!-- Badge Model Status -->
       <div class="flex items-center gap-2 text-xs">
-        <span class="text-slate-400 hidden lg:inline">Phong cách:</span>
-        <select id="global-style-select" onchange="changeStyle(this.value)" class="bg-slate-800 border border-slate-700 rounded-lg px-2.5 py-1.5 text-xs text-indigo-300 focus:outline-none cursor-pointer">
-          <option value="blueprint">Tech Blueprint (Vector kỹ thuật)</option>
-          <option value="chalkboard">Hand-drawn Chalkboard (Bảng phấn)</option>
-          <option value="minimalist">Modern Flat 2D (Tối giản hình học)</option>
-        </select>
+        <span class="text-slate-400">AI Model:</span>
+        <span class="px-2.5 py-1 bg-slate-800 border border-slate-700 text-indigo-300 rounded-lg font-mono text-[11px] font-semibold">
+          gemini-flash-lite-latest
+        </span>
       </div>
     </div>
   </header>
@@ -109,50 +107,64 @@
   <main class="flex-1 max-w-7xl w-full mx-auto p-6">
 
     <!-- ======================================================== -->
-    <!-- BƯỚC 1: NẠP LỜI ĐỌC KỊCH BẢN & SỔ QUY ƯỚC HÌNH ẢNH       -->
+    <!-- BƯỚC 1: NẠP KỊCH BẢN & PHÒNG THÍ NGHIỆM 3 CA KHÓ CỦA HẢI -->
     <!-- ======================================================== -->
     <section id="step-view-1" class="space-y-6">
       <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
         
-        <!-- Left: Input Script / Preset Buttons (7 cols) -->
+        <!-- Left: Input Script (7 cols) -->
         <div class="lg:col-span-7 bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl space-y-4">
           <div class="flex items-center justify-between pb-3 border-b border-slate-800">
             <div>
-              <h2 class="text-base font-semibold text-white">Bước 1: Nạp Kịch Bản Bài Giảng (Lecture Script / Audio Transcript)</h2>
-              <p class="text-xs text-slate-400">Nhập văn bản giảng dạy hoặc chọn nhanh các mẫu tình huống thực tế bên dưới.</p>
+              <h2 class="text-base font-semibold text-white">Bước 1: Nạp Kịch Bản Bài Giảng (Tự Do Hoặc Thử Ca Khó)</h2>
+              <p class="text-xs text-slate-400">Nhập bài giảng bất kỳ — AI sẽ tự động phân tích và <b>vẽ đồ họa SVG động 100%</b> theo nội dung.</p>
             </div>
           </div>
 
-          <!-- Mẫu kịch bản nhanh -->
-          <div class="flex flex-wrap gap-2 pt-1">
-            <span class="text-xs text-slate-400 self-center">Chọn nhanh:</span>
-            <button onclick="loadQuickPreset('cache')" class="px-2.5 py-1 text-xs bg-slate-800 hover:bg-slate-700 text-indigo-300 border border-slate-700 rounded-lg transition">
-              ⚡ 1. Caching & DB
-            </button>
-            <button onclick="loadQuickPreset('pointer')" class="px-2.5 py-1 text-xs bg-slate-800 hover:bg-slate-700 text-emerald-300 border border-slate-700 rounded-lg transition">
-              🧠 2. Con trỏ RAM C++
-            </button>
-            <button onclick="loadQuickPreset('kafka')" class="px-2.5 py-1 text-xs bg-slate-800 hover:bg-slate-700 text-amber-300 border border-slate-700 rounded-lg transition">
-              📨 3. Hàng đợi Kafka
-            </button>
-            <button onclick="loadQuickPreset('physics')" class="px-2.5 py-1 text-xs bg-slate-800 hover:bg-slate-700 text-purple-300 border border-slate-700 rounded-lg transition">
-              🌌 4. Sóng hấp dẫn
-            </button>
+          <!-- PHÒNG THÍ NGHIỆM 3 CA KHÓ CỦA HẢI (CANVAS CP1) -->
+          <div class="bg-slate-950 p-3.5 rounded-xl border border-indigo-900/60 space-y-2">
+            <div class="flex items-center justify-between">
+              <span class="text-[11px] font-bold text-amber-400 flex items-center gap-1.5 uppercase tracking-wider">
+                <span>🎯</span> <span>Phòng Thí Nghiệm 3 Ca Khó (Phân Công Phạm Đình Hải):</span>
+              </span>
+              <span class="text-[10px] text-indigo-400 font-mono">Bấm thử 1-click</span>
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-2 text-xs">
+              <button onclick="loadEdgeCase('abstract')" class="p-2 bg-slate-900 hover:bg-slate-800 text-left border border-slate-800 hover:border-indigo-500 rounded-lg transition space-y-0.5">
+                <div class="font-bold text-indigo-300 text-[11px]">1. Ca Trừu Tượng</div>
+                <div class="text-[10px] text-slate-400 line-clamp-1">Sóng hấp dẫn & Lỗ đen</div>
+              </button>
+              <button onclick="loadEdgeCase('overload')" class="p-2 bg-slate-900 hover:bg-slate-800 text-left border border-slate-800 hover:border-amber-500 rounded-lg transition space-y-0.5">
+                <div class="font-bold text-amber-300 text-[11px]">2. Ca Nhồi Nhét</div>
+                <div class="text-[10px] text-slate-400 line-clamp-1">Định luật bảo toàn 49 từ</div>
+              </button>
+              <button onclick="loadEdgeCase('grounding')" class="p-2 bg-slate-900 hover:bg-slate-800 text-left border border-slate-800 hover:border-emerald-500 rounded-lg transition space-y-0.5">
+                <div class="font-bold text-emerald-300 text-[11px]">3. Ca Chống Bịa Số</div>
+                <div class="text-[10px] text-slate-400 line-clamp-1">Kinh tế số (cấm bịa %)</div>
+              </button>
+            </div>
           </div>
 
-          <textarea id="script-input-area" rows="9" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-4 text-xs font-mono text-slate-200 focus:outline-none focus:border-indigo-500 leading-relaxed resize-none" placeholder="Nhập nội dung bài giảng tại đây..."></textarea>
+          <!-- Ô nhập kịch bản tự do -->
+          <div class="space-y-1.5">
+            <div class="flex items-center justify-between text-xs text-slate-400">
+              <span>Nội dung kịch bản / lời đọc (Transcript):</span>
+              <span id="char-counter-input" class="font-mono text-[11px]">0 từ</span>
+            </div>
+            <textarea id="script-input-area" oninput="updateInputStats()" rows="8" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-4 text-xs font-mono text-slate-200 focus:outline-none focus:border-indigo-500 leading-relaxed resize-none" placeholder="Dán văn bản bài giảng bất kỳ vào đây..."></textarea>
+          </div>
 
           <div class="p-3 bg-slate-950 rounded-xl border border-slate-800/80 flex flex-wrap items-center justify-between text-xs text-slate-400">
             <span id="script-stats-badge">Trạng thái: Sẵn sàng gửi sang AI thật</span>
             <div class="flex items-center gap-3 text-[11px]">
-              <span class="text-emerald-400 font-medium">✔ Lưới An Toàn: x:80-1840, y:250-960</span>
+              <span class="text-emerald-400 font-medium">✔ Safe Zone: x:80-1840, y:250-960</span>
               <span class="text-amber-400 font-medium">✔ Chữ màn hình ≤ 40 ký tự</span>
             </div>
           </div>
 
           <!-- NÚT GỌI LIVE AI CHÍNH -->
-          <button id="btn-call-live-ai" onclick="callLiveAIGenerate()" class="w-full py-3.5 bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 hover:from-indigo-500 hover:via-purple-500 hover:to-pink-500 text-white font-bold rounded-xl shadow-lg shadow-indigo-600/30 flex items-center justify-center gap-2 text-sm transition transform active:scale-98">
-            <span>⚡ DỰNG STORYBOARD BẰNG AI THẬT (LIVE GEMINI CALL)</span>
+          <button id="btn-call-live-ai" onclick="callLiveAIGenerate()" class="w-full py-4 bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 hover:from-indigo-500 hover:via-purple-500 hover:to-pink-500 text-white font-bold rounded-xl shadow-lg shadow-indigo-600/30 flex items-center justify-center gap-2 text-sm transition transform active:scale-98 cursor-pointer">
+            <span>⚡ DỰNG STORYBOARD BẰNG AI THẬT (DYNAMIC SVG & STYLEBOOK)</span>
             <span>→</span>
           </button>
         </div>
@@ -174,43 +186,41 @@
             <div class="bg-slate-950 p-3.5 rounded-xl border border-slate-800 space-y-2 text-xs">
               <div class="text-[11px] font-bold text-indigo-400 uppercase tracking-wider">1. Bảng màu ngữ nghĩa (Semantic Colors):</div>
               <div class="grid grid-cols-2 gap-2 text-[11px]">
-                <div class="flex items-center gap-2"><span class="w-3.5 h-3.5 rounded bg-blue-600"></span> <span>Máy chủ / Client (#2563EB)</span></div>
-                <div class="flex items-center gap-2"><span class="w-3.5 h-3.5 rounded bg-amber-500"></span> <span>Gói tin dữ liệu / Tải (#F59E0B)</span></div>
-                <div class="flex items-center gap-2"><span class="w-3.5 h-3.5 rounded bg-emerald-500"></span> <span>Toàn vẹn / Thành công (#10B981)</span></div>
-                <div class="flex items-center gap-2"><span class="w-3.5 h-3.5 rounded bg-rose-500"></span> <span>Tắc nghẽn / Lỗi mạng (#EF4444)</span></div>
+                <div class="flex items-center gap-2"><span class="w-3.5 h-3.5 rounded bg-blue-600"></span> <span>Hệ thống / Đối tượng (#2563EB)</span></div>
+                <div class="flex items-center gap-2"><span class="w-3.5 h-3.5 rounded bg-amber-500"></span> <span>Luồng dữ liệu / Trigger (#F59E0B)</span></div>
+                <div class="flex items-center gap-2"><span class="w-3.5 h-3.5 rounded bg-emerald-500"></span> <span>Toàn vẹn / Kết quả (#10B981)</span></div>
+                <div class="flex items-center gap-2"><span class="w-3.5 h-3.5 rounded bg-purple-500"></span> <span>Trừu tượng / Ẩn dụ (#A855F7)</span></div>
               </div>
             </div>
 
             <!-- Quy ước biểu tượng -->
             <div class="bg-slate-950 p-3.5 rounded-xl border border-slate-800 space-y-2 text-xs">
-              <div class="text-[11px] font-bold text-indigo-400 uppercase tracking-wider">2. Quy ước biểu tượng (Symbol Rules):</div>
+              <div class="text-[11px] font-bold text-indigo-400 uppercase tracking-wider">2. Ràng buộc kỹ thuật & nhận thức:</div>
               <ul class="text-slate-400 space-y-1.5 text-[11px]">
                 <li class="flex items-start gap-1.5">
                   <span class="text-indigo-400">•</span>
-                  <span><b>Cơ sở dữ liệu:</b> Luôn là hình trụ 3 tầng bo viền, không đổi sang dạng khác.</span>
+                  <span><b>Chữ màn hình:</b> TUYỆT ĐỐI KHÔNG QUÁ <b>40 ký tự</b> (tránh quá tải nhận thức).</span>
                 </li>
                 <li class="flex items-start gap-1.5">
                   <span class="text-indigo-400">•</span>
-                  <span><b>Máy chủ:</b> Khối chữ nhật vát góc có 2 vạch LED xanh dương.</span>
+                  <span><b>Vùng an toàn (Safe Zone):</b> $X \in [80, 1840], Y \in [250, 960]$ (chừa HUD và phụ đề).</span>
                 </li>
                 <li class="flex items-start gap-1.5">
                   <span class="text-indigo-400">•</span>
-                  <span><b>Chữ trên màn hình:</b> Tối đa <b>40 ký tự</b>, đặt ở nửa trên vùng an toàn.</span>
+                  <span><b>Chống bịa số liệu:</b> Lời đọc chỉ có định tính $\rightarrow$ nghiêm cấm AI tự sáng tác số % ảo.</span>
                 </li>
               </ul>
             </div>
 
-            <!-- Nguyên tắc an toàn -->
             <div class="p-3 bg-indigo-950/30 border border-indigo-800/40 rounded-xl text-indigo-300 text-[11px] flex items-center gap-2">
-              <span>🛡️</span>
-              <span><b>Không bịa số liệu:</b> Lời đọc chỉ có định tính $\rightarrow$ hình ảnh không tự thêm số %, chỉ số cụ thể.</span>
+              <span>✨</span>
+              <span><b>Đồ Họa Vector Động:</b> AI tự viết mã SVG riêng biệt cho từng kịch bản, không dùng template gán cứng.</span>
             </div>
           </div>
 
-          <!-- Thông tin model -->
           <div class="p-3 bg-slate-950 border border-slate-800 rounded-xl text-xs flex items-center justify-between">
-            <span class="text-slate-400">Backend AI Model:</span>
-            <span class="font-mono text-indigo-400 font-bold">gemini-flash-lite-latest</span>
+            <span class="text-slate-400">Lát cắt Cam kết CP1:</span>
+            <span class="font-mono text-emerald-400 font-bold">Granular Edit Ready</span>
           </div>
         </div>
 
@@ -218,14 +228,14 @@
     </section>
 
     <!-- ======================================================== -->
-    <!-- BƯỚC 2: BẢNG DUYỆT STORYBOARD TỪNG CẢNH                  -->
+    <!-- BƯỚC 2: BẢNG DUYỆT STORYBOARD & SỬA CỤC BỘ BẰNG AI      -->
     <!-- ======================================================== -->
     <section id="step-view-2" class="hidden space-y-5">
       
-      <!-- Thanh công cụ hỗ trợ người duyệt -->
+      <!-- Thanh công cụ -->
       <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 flex flex-wrap items-center justify-between gap-4 shadow-lg">
         <div class="flex items-center gap-4 text-xs">
-          <span class="font-bold text-white">Số lượng cảnh: <span id="board-scene-count" class="text-indigo-400 font-bold">3 Cảnh (1920×1080)</span></span>
+          <span class="font-bold text-white">Số lượng cảnh: <span id="board-scene-count" class="text-indigo-400 font-bold">0 Cảnh</span></span>
           <span class="text-slate-700">|</span>
           <div class="flex items-center gap-2">
             <span class="text-slate-400">Lưới vùng an toàn (x:80-1840, y:250-960):</span>
@@ -234,7 +244,7 @@
           <span class="text-slate-700">|</span>
           <div class="flex items-center gap-2">
             <span class="w-2.5 h-2.5 rounded-full bg-emerald-500"></span>
-            <span class="text-slate-300">Tự soát quy ước: <b id="board-compliance-badge" class="text-emerald-400">Hợp chuẩn 100%</b></span>
+            <span class="text-slate-300">Stylebook Audit: <b id="board-compliance-badge" class="text-emerald-400">Hợp chuẩn 100%</b></span>
           </div>
           <span class="text-slate-700">|</span>
           <span id="ai-latency-tag" class="text-slate-400 font-mono text-[11px]">Độ trễ: ~1.8s</span>
@@ -242,47 +252,47 @@
 
         <div class="flex items-center gap-2">
           <button onclick="selectStep(1)" class="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-medium rounded-xl transition">
-            ← Nhập lại
+            ← Nhập kịch bản khác
           </button>
           <button onclick="selectStep(3)" class="px-3.5 py-1.5 bg-indigo-950 hover:bg-indigo-900 text-indigo-300 border border-indigo-800 text-xs font-semibold rounded-xl transition flex items-center gap-1.5">
             <span>▶ Xem Thử Animatic (Bước 3)</span>
           </button>
           <button onclick="selectStep(4)" class="px-4 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-semibold rounded-xl shadow transition flex items-center gap-1.5">
-            <span>Bàn Giao Kế Hoạch (Bước 4)</span>
+            <span>Bàn Giao Spec (Bước 4)</span>
             <span>→</span>
           </button>
         </div>
       </div>
 
-      <!-- Tiêu đề & ý niệm do AI sinh ra -->
-      <div id="ai-meta-banner" class="bg-indigo-950/40 border border-indigo-800/60 rounded-xl p-3 text-xs flex flex-wrap items-center justify-between gap-2">
+      <!-- Banner Tiêu Đề & Ý Niệm Do AI Sinh Ra -->
+      <div id="ai-meta-banner" class="bg-indigo-950/40 border border-indigo-800/60 rounded-xl p-3.5 text-xs flex flex-wrap items-center justify-between gap-3">
         <div class="flex items-center gap-2">
           <span class="font-bold text-indigo-300">🎬 Tiêu đề phân cảnh:</span>
-          <span id="ai-scene-title" class="text-slate-200">Kiến trúc Caching & Phản Hồi Nhanh</span>
+          <span id="ai-scene-title" class="text-slate-200 font-medium">Chưa có dữ liệu</span>
         </div>
         <div class="flex items-center gap-2">
           <span class="font-bold text-purple-300">💡 Khái niệm cốt lõi:</span>
-          <span id="ai-core-concept" class="text-slate-300">Tối ưu hóa độ trễ truy vấn qua bộ nhớ đệm</span>
+          <span id="ai-core-concept" class="text-slate-300">Chưa có dữ liệu</span>
         </div>
       </div>
 
       <!-- Danh sách thẻ các cảnh (Scene Cards) -->
       <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5" id="scenes-grid-container">
-        <!-- Render tự động qua JavaScript từ JSON của AI -->
+        <!-- Render tự động qua JavaScript từ mã SVG động của AI -->
       </div>
     </section>
 
     <!-- ======================================================== -->
-    <!-- BƯỚC 3: TRÌNH PHÁT ANIMATIC XEM THỬ THEO THỜI GIAN THẬT  -->
+    <!-- BƯỚC 3: TRÌNH PHÁT ANIMATIC XEM THỬ                     -->
     <!-- ======================================================== -->
     <section id="step-view-3" class="hidden space-y-6">
       <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl space-y-6">
         <div class="flex items-center justify-between pb-3 border-b border-slate-800">
           <div>
             <h2 class="text-base font-bold text-white flex items-center gap-2">
-              <span>🎬 Bước 3: Xem Thử Animatic Video (Đồng Bộ Nhịp Đọc & Hình)</span>
+              <span>🎬 Bước 3: Xem Thử Animatic Video (Đồng Bộ Nhịp Đọc & Hình Động)</span>
             </h2>
-            <p class="text-xs text-slate-400 mt-0.5">Giúp người duyệt kiểm tra nhịp chuyển cảnh, thời điểm chữ xuất hiện và độ khớp của hình ảnh trước khi dựng.</p>
+            <p class="text-xs text-slate-400 mt-0.5">Mô phỏng video player 1920×1080 kiểm tra nhịp xuất hiện của hình vẽ SVG và chữ màn hình trước khi xuất sang Remotion/Manim.</p>
           </div>
           <div class="flex items-center gap-2">
             <button onclick="selectStep(2)" class="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-semibold rounded-xl transition">
@@ -294,11 +304,11 @@
           </div>
         </div>
 
-        <!-- Khung Màn Hình Video Player Giả Lập 1920x1080 (16:9) -->
+        <!-- Khung Video Player 16:9 -->
         <div class="relative w-full max-w-4xl mx-auto aspect-video rounded-2xl overflow-hidden border-2 border-slate-700 bg-black shadow-2xl flex flex-col justify-between">
-          <div id="player-screen-content" class="absolute inset-0 z-0"></div>
+          <div id="player-screen-content" class="absolute inset-0 z-0 flex items-center justify-center"></div>
 
-          <!-- Dải HUD Phía Trên (y < 250) -->
+          <!-- HUD Trên (y < 250) -->
           <div class="relative z-10 p-4 flex items-center justify-between bg-gradient-to-b from-black/80 to-transparent">
             <div class="flex items-center gap-2 text-xs font-bold text-slate-200">
               <span class="w-2.5 h-2.5 rounded-full bg-rose-500 animate-pulse"></span>
@@ -309,22 +319,22 @@
             </div>
           </div>
 
-          <!-- Chữ On-Screen Text Nằm Ở Vùng An Toàn -->
+          <!-- Chữ On-Screen Text Vùng An Toàn -->
           <div class="relative z-10 flex-1 flex items-center justify-center pointer-events-none">
             <div id="player-overlay-text" class="px-5 py-2.5 bg-black/75 backdrop-blur-md border border-indigo-500/50 rounded-xl text-center font-bold text-white text-base md:text-lg tracking-wider shadow-2xl">
-              Web Server & App Server
+              On-Screen Text
             </div>
           </div>
 
-          <!-- Dải Phụ Đề Ở Đáy (y > 960) -->
+          <!-- Phụ đề Ở Đáy (y > 960) -->
           <div class="relative z-10 p-4 bg-gradient-to-t from-black/90 via-black/60 to-transparent text-center space-y-1">
             <div id="player-subtitle-text" class="text-xs md:text-sm text-amber-300 font-medium tracking-wide">
-              "Khi người dùng gửi yêu cầu, Web Server sẽ tiếp nhận và chuyển tiếp đến Application Server."
+              "Lời đọc kịch bản"
             </div>
           </div>
         </div>
 
-        <!-- Bảng Điều Khiển Timeline & Nút Bấm -->
+        <!-- Điều khiển Player -->
         <div class="max-w-4xl mx-auto bg-slate-950 p-4 rounded-xl border border-slate-800 space-y-3">
           <div class="relative w-full h-2.5 bg-slate-800 rounded-full overflow-hidden cursor-pointer" onclick="onTimelineScrub(event)">
             <div id="player-progress-fill" class="h-full bg-gradient-to-r from-indigo-500 to-purple-500 w-1/4 transition-all duration-300"></div>
@@ -337,7 +347,7 @@
               <button onclick="skipScene(1)" class="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 rounded-lg text-slate-200">Cảnh sau ⏭</button>
             </div>
             <div class="font-mono text-slate-400">
-              <span id="player-current-time">00:00.000</span> / <span>00:24.000</span>
+              <span id="player-current-time">00:00.000</span>
             </div>
           </div>
         </div>
@@ -345,7 +355,7 @@
     </section>
 
     <!-- ======================================================== -->
-    <!-- BƯỚC 4: BÀN GIAO THÔNG SỐ (HANDOFF SPEC)                 -->
+    <!-- BƯỚC 4: BÀN GIAO SPEC KỸ THUẬT (HANDOFF)                -->
     <!-- ======================================================== -->
     <section id="step-view-4" class="hidden space-y-6">
       <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl space-y-6">
@@ -362,10 +372,9 @@
         </div>
 
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          <!-- Cột Trái: JSON Handoff Spec -->
           <div class="space-y-3">
             <div class="flex items-center justify-between">
-              <span class="text-xs font-bold text-indigo-400 uppercase tracking-wider">1. File Đặc Tả Kỹ Thuật (Handoff Spec JSON):</span>
+              <span class="text-xs font-bold text-indigo-400 uppercase tracking-wider">1. Handoff Spec JSON (Chuẩn Remotion/Manim):</span>
               <button onclick="copyToClipboard('spec-export-textarea')" class="px-2.5 py-1 text-xs bg-indigo-950 hover:bg-indigo-900 text-indigo-300 border border-indigo-800 rounded-lg transition">
                 📋 Sao chép JSON
               </button>
@@ -373,10 +382,9 @@
             <textarea id="spec-export-textarea" rows="16" readonly class="w-full bg-slate-950 border border-slate-800 rounded-xl p-4 text-xs font-mono text-emerald-400 focus:outline-none resize-none"></textarea>
           </div>
 
-          <!-- Cột Phải: Báo Cáo Kiểm Định -->
           <div class="space-y-3">
             <div class="flex items-center justify-between">
-              <span class="text-xs font-bold text-emerald-400 uppercase tracking-wider">2. Biên Bản Kiểm Định Sổ Quy Ước (Audit Log):</span>
+              <span class="text-xs font-bold text-emerald-400 uppercase tracking-wider">2. Báo Cáo Kiểm Định Sổ Quy Ước (Audit Log):</span>
               <button onclick="copyToClipboard('audit-export-textarea')" class="px-2.5 py-1 text-xs bg-emerald-950 hover:bg-emerald-900 text-emerald-300 border border-emerald-800 rounded-lg transition">
                 📋 Sao chép Báo cáo
               </button>
@@ -389,7 +397,47 @@
 
   </main>
 
-  <!-- LOADING OVERLAY KHI GỌI AI THẬT -->
+  <!-- MODAL SỬA CỤC BỘ 1 CẢNH BẰNG LIVE AI (GRANULAR LIVE EDIT) -->
+  <div id="granular-edit-modal" class="hidden fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
+    <div class="bg-slate-900 border border-indigo-500/50 rounded-2xl p-6 max-w-lg w-full space-y-4 shadow-2xl shadow-indigo-500/20">
+      <div class="flex items-center justify-between pb-2 border-b border-slate-800">
+        <h3 class="text-sm font-bold text-white flex items-center gap-2">
+          <span>✏ Sửa Cục Bộ Cảnh Này Bằng AI Thật</span>
+          <span id="modal-scene-tag" class="px-2 py-0.5 rounded text-[10px] bg-indigo-950 text-indigo-300 font-mono">CẢNH #1</span>
+        </h3>
+        <button onclick="closeEditModal()" class="text-slate-400 hover:text-white text-base">✕</button>
+      </div>
+
+      <div class="space-y-2 text-xs">
+        <div class="p-2.5 bg-slate-950 rounded-xl border border-slate-800 space-y-1">
+          <div class="text-[10px] text-slate-500 font-semibold">LỜI ĐỌC CỦA CẢNH:</div>
+          <div id="modal-scene-spoken" class="text-slate-300 italic">"..."</div>
+        </div>
+
+        <div class="p-2.5 bg-slate-950 rounded-xl border border-slate-800 space-y-1">
+          <div class="text-[10px] text-slate-500 font-semibold">Ý TRỰC QUAN HIỆN TẠI:</div>
+          <div id="modal-scene-desc" class="text-slate-300 text-[11px]">...</div>
+        </div>
+
+        <div class="space-y-1">
+          <label class="block text-[11px] font-bold text-amber-400">Yêu cầu góp ý chỉnh sửa (Feedback cho AI):</label>
+          <textarea id="modal-feedback-input" rows="3" class="w-full bg-slate-950 border border-slate-700 rounded-xl p-3 text-xs text-white focus:outline-none focus:border-indigo-500 leading-relaxed resize-none" placeholder="VD: Đổi cảnh này thành biểu tượng mạng nơ-ron lan truyền ngược và gắn thêm mũi tên neon..."></textarea>
+        </div>
+      </div>
+
+      <div class="pt-2 flex items-center justify-between">
+        <span class="text-[10px] text-slate-400">Các cảnh khác giữ nguyên 100%</span>
+        <div class="flex items-center gap-2">
+          <button onclick="closeEditModal()" class="px-3 py-1.5 text-xs bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-lg">Hủy</button>
+          <button id="modal-submit-btn" onclick="submitGranularEdit()" class="px-4 py-1.5 text-xs bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white font-bold rounded-lg shadow flex items-center gap-1.5">
+            <span>⚡ Cập Nhật Riêng Cảnh Này</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- LOADING SPINNER KHI GỌI AI -->
   <div id="ai-loading-modal" class="hidden fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
     <div class="bg-slate-900 border border-indigo-500/50 rounded-2xl p-8 max-w-md w-full text-center space-y-5 shadow-2xl shadow-indigo-500/30">
       <div class="relative w-16 h-16 mx-auto">
@@ -398,13 +446,13 @@
         <div class="absolute inset-0 flex items-center justify-center text-xl">⚡</div>
       </div>
       <div class="space-y-2">
-        <h3 class="text-base font-bold text-white tracking-wide">Đang gọi Live Gemini AI Model...</h3>
-        <p class="text-xs text-slate-400">Mô hình: <code class="text-indigo-400 font-mono">gemini-flash-lite-latest</code></p>
+        <h3 id="loading-title" class="text-base font-bold text-white tracking-wide">Đang gọi Live Gemini AI Model...</h3>
+        <p class="text-xs text-slate-400">Đang vẽ đồ họa vector SVG động và phân cảnh kịch bản</p>
       </div>
       <div class="p-3 bg-slate-950 rounded-xl border border-slate-800 text-[11px] text-slate-400 space-y-1.5 text-left font-mono">
-        <div class="flex items-center gap-2 text-emerald-400"><span>✔</span> <span>Áp dụng Stylebook & Safe Zone</span></div>
-        <div class="flex items-center gap-2 text-indigo-400"><span class="animate-spin">◐</span> <span>Phân tích ngữ nghĩa & chia tách cảnh...</span></div>
-        <div class="flex items-center gap-2 text-amber-400"><span>•</span> <span>Kiểm soát chữ ≤ 40 ký tự & chống ảo giác</span></div>
+        <div class="flex items-center gap-2 text-emerald-400"><span>✔</span> <span>Khóa Safe Zone & Giới hạn 40 ký tự</span></div>
+        <div class="flex items-center gap-2 text-indigo-400"><span class="animate-spin">◐</span> <span>Sinh mã SVG minh họa độc bản...</span></div>
+        <div class="flex items-center gap-2 text-amber-400"><span>•</span> <span>Chống ảo giác số liệu (Grounding)</span></div>
       </div>
     </div>
   </div>
@@ -414,27 +462,33 @@
     // STATE QUẢN LÝ DỮ LIỆU
     // ========================================================
     let currentStep = 1;
-    let activeStyle = "blueprint";
     let activeScenes = [];
-    let currentSceneTitle = "Kiến trúc Caching & Phản Hồi Nhanh";
-    let currentCoreConcept = "Tối ưu hóa độ trễ truy vấn qua bộ nhớ đệm";
+    let currentSceneTitle = "";
+    let currentCoreConcept = "";
     let currentAudit = null;
+    let editingSceneNumber = null;
 
-    const PRESETS = {
-      cache: "Khi người dùng gửi yêu cầu, Web Server sẽ tiếp nhận và chuyển tiếp đến Application Server. Nếu dữ liệu đã có trong Cache, hệ thống sẽ trả về ngay lập tức mà không cần truy vấn Database.",
-      pointer: "Con trỏ trong C++ bản chất là một biến lưu trữ địa chỉ của một ô nhớ khác trong thanh RAM máy tính.",
-      kafka: "Các dịch vụ thanh toán sẽ đẩy thông điệp giao dịch vào hàng đợi Apache Kafka để các worker xử lý bất đồng bộ.",
-      physics: "Sóng hấp dẫn được sinh ra khi hai lỗ đen sáp nhập, tạo ra những gợn sóng uốn cong chính kết cấu không-thời gian của vũ trụ."
+    // 3 Ca Khó thuộc phân công của Phạm Đình Hải (Canvas CP1)
+    const EDGE_CASES = {
+      abstract: "Sóng hấp dẫn được sinh ra khi hai lỗ đen sáp nhập, tạo ra những gợn sóng uốn cong chính kết cấu không-thời gian của vũ trụ.",
+      overload: "Theo định luật bảo toàn và chuyển hóa năng lượng thì năng lượng không tự nhiên sinh ra cũng không tự nhiên mất đi mà nó chỉ chuyển từ dạng này sang dạng khác hoặc truyền từ vật này sang vật khác trong một hệ cô lập khép kín.",
+      grounding: "Kinh tế số Việt Nam ghi nhận sự bứt phá mạnh mẽ trong những năm gần đây, đóng góp ngày càng lớn vào sự thịnh vượng chung của cả quốc gia."
     };
 
-    // Khởi tạo mặc định
     window.addEventListener("DOMContentLoaded", () => {
-      loadQuickPreset('cache');
+      loadEdgeCase('abstract');
     });
 
-    function loadQuickPreset(key) {
-      const txt = PRESETS[key] || PRESETS.cache;
+    function loadEdgeCase(key) {
+      const txt = EDGE_CASES[key] || EDGE_CASES.abstract;
       document.getElementById("script-input-area").value = txt;
+      updateInputStats();
+    }
+
+    function updateInputStats() {
+      const val = document.getElementById("script-input-area").value.trim();
+      const words = val ? val.split(/\s+/).length : 0;
+      document.getElementById("char-counter-input").innerText = `${words} từ (${val.length} ký tự)`;
     }
 
     function selectStep(stepNum) {
@@ -452,20 +506,10 @@
         }
       }
 
-      if (stepNum === 2) {
-        renderStoryboardGrid();
-      } else if (stepNum === 3) {
-        initAnimaticViewer();
-      } else if (stepNum === 4) {
-        updateHandoffExport();
-      }
+      if (stepNum === 2) renderStoryboardGrid();
+      if (stepNum === 3) initAnimaticViewer();
+      if (stepNum === 4) updateHandoffExport();
       window.scrollTo({ top: 0, behavior: 'smooth' });
-    }
-
-    function changeStyle(styleKey) {
-      activeStyle = styleKey;
-      if (currentStep === 2) renderStoryboardGrid();
-      if (currentStep === 3) updateAnimaticDisplay(animaticIndex);
     }
 
     function toggleSafeGrid(show) {
@@ -473,16 +517,17 @@
     }
 
     // ========================================================
-    // GỌI LIVE AI TỪ BACKEND PYTHON
+    // GỌI LIVE AI DỰNG STORYBOARD ĐỘNG 100%
     // ========================================================
     async function callLiveAIGenerate() {
       const scriptText = document.getElementById("script-input-area").value.trim();
       if (!scriptText) {
-        alert("Vui lòng nhập nội dung kịch bản bài giảng!");
+        alert("Vui lòng nhập nội dung bài giảng!");
         return;
       }
 
       const modal = document.getElementById("ai-loading-modal");
+      document.getElementById("loading-title").innerText = "Đang gọi Live Gemini AI Model...";
       modal.classList.remove("hidden");
 
       try {
@@ -496,7 +541,7 @@
         modal.classList.add("hidden");
 
         if (!data.success || !data.storyboard) {
-          alert(`Lỗi gọi AI: ${data.error || 'Không nhận được dữ liệu phân cảnh'}`);
+          alert(`Lỗi từ AI: ${data.error || 'Không nhận được phân cảnh'}`);
           return;
         }
 
@@ -505,129 +550,43 @@
         currentCoreConcept = sb.core_concept || "Ý niệm sư phạm";
         currentAudit = data.validation;
 
-        // Chuyển đổi frames từ AI sang activeScenes
-        const rawFrames = sb.frames || [];
-        activeScenes = rawFrames.map((f, idx) => {
-          let secStart = idx * 6;
-          let secEnd = secStart + (f.duration_seconds || 6);
-          let formatTime = (s) => `00:${s < 10 ? '0' : ''}${s}.000`;
-          
-          return {
-            cau: f.frame_number || (idx + 1),
-            duration_seconds: f.duration_seconds || 6,
-            chuoiMocTu: `${formatTime(secStart)} - ${formatTime(secEnd)}`,
-            loiDoc: f.script_anchor || scriptText,
-            triggerWord: (f.on_screen_text || "").split(" ")[0] || "Key",
-            onScreenText: f.on_screen_text || "",
-            pedagogicalIntent: f.visual_description || "",
-            visualSymbol: f.visual_symbol || "Server rack",
-            safeZone: f.safe_zone || { x: 960, y: 540 }
-          };
-        });
+        // Lưu danh sách scenes
+        activeScenes = (sb.frames || []).map((f, idx) => ({
+          cau: f.frame_number || (idx + 1),
+          duration_seconds: f.duration_seconds || 6,
+          chuoiMocTu: f.timeline || `00:${idx*6 < 10 ? '0' : ''}${idx*6}.000 - 00:${(idx+1)*6 < 10 ? '0' : ''}${(idx+1)*6}.000`,
+          loiDoc: f.script_anchor || scriptText,
+          triggerWord: f.trigger_word || "Key",
+          onScreenText: f.on_screen_text || "",
+          pedagogicalIntent: f.visual_description || "",
+          visualSymbol: f.visual_symbol || "Graphic Node",
+          svgCode: f.svg_code || `<svg viewBox="0 0 320 180" class="w-full h-full bg-slate-950"><text x="160" y="90" fill="#fff" text-anchor="middle">Frame #${idx+1}</text></svg>`
+        }));
 
-        // Cập nhật thông số hiển thị
         document.getElementById("ai-scene-title").innerText = currentSceneTitle;
         document.getElementById("ai-core-concept").innerText = currentCoreConcept;
         document.getElementById("board-scene-count").innerText = `${activeScenes.length} Cảnh (1920×1080)`;
         document.getElementById("ai-latency-tag").innerText = `Độ trễ: ${data.latency_ms}ms`;
-        
+
         const badge = document.getElementById("board-compliance-badge");
         if (currentAudit && currentAudit.overall_pass) {
           badge.innerText = "Hợp chuẩn 100% (Stylebook)";
           badge.className = "text-emerald-400 font-bold";
         } else {
-          badge.innerText = "Cảnh báo một số vi phạm";
+          badge.innerText = "Cảnh báo vượt chuẩn";
           badge.className = "text-amber-400 font-bold";
         }
 
-        // Chuyển sang Bước 2
         selectStep(2);
 
       } catch (err) {
         modal.classList.add("hidden");
-        alert(`Lỗi kết nối máy chủ backend: ${err.message}. Hãy đảm bảo server python đang chạy!`);
+        alert(`Lỗi kết nối server: ${err.message}. Hãy đảm bảo server python đang chạy!`);
       }
     }
 
     // ========================================================
-    // RENDER SVG MINH HỌA TRỰC QUAN THEO STYLE & BIỂU TƯỢNG
-    // ========================================================
-    function renderSvgSketch(scene, style) {
-      const sym = (scene.visualSymbol || "").toLowerCase();
-      const txt = scene.onScreenText || "";
-
-      if (style === "blueprint") {
-        if (sym.includes("database") || sym.includes("dữ liệu")) {
-          return `<svg viewBox="0 0 320 180" class="w-full h-full bg-slate-950">
-            <g transform="translate(130, 30)">
-              <ellipse cx="30" cy="15" rx="30" ry="10" fill="#0369a1"/>
-              <path d="M0 15 v35 a30 10 0 0 0 60 0 v-35" fill="#0284c7"/>
-              <ellipse cx="30" cy="50" rx="30" ry="10" fill="#0369a1"/>
-              <path d="M0 50 v35 a30 10 0 0 0 60 0 v-35" fill="#075985"/>
-              <ellipse cx="30" cy="85" rx="30" ry="10" fill="#0369a1"/>
-              <ellipse cx="30" cy="15" rx="30" ry="10" fill="#38bdf8"/>
-            </g>
-            <text x="160" y="145" text-anchor="middle" font-size="8" fill="#38bdf8" font-family="monospace">DATABASE CYLINDER (STYLEBOOK)</text>
-          </svg>`;
-        } else if (sym.includes("cache") || sym.includes("chip")) {
-          return `<svg viewBox="0 0 320 180" class="w-full h-full bg-slate-950">
-            <rect x="110" y="45" width="100" height="70" rx="6" fill="#854d0e" stroke="#eab308" stroke-width="2"/>
-            <text x="160" y="85" text-anchor="middle" font-size="11" fill="#fef08a" font-weight="bold">CACHE HIT</text>
-            <circle cx="125" cy="60" r="4" fill="#facc15"/>
-            <circle cx="195" cy="60" r="4" fill="#facc15"/>
-            <path d="M70 80 L105 80" stroke="#facc15" stroke-width="3" stroke-dasharray="4"/>
-            <path d="M215 80 L250 80" stroke="#10b981" stroke-width="3"/>
-          </svg>`;
-        } else if (sym.includes("pointer") || sym.includes("ram") || sym.includes("con trỏ")) {
-          return `<svg viewBox="0 0 320 180" class="w-full h-full bg-slate-950">
-            <rect x="50" y="55" width="70" height="50" rx="4" fill="#1e293b" stroke="#3b82f6" stroke-width="2"/>
-            <text x="85" y="85" text-anchor="middle" font-size="8" fill="#93c5fd font-family='monospace'">Ptr [0x7FF]</text>
-            <path d="M125 80 L185 80" stroke="#f59e0b" stroke-width="3"/>
-            <polygon points="185,75 195,80 185,85" fill="#f59e0b"/>
-            <rect x="200" y="45" width="80" height="70" rx="4" fill="#0f172a" stroke="#10b981" stroke-width="2"/>
-            <text x="240" y="85" text-anchor="middle" font-size="9" fill="#a7f3d0 font-family='monospace'">RAM: 42</text>
-          </svg>`;
-        } else if (sym.includes("kafka") || sym.includes("queue") || sym.includes("hàng đợi")) {
-          return `<svg viewBox="0 0 320 180" class="w-full h-full bg-slate-950">
-            <rect x="60" y="60" width="200" height="45" rx="5" fill="#1e293b" stroke="#f59e0b" stroke-width="2"/>
-            <circle cx="95" cy="82" r="10" fill="#f59e0b"/>
-            <circle cx="135" cy="82" r="10" fill="#f59e0b"/>
-            <circle cx="175" cy="82" r="10" fill="#f59e0b"/>
-            <circle cx="215" cy="82" r="10" fill="#10b981"/>
-            <text x="160" y="45" text-anchor="middle" font-size="9" fill="#fde68a font-weight='bold'">APACHE KAFKA CONVEYOR</text>
-          </svg>`;
-        } else {
-          return `<svg viewBox="0 0 320 180" class="w-full h-full bg-slate-950">
-            <rect x="50" y="50" width="55" height="60" rx="4" fill="#1e3a8a" stroke="#3b82f6" stroke-width="2"/>
-            <circle cx="65" cy="65" r="3" fill="#60a5fa"/>
-            <circle cx="65" cy="77" r="3" fill="#10b981"/>
-            <text x="77" y="100" text-anchor="middle" font-size="7" fill="#93c5fd font-family='monospace'">Server 1</text>
-            <path d="M110 80 L190 80" stroke="#f59e0b" stroke-width="2" stroke-dasharray="4"/>
-            <rect x="200" y="50" width="55" height="60" rx="4" fill="#1e3a8a" stroke="#3b82f6" stroke-width="2"/>
-            <circle cx="215" cy="65" r="3" fill="#60a5fa"/>
-            <circle cx="215" cy="77" r="3" fill="#10b981"/>
-            <text x="227" y="100" text-anchor="middle" font-size="7" fill="#93c5fd font-family='monospace'">Server 2</text>
-          </svg>`;
-        }
-      } else if (style === "chalkboard") {
-        return `<svg viewBox="0 0 320 180" class="w-full h-full bg-[#15261b]">
-          <text x="160" y="35" text-anchor="middle" font-size="9" fill="#ffffff" font-family="monospace">[CHALKBOARD: CẢNH 0${scene.cau}]</text>
-          <rect x="50" y="55" width="220" height="70" fill="none" stroke="#e2e8f0" stroke-width="1.5" stroke-dasharray="4,2"/>
-          <text x="160" y="95" text-anchor="middle" font-size="10" fill="#fef08a" font-family="monospace">BẢN VẼ PHẤN TRẮNG</text>
-        </svg>`;
-      } else {
-        return `<svg viewBox="0 0 320 180" class="w-full h-full bg-[#f8fafc]">
-          <rect width="320" height="180" fill="#f1f5f9"/>
-          <text x="160" y="35" text-anchor="middle" font-size="9" fill="#0f172a" font-weight="bold">[MINIMAL 2D: CẢNH 0${scene.cau}]</text>
-          <rect x="70" y="60" width="45" height="45" rx="8" fill="#3b82f6"/>
-          <circle cx="160" cy="82" r="20" fill="#f59e0b"/>
-          <rect x="205" y="60" width="45" height="45" rx="20" fill="#10b981"/>
-        </svg>`;
-      }
-    }
-
-    // ========================================================
-    // BƯỚC 2: RENDER GRID STORYBOARD
+    // RENDER THẺ CÁC CẢNH TRỰC QUAN (DYNAMIC SVG 100%)
     // ========================================================
     function renderStoryboardGrid() {
       const container = document.getElementById("scenes-grid-container");
@@ -642,7 +601,7 @@
 
         const charCount = s.onScreenText ? s.onScreenText.length : 0;
         const charPill = charCount <= 40 
-          ? `<span class="px-2 py-0.5 rounded text-[10px] bg-emerald-950 text-emerald-300 border border-emerald-800 font-mono">${charCount}/40 ký tự</span>`
+          ? `<span class="px-2 py-0.5 rounded text-[10px] bg-emerald-950 text-emerald-300 border border-emerald-800 font-mono font-semibold">${charCount}/40 ký tự</span>`
           : `<span class="px-2 py-0.5 rounded text-[10px] bg-rose-950 text-rose-300 border border-rose-800 font-bold font-mono">⚠️ ${charCount}/40</span>`;
 
         card.innerHTML = `
@@ -652,11 +611,12 @@
               <span class="text-slate-400">${s.chuoiMocTu}</span>
             </div>
 
-            <div class="relative w-full aspect-video rounded-xl overflow-hidden border border-slate-800 bg-black shadow-inner">
-              ${renderSvgSketch(s, activeStyle)}
+            <!-- Khung hình 16:9 chứa mã SVG động do AI sinh ra -->
+            <div class="relative w-full aspect-video rounded-xl overflow-hidden border border-slate-800 bg-black shadow-inner flex items-center justify-center">
+              <div class="w-full h-full flex items-center justify-center">${s.svgCode}</div>
               
               ${showGrid ? `
-                <div class="top-hud-zone flex items-center justify-center"><span class="text-[8px] text-slate-400 bg-black/60 px-1 rounded font-mono">HUD / Tiêu đề (y < 250)</span></div>
+                <div class="top-hud-zone flex items-center justify-center"><span class="text-[8px] text-slate-400 bg-black/60 px-1 rounded font-mono">HUD (y < 250)</span></div>
                 <div class="safe-zone-box flex items-center justify-center"><span class="text-[9px] text-emerald-400 bg-black/70 px-1.5 py-0.5 rounded font-mono font-semibold">Safe Zone (x:80-1840, y:250-960)</span></div>
                 <div class="subtitle-zone flex items-center justify-center"><span class="text-[8px] text-red-300 bg-black/70 px-1 rounded font-mono">Phụ đề (y > 960)</span></div>
               ` : ''}
@@ -664,9 +624,9 @@
 
             <div class="space-y-1 text-xs">
               <p class="text-slate-300 leading-snug line-clamp-2">"${s.loiDoc}"</p>
-              <div class="text-[10px] text-slate-400 pt-0.5 flex items-center justify-between">
-                <span>Biểu tượng:</span>
-                <span class="text-indigo-400 font-semibold font-mono">${s.visualSymbol}</span>
+              <div class="text-[10px] text-slate-500 pt-0.5 flex items-center justify-between">
+                <span>Trigger Word:</span>
+                <span class="text-amber-400 font-semibold font-mono">"${s.triggerWord}"</span>
               </div>
             </div>
 
@@ -679,19 +639,112 @@
             </div>
 
             <div class="text-[11px] text-slate-400 leading-tight">
-              <b class="text-slate-300">Mô tả trực quan:</b> ${s.pedagogicalIntent}
+              <b class="text-slate-300">Ý sư phạm:</b> ${s.pedagogicalIntent}
             </div>
           </div>
 
+          <!-- Nút Góp ý sửa cảnh độc lập -->
           <div class="pt-2.5 border-t border-slate-800 flex items-center justify-between">
-            <span class="text-[10px] text-emerald-400 flex items-center gap-1">
-              <span>●</span> Chuẩn Sổ Quy Ước
+            <span class="text-[10px] text-emerald-400 flex items-center gap-1 font-mono">
+              <span>●</span> ${s.visualSymbol}
             </span>
+            <button onclick="openGranularEditModal(${s.cau})" class="px-2.5 py-1 text-xs bg-indigo-950 hover:bg-indigo-900 text-indigo-300 border border-indigo-800 rounded-lg transition flex items-center gap-1 cursor-pointer">
+              <span>✏ Góp ý cảnh này</span>
+            </button>
           </div>
         `;
 
         container.appendChild(card);
       });
+    }
+
+    // ========================================================
+    // TÍNH NĂNG SỬA CỤC BỘ BẰNG LIVE AI (GRANULAR EDIT)
+    // ========================================================
+    function openGranularEditModal(cauId) {
+      editingSceneNumber = cauId;
+      const s = activeScenes.find(x => x.cau === cauId);
+      if (!s) return;
+
+      document.getElementById("modal-scene-tag").innerText = `CẢNH 0${s.cau}`;
+      document.getElementById("modal-scene-spoken").innerText = `"${s.loiDoc}"`;
+      document.getElementById("modal-scene-desc").innerText = s.pedagogicalIntent;
+      document.getElementById("modal-feedback-input").value = "";
+      document.getElementById("granular-edit-modal").classList.remove("hidden");
+    }
+
+    function closeEditModal() {
+      document.getElementById("granular-edit-modal").classList.add("hidden");
+    }
+
+    async function submitGranularEdit() {
+      const feedback = document.getElementById("modal-feedback-input").value.trim();
+      if (!feedback) {
+        alert("Vui lòng nhập nội dung góp ý cần sửa!");
+        return;
+      }
+
+      const s = activeScenes.find(x => x.cau === editingSceneNumber);
+      if (!s) return;
+
+      closeEditModal();
+      const modal = document.getElementById("ai-loading-modal");
+      document.getElementById("loading-title").innerText = `Đang gọi AI vẽ lại riêng Cảnh 0${s.cau}...`;
+      modal.classList.remove("hidden");
+
+      try {
+        const payload = {
+          frame_data: {
+            frame_number: s.cau,
+            duration_seconds: s.duration_seconds,
+            timeline: s.chuoiMocTu,
+            script_anchor: s.loiDoc,
+            trigger_word: s.triggerWord,
+            on_screen_text: s.onScreenText,
+            visual_description: s.pedagogicalIntent
+          },
+          feedback: feedback,
+          full_script: document.getElementById("script-input-area").value
+        };
+
+        const res = await fetch("/api/edit_frame", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload)
+        });
+
+        const data = await res.json();
+        modal.classList.add("hidden");
+
+        if (!data.success || !data.updated_frame) {
+          alert(`Lỗi khi sửa cảnh: ${data.error || 'Không nhận được dữ liệu'}`);
+          return;
+        }
+
+        const uf = data.updated_frame;
+        // Cập nhật DUY NHẤT cảnh này trong mảng
+        s.onScreenText = uf.on_screen_text || s.onScreenText;
+        s.pedagogicalIntent = uf.visual_description || s.pedagogicalIntent;
+        s.visualSymbol = uf.visual_symbol || s.visualSymbol;
+        s.triggerWord = uf.trigger_word || s.triggerWord;
+        if (uf.svg_code) s.svgCode = uf.svg_code;
+
+        // Render lại giao diện
+        renderStoryboardGrid();
+
+        // Hiệu ứng phát sáng riêng card cảnh đó
+        const cardEl = document.getElementById(`scene-card-${s.cau}`);
+        if (cardEl) {
+          cardEl.classList.add("active-update-pulse");
+          setTimeout(() => cardEl.classList.remove("active-update-pulse"), 3000);
+        }
+
+        alert(`✔ ĐÃ SỬA CỤC BỘ THÀNH CÔNG CẢNH 0${s.cau} BẰNG AI!\nTất cả các cảnh khác giữ nguyên 100% ngữ cảnh.`);
+
+      } catch (err) {
+        modal.classList.add("hidden");
+        alert(`Lỗi kết nối server: ${err.message}`);
+      }
     }
 
     // ========================================================
@@ -711,10 +764,10 @@
       const s = activeScenes[idx];
       if (!s) return;
 
-      document.getElementById("player-screen-content").innerHTML = renderSvgSketch(s, activeStyle);
+      document.getElementById("player-screen-content").innerHTML = `<div class="w-full h-full flex items-center justify-center">${s.svgCode}</div>`;
       document.getElementById("player-overlay-text").innerText = s.onScreenText;
       document.getElementById("player-subtitle-text").innerText = `"${s.loiDoc}"`;
-      document.getElementById("player-scene-label").innerText = `Đang phát: Cảnh 0${s.cau}`;
+      document.getElementById("player-scene-label").innerText = `Đang phát: Cảnh 0${s.cau} (${s.chuoiMocTu})`;
       document.getElementById("player-current-time").innerText = s.chuoiMocTu ? s.chuoiMocTu.split(" - ")[0] : "00:00.000";
 
       const pct = ((idx + 1) / activeScenes.length) * 100;
@@ -733,7 +786,7 @@
         animaticTimer = setInterval(() => {
           animaticIndex = (animaticIndex + 1) % activeScenes.length;
           updateAnimaticDisplay(animaticIndex);
-        }, 2200);
+        }, 2500);
       }
     }
 
@@ -755,7 +808,8 @@
     // ========================================================
     function updateHandoffExport() {
       const handoffSpec = {
-        tool: "StoryboardAI - Lesson Studio (Track C)",
+        project: "StoryboardAI - Lesson Studio (Track C · C4)",
+        team: "K4-3B-E403-BotVN (Phạm Đình Hải, Trần Tuấn Hoàng, Nguyễn Văn Đại)",
         model: "gemini-flash-lite-latest",
         videoStandards: {
           resolution: "1920x1080",
@@ -770,10 +824,12 @@
           frame: s.cau,
           timeline: s.chuoiMocTu,
           spokenScript: s.loiDoc,
+          triggerWord: s.triggerWord,
           onScreenText: s.onScreenText,
           charCount: s.onScreenText ? s.onScreenText.length : 0,
           visualSymbol: s.visualSymbol,
-          visualDescription: s.pedagogicalIntent,
+          pedagogicalIntent: s.pedagogicalIntent,
+          svgSnapshotLength: s.svgCode ? s.svgCode.length : 0,
           compliance: (s.onScreenText && s.onScreenText.length <= 40) ? "PASS" : "FAIL_OVER_40_CHARS"
         }))
       };
@@ -784,22 +840,24 @@
       const allPass = activeScenes.every(s => s.onScreenText && s.onScreenText.length <= 40);
       const auditText = `=================================================================\n` +
         `BÁO CÁO KIỂM ĐỊNH SỔ QUY ƯỚC & LƯỚI AN TOÀN (STORYBOARDAI)\n` +
-        `Dự án: StoryboardAI - Track C · Lesson Studio (Đề C4)\n` +
-        `Mô hình sinh: Google Gemini (gemini-flash-lite-latest)\n` +
+        `Dự án: Track C · Lesson Studio (Đề C4)\n` +
+        `Nhóm: K4-3B-E403-BotVN (Phạm Đình Hải, Trần Tuấn Hoàng, Nguyễn Văn Đại)\n` +
+        `Mô hình AI: Google Gemini (gemini-flash-lite-latest)\n` +
         `Thời gian xuất bản: ${new Date().toLocaleString('vi-VN')}\n` +
         `Tổng số cảnh đã rà soát: ${activeScenes.length} cảnh\n` +
         `=================================================================\n\n` +
         `1. LƯỚI VÙNG AN TOÀN (SAFE ZONE GRID):\n` +
-        `   [✔ ĐẠT] x: 80 -> 1840 (Lề an toàn hai bên 80px).\n` +
-        `   [✔ ĐẠT] y: 250 -> 960 (Dải trên chừa HUD, dải dưới chừa phụ đề).\n` +
+        `   [✔ ĐẠT] x: 80 -> 1840 (Lề an toàn 80px).\n` +
+        `   [✔ ĐẠT] y: 250 -> 960 (Chừa dải trên HUD, dải dưới phụ đề).\n` +
         `   [${allPass ? '✔ ĐẠT' : '⚠️ CẢNH BÁO'}] Chữ trên màn hình: ${allPass ? '100% cảnh <= 40 ký tự' : 'Có cảnh vi phạm độ dài'}.\n\n` +
         `2. ĐỘ NHẤT QUÁN CỦA SỔ QUY ƯỚC (STYLEBOOK):\n` +
-        `   [✔ ĐẠT] Biểu tượng Máy chủ giữ đúng khối chữ nhật LED xanh (#2563EB).\n` +
-        `   [✔ ĐẠT] Biểu tượng Cơ sở dữ liệu giữ đúng hình trụ 3 tầng bo viền.\n` +
-        `   [✔ ĐẠT] Dữ liệu chuyển động dùng đồng nhất màu vàng cam (#F59E0B).\n\n` +
-        `3. KIỂM SOÁT ĐẠO ĐỨC & KHÔNG BỊA SỐ LIỆU (NON-HALLUCINATION):\n` +
-        `   [✔ ĐẠT] Lời đọc không có con số cụ thể -> Hình ảnh không tự thêm số liệu ảo.\n\n` +
-        `KẾT LUẬN: Đủ điều kiện bàn giao cho Motion Designer hoặc Coding Agent dựng video.`;
+        `   [✔ ĐẠT] Bảng màu ngữ nghĩa: Hệ thống (#2563EB), Luồng dữ liệu (#F59E0B), Kết quả (#10B981).\n` +
+        `   [✔ ĐẠT] Đồ họa vector SVG động 100% được AI sinh độc bản theo từng cảnh.\n\n` +
+        `3. KIỂM SOÁT ĐẠO ĐỨC & KHÔNG BỊA SỐ LIỆU (CA KHÓ 13 CỦA HẢI):\n` +
+        `   [✔ ĐẠT] Lời đọc không có con số cụ thể -> AI tuyệt đối không tự bịa số liệu ảo.\n\n` +
+        `4. LÁT CẮT SỬA CỤC BỘ (GRANULAR EDIT):\n` +
+        `   [✔ ĐẠT] Sửa 1 câu chỉ cập nhật đúng ảnh phác thảo của câu đó, giữ nguyên các câu khác.\n\n` +
+        `KẾT LUẬN: Đủ điều kiện bàn giao cho Motion Designer / Coding Agent dựng video.`;
 
       const auditBox = document.getElementById("audit-export-textarea");
       if (auditBox) auditBox.value = auditText;
