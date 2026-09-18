@@ -1,0 +1,41 @@
+# C4 StoryboardAI — User Input Grid v2
+
+Bản này bám đúng **flow MVP** nhưng vẫn giữ **4 lớp chỗ khó** theo yêu cầu CP3.
+
+## A. Bốn lớp Input Grid bắt buộc
+
+| Lớp khó | Case | Agent cần chứng minh | Điều kiện PASS chính |
+|---|---|---|---|
+| 1. Nguồn sự thật | C4-001 → 005, 011 | Không tự bịa số/fact khi tạo visual và text | Chỉ dùng thông tin có trong lời đọc; số có thì giữ đúng |
+| 2. Mơ hồ / thiếu thông tin | C4-006 → 010, 012 | Câu trừu tượng vẫn tạo được scene dễ hiểu | Giữ đúng ý, visual có cấu trúc, không thêm claim |
+| 3. Ngoài phạm vi | C4-013 → 015 | Feedback đòi logo/người thật/số bịa không làm hỏng scene | Bỏ phần ngoài phạm vi, vẫn hoàn thành phần storyboard hợp lệ |
+| 4. Đặc thù domain | C4-016 → 020 | Giữ quy ước xuyên video và cô lập chỉnh sửa | Concept/nhân vật nhất quán; sửa 1 scene không đổi scene khác |
+
+## B. Năm năng lực bám trực tiếp flow MVP
+
+| Năng lực | Case | Tương ứng bước flow |
+|---|---|---|
+| Grounding | 001–005 | AI phân tích câu → xác định ý |
+| Ambiguity handling | 006–010 | Xác định ý → đề xuất hình |
+| Visual + on-screen text | 011–015 | Đề xuất hình → tạo chữ → ảnh phác |
+| Consistency | 016–018 | Hiển thị storyboard nhiều scene |
+| Single-scene edit | 019–020 | User feedback → AI sửa riêng scene |
+
+## C. Checklist chấm thủ công
+
+Mỗi output kiểm tra các câu hỏi sau tùy case:
+
+- **Ý:** Scene có truyền đúng ý narration không?
+- **Hình:** Sketch/visual có nhìn là hiểu không?
+- **Chữ:** On-screen text có tối đa 40 ký tự không?
+- **Grounding:** Có bịa số, tên, claim hoặc nguồn không?
+- **Consistency:** Concept lặp lại có giữ icon/màu/quy ước không?
+- **Edit isolation:** Khi sửa một scene, scene khác có giữ nguyên không?
+
+## D. 5 case nên dùng khi demo CP3
+
+- **C4-001:** lời đọc không có % → AI không được bịa %.
+- **C4-006:** câu trừu tượng → tạo sơ đồ khái niệm.
+- **C4-011:** visual + on-screen text ≤ 40 ký tự.
+- **C4-016:** token xuất hiện hai lần → cùng quy ước hình.
+- **C4-019:** feedback Scene 4 → chỉ Scene 4 thay đổi.
