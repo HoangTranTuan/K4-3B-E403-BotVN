@@ -235,6 +235,181 @@ YÊU CẦU BẮT BUỘC:
                 "latency_ms": int((time.time() - start_time) * 1000)
             }
 
+    def generate_alternatives(self, frame_data: Dict[str, Any], count: int = 3, feedback: str = "", full_script: str = "") -> Dict[str, Any]:
+        """Tạo ra N phương án thay thế (tối đa 5) cho một phân cảnh cụ thể khi người dùng thấy chưa phù hợp."""
+        try:
+            count = int(count)
+        except (ValueError, TypeError):
+            count = 3
+        count = max(1, min(count, 5))
+
+        prompt = f"""Bạn là Senior Art Director & Storyboard Architect cho Lesson Studio.
+Người dùng thấy phân cảnh hiện tại không phù hợp và muốn bạn đề xuất CHÍNH XÁC {count} PHƯƠNG ÁN HÌNH ẢNH KHÁC BIỆT (từ 1 đến {count}) để thay thế phân cảnh này.
+
+THÔNG TIN PHÂN CẢNH HIỆN TẠI (CẢNH #{frame_data.get('frame_number', 1)}):
+- Mốc thời gian: "{frame_data.get('timeline', '00:00.000 - 00:06.000')}"
+- Lời đọc câu này: "{frame_data.get('script_anchor', '')}"
+- Chữ màn hình cũ: "{frame_data.get('on_screen_text', '')}"
+- Ý trực quan cũ: "{frame_data.get('visual_description', '')}"
+- Biểu tượng cũ: "{frame_data.get('visual_symbol', '')}"
+- Toàn bộ bài giảng: "{full_script}"
+- Góp ý/Yêu cầu bổ sung của người dùng (nếu có): "{feedback}"
+
+YÊU CẦU BẮT BUỘC:
+1. Đề xuất đúng {count} phương án khác biệt. Mỗi phương án phải có góc nhìn sư phạm và cấu trúc trực quan riêng:
+   - Phương án 1: Sơ đồ dòng chảy / quy trình ngang (Pipeline Flow).
+   - Phương án 2: Mô hình trung tâm tỏa tia (Radial Network / Hub & Spoke).
+   - Phương án 3: Bảng phân tầng / so sánh 2-3 cột (Layered Architecture / Matrix).
+   - Phương án 4: Sơ đồ tư duy phân nhánh (Mindmap / Hierarchy Tree).
+   - Phương án 5: Tối giản hóa biểu tượng trọng tâm kèm số liệu/chỉ dẫn trực quan (Focus Hero).
+2. 'on_screen_text' trong mỗi phương án TUYỆT ĐỐI KHÔNG QUÁ 40 KÝ TỰ (len <= 40).
+3. 'svg_code': Mã SVG chuẩn 16:9 viewBox="0 0 600 200", class="w-full h-full max-h-40", không background.
+   - Bảng màu: stroke="#475569" (đường nối), fill="#4c1d95" (node chính tím), fill="#0B0F19" stroke="#0ea5e9" hoặc "#10b981" (node phụ). Chữ <text> màu trắng fill="#ffffff".
+4. TUYỆT ĐỐI AN TOÀN SƯ PHẠM (không bạo lực, không nhạy cảm, chuẩn PG-Clean).
+5. Trả về DUY NHẤT JSON:
+{{
+  "alternatives": [
+    {{
+      "variant_id": 1,
+      "title": "Tên ý tưởng ngắn gọn (VD: Sơ đồ dòng chảy 3 bước)",
+      "visual_description": "Mô tả ý sư phạm của phương án này",
+      "visual_symbol": "Từ khóa cốt lõi (tối đa 2 từ)",
+      "on_screen_text": "Chữ cô đọng <= 40 ký tự",
+      "svg_code": "<svg class=\\"w-full h-full max-h-40\\" viewBox=\\"0 0 600 200\\" xmlns=\\"http://www.w3.org/2000/svg\\">...</svg>"
+    }}
+  ]
+}}
+"""
+        start_time = time.time()
+        try:
+            response = self.client.models.generate_content(
+                model=self.model_name,
+                contents=prompt,
+                config=types.GenerateContentConfig(
+                    system_instruction=STYLEBOOK_SYSTEM_PROMPT,
+                    temperature=0.4,
+                    response_mime_type="application/json"
+                )
+            )
+            raw_text = response.text or ""
+            clean_text = raw_text.strip()
+            if clean_text.startswith('```json'):
+                clean_text = clean_text[7:]
+            if clean_text.startswith('```'):
+                clean_text = clean_text[3:]
+            if clean_text.endswith('```'):
+                clean_text = clean_text[:-3]
+            parsed = json.loads(clean_text.strip())
+            alternatives = parsed.get("alternatives", [])
+            # Đảm bảo đúng số lượng tối đa 5
+            alternatives = alternatives[:count]
+            for idx, alt in enumerate(alternatives):
+                alt["variant_id"] = idx + 1
+                if not alt.get("svg_code"):
+                    alt["svg_code"] = self._create_fallback_svg(alt.get("visual_symbol", "Concept"), idx + 1)
+            
+            return {
+                "success": True,
+                "latency_ms": int((time.time() - start_time) * 1000),
+                "alternatives": alternatives
+            }
+        except Exception as e:
+            # Fallback tạo phương án dự phòng chất lượng cao
+            fallback_alts = []
+            anchor = frame_data.get('script_anchor', 'Khái niệm bài giảng')
+            keywords = [frame_data.get('visual_symbol', 'Chủ thể'), 'Mô hình', 'Quy trình', 'Cấu trúc', 'Tổng quan']
+            for i in range(count):
+                kw = keywords[i % len(keywords)]
+                fallback_alts.append({
+                    "variant_id": i + 1,
+                    "title": f"Phương án {i + 1}: Biểu diễn {kw}",
+                    "visual_description": f"Cách tiếp cận {i + 1}: Tối ưu hóa biểu diễn cho '{anchor[:40]}...'",
+                    "visual_symbol": kw,
+                    "on_screen_text": f"{kw}: {anchor[:30]}".strip()[:40],
+                    "svg_code": self._create_fallback_svg(kw, i + 1)
+                })
+            return {
+                "success": True,
+                "latency_ms": int((time.time() - start_time) * 1000),
+                "alternatives": fallback_alts,
+                "warning": f"Dùng fallback do AI: {str(e)}"
+            }
+
+    def _create_fallback_svg(self, symbol: str, style_idx: int) -> str:
+        """Tạo mã SVG đẹp mắt theo nhiều kiểu cấu trúc khác nhau cho fallback."""
+        if style_idx == 1:
+            # Dòng chảy 3 node
+            return (
+                '<svg class="w-full h-full max-h-40" viewBox="0 0 600 200" xmlns="http://www.w3.org/2000/svg">'
+                '<line x1="120" y1="100" x2="480" y2="100" stroke="#475569" stroke-width="3" stroke-dasharray="6,6"/>'
+                '<circle cx="150" cy="100" r="42" fill="#0B0F19" stroke="#0ea5e9" stroke-width="2.5"/>'
+                '<text x="150" y="105" fill="#ffffff" font-family="sans-serif" font-size="12" font-weight="bold" text-anchor="middle">ĐẦU VÀO</text>'
+                '<rect x="255" y="60" width="90" height="80" rx="12" fill="#4c1d95" stroke="#7c3aed" stroke-width="2.5"/>'
+                f'<text x="300" y="105" fill="#ffffff" font-family="sans-serif" font-size="12" font-weight="bold" text-anchor="middle">{symbol[:10]}</text>'
+                '<circle cx="450" cy="100" r="42" fill="#0B0F19" stroke="#10b981" stroke-width="2.5"/>'
+                '<text x="450" y="105" fill="#ffffff" font-family="sans-serif" font-size="12" font-weight="bold" text-anchor="middle">KẾT QUẢ</text>'
+                '</svg>'
+            )
+        elif style_idx == 2:
+            # Trung tâm tỏa tia
+            return (
+                '<svg class="w-full h-full max-h-40" viewBox="0 0 600 200" xmlns="http://www.w3.org/2000/svg">'
+                '<line x1="300" y1="100" x2="160" y2="60" stroke="#475569" stroke-width="2.5"/>'
+                '<line x1="300" y1="100" x2="160" y2="140" stroke="#475569" stroke-width="2.5"/>'
+                '<line x1="300" y1="100" x2="440" y2="60" stroke="#475569" stroke-width="2.5"/>'
+                '<line x1="300" y1="100" x2="440" y2="140" stroke="#475569" stroke-width="2.5"/>'
+                '<circle cx="300" cy="100" r="46" fill="#4c1d95" stroke="#a855f7" stroke-width="3"/>'
+                f'<text x="300" y="105" fill="#ffffff" font-family="sans-serif" font-size="12" font-weight="bold" text-anchor="middle">{symbol[:10]}</text>'
+                '<rect x="110" y="40" width="80" height="38" rx="8" fill="#0B0F19" stroke="#0ea5e9" stroke-width="2"/>'
+                '<text x="150" y="64" fill="#93c5fd" font-family="sans-serif" font-size="11" font-weight="bold" text-anchor="middle">Nhánh A</text>'
+                '<rect x="110" y="120" width="80" height="38" rx="8" fill="#0B0F19" stroke="#0ea5e9" stroke-width="2"/>'
+                '<text x="150" y="144" fill="#93c5fd" font-family="sans-serif" font-size="11" font-weight="bold" text-anchor="middle">Nhánh B</text>'
+                '<rect x="410" y="40" width="80" height="38" rx="8" fill="#0B0F19" stroke="#10b981" stroke-width="2"/>'
+                '<text x="450" y="64" fill="#a7f3d0" font-family="sans-serif" font-size="11" font-weight="bold" text-anchor="middle">Nhánh C</text>'
+                '<rect x="410" y="120" width="80" height="38" rx="8" fill="#0B0F19" stroke="#10b981" stroke-width="2"/>'
+                '<text x="450" y="144" fill="#a7f3d0" font-family="sans-serif" font-size="11" font-weight="bold" text-anchor="middle">Nhánh D</text>'
+                '</svg>'
+            )
+        elif style_idx == 3:
+            # Mô hình phân tầng (Stack)
+            return (
+                '<svg class="w-full h-full max-h-40" viewBox="0 0 600 200" xmlns="http://www.w3.org/2000/svg">'
+                '<rect x="180" y="30" width="240" height="38" rx="8" fill="#4c1d95" stroke="#8b5cf6" stroke-width="2.5"/>'
+                f'<text x="300" y="54" fill="#ffffff" font-family="sans-serif" font-size="12" font-weight="bold" text-anchor="middle">TẦNG ỨNG DỤNG: {symbol[:8]}</text>'
+                '<line x1="300" y1="68" x2="300" y2="82" stroke="#64748b" stroke-width="2"/>'
+                '<rect x="180" y="82" width="240" height="38" rx="8" fill="#0B0F19" stroke="#0ea5e9" stroke-width="2"/>'
+                '<text x="300" y="106" fill="#93c5fd" font-family="sans-serif" font-size="12" font-weight="bold" text-anchor="middle">TẦNG TRUNG GIAN (LOGIC)</text>'
+                '<line x1="300" y1="120" x2="300" y2="134" stroke="#64748b" stroke-width="2"/>'
+                '<rect x="180" y="134" width="240" height="38" rx="8" fill="#0B0F19" stroke="#10b981" stroke-width="2"/>'
+                '<text x="300" y="158" fill="#a7f3d0" font-family="sans-serif" font-size="12" font-weight="bold" text-anchor="middle">TẦNG DỮ LIỆU / CƠ SỞ</text>'
+                '</svg>'
+            )
+        elif style_idx == 4:
+            # So sánh 2 cột đối sánh
+            return (
+                '<svg class="w-full h-full max-h-40" viewBox="0 0 600 200" xmlns="http://www.w3.org/2000/svg">'
+                '<rect x="90" y="45" width="180" height="110" rx="12" fill="#0B0F19" stroke="#3b82f6" stroke-width="2"/>'
+                f'<text x="180" y="80" fill="#93c5fd" font-family="sans-serif" font-size="13" font-weight="bold" text-anchor="middle">HIỆN TRẠNG</text>'
+                '<text x="180" y="115" fill="#e2e8f0" font-family="sans-serif" font-size="11" text-anchor="middle">• Truyền thống</text>'
+                '<line x1="300" y1="50" x2="300" y2="150" stroke="#475569" stroke-width="3" stroke-dasharray="4,4"/>'
+                '<rect x="330" y="45" width="180" height="110" rx="12" fill="#4c1d95" stroke="#a855f7" stroke-width="2.5"/>'
+                f'<text x="420" y="80" fill="#ffffff" font-family="sans-serif" font-size="13" font-weight="bold" text-anchor="middle">{symbol[:10]}</text>'
+                '<text x="420" y="115" fill="#f5d0fe" font-family="sans-serif" font-size="11" font-weight="bold" text-anchor="middle">★ Giải pháp mới</text>'
+                '</svg>'
+            )
+        else:
+            # Hero Highlight với Icon và đồng hồ nhịp
+            return (
+                '<svg class="w-full h-full max-h-40" viewBox="0 0 600 200" xmlns="http://www.w3.org/2000/svg">'
+                '<circle cx="300" cy="95" r="55" fill="#4c1d95" stroke="#c084fc" stroke-width="3"/>'
+                '<polygon points="300,55 335,80 335,120 300,140 265,120 265,80" fill="none" stroke="#38bdf8" stroke-width="2"/>'
+                f'<text x="300" y="100" fill="#ffffff" font-family="sans-serif" font-size="13" font-weight="bold" text-anchor="middle">{symbol[:12]}</text>'
+                '<rect x="180" y="160" width="240" height="24" rx="6" fill="#0B0F19" stroke="#64748b" stroke-width="1.5"/>'
+                '<text x="300" y="176" fill="#cbd5e1" font-family="sans-serif" font-size="10" font-weight="bold" text-anchor="middle">TIÊU ĐIỂM SƯ PHẠM ĐỘC QUYỀN</text>'
+                '</svg>'
+            )
+
+
     # Bảng từ khóa kiểm duyệt nội dung an toàn sư phạm (Responsible AI)
     BLOCKED_SAFETY_KEYWORDS = [
         # Bạo lực & máu me

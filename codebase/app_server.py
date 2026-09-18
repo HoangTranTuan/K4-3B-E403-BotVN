@@ -122,6 +122,33 @@ class StoryboardHandler(SimpleHTTPRequestHandler):
                 self.send_error_response(500, f"Lỗi khi sửa cảnh: {str(e)}")
             return
 
+        elif self.path == "/api/generate_alternatives":
+            try:
+                payload = json.loads(post_data)
+                frame_data = payload.get("frame_data", {})
+                count = int(payload.get("count", 3))
+                feedback = payload.get("feedback", "").strip()
+                full_script = payload.get("full_script", "")
+
+                if not agent:
+                    self.send_error_response(500, "StoryboardAgent chưa sẵn sàng.")
+                    return
+
+                print(f"\n[API /generate_alternatives] Đang tạo {count} phương án thay thế cho Cảnh #{frame_data.get('frame_number')}...")
+                start_t = time.time()
+                alt_res = agent.generate_alternatives(frame_data, count=count, feedback=feedback, full_script=full_script)
+                duration_ms = int((time.time() - start_t) * 1000)
+
+                self.send_response(200)
+                self.send_header("Content-Type", "application/json; charset=utf-8")
+                self.end_headers()
+                self.wfile.write(json.dumps(alt_res, ensure_ascii=False).encode("utf-8"))
+                print(f"[API /generate_alternatives] Đã tạo xong {len(alt_res.get('alternatives', []))} phương án trong {duration_ms}ms!")
+
+            except Exception as e:
+                self.send_error_response(500, f"Lỗi khi tạo phương án: {str(e)}")
+            return
+
         self.send_error_response(404, "Endpoint không tồn tại")
 
     def send_error_response(self, code, message):
@@ -133,8 +160,19 @@ class StoryboardHandler(SimpleHTTPRequestHandler):
 def open_browser():
     time.sleep(1.2)
     url = f"http://localhost:{PORT}"
-    print(f"\n🚀 Đang tự động mở trình duyệt: {url}")
-    webbrowser.open(url)
+    print(f"\n🚀 Đang mở trình duyệt: {url}")
+    # Nếu chạy từ môi trường WSL, tự động mở trình duyệt mặc định ngoài Windows
+    try:
+        if os.path.exists("/proc/version") and "microsoft" in open("/proc/version").read().lower():
+            if os.system(f"cmd.exe /c start {url} >/dev/null 2>&1") == 0:
+                return
+    except Exception:
+        pass
+
+    try:
+        webbrowser.open(url)
+    except Exception:
+        pass
 
 def start_server():
     server_address = ('', PORT)

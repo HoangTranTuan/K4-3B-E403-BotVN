@@ -340,6 +340,81 @@
             </div>
           </div>
         </div>
+
+        <!-- ======================================================== -->
+        <!-- ĐỔI PHƯƠNG ÁN KHÁC CHO CẢNH ĐANG XEM (TỐI ĐA 5 PHƯƠNG ÁN) -->
+        <!-- ======================================================== -->
+        <div class="max-w-4xl mx-auto bg-slate-950 border border-slate-800 rounded-2xl p-5 space-y-4 shadow-xl">
+          <div class="flex flex-col md:flex-row md:items-center justify-between pb-3 border-b border-slate-800 gap-2">
+            <div>
+              <div class="flex items-center gap-2">
+                <span class="text-base">💡</span>
+                <h3 class="text-sm font-bold text-white">Thấy cảnh này chưa hợp? Đổi phương án khác</h3>
+                <span id="alt-current-scene-badge" class="px-2 py-0.5 rounded text-[10px] bg-indigo-950 text-indigo-300 border border-indigo-800 font-mono font-bold">CẢNH 01</span>
+              </div>
+              <p class="text-xs text-slate-400 mt-0.5">Nhập số phương án bạn muốn AI đề xuất (tối đa 5). Xem các phương án bên dưới và bấm <b class="text-emerald-400">"Chọn phương án này"</b> để thay thế.</p>
+            </div>
+            <span class="text-[11px] text-slate-500 italic">Cảnh thay thế sẽ tự động đồng bộ vào Bảng Duyệt & Bàn Giao</span>
+          </div>
+
+          <!-- Bộ điều khiển số phương án + Góp ý + Nút tạo -->
+          <div class="grid grid-cols-1 md:grid-cols-12 gap-3 items-end">
+            <!-- Ô nhập số lượng phương án (tối đa 5) -->
+            <div class="md:col-span-4 space-y-1.5">
+              <label for="alt-count-input" class="block text-[11px] font-bold text-indigo-300">
+                Số phương án khác (1 - 5):
+              </label>
+              <div class="flex items-center gap-2">
+                <input type="number" id="alt-count-input" min="1" max="5" value="3" onchange="validateAltCountInput()" class="w-16 bg-slate-900 border border-indigo-600 rounded-lg p-2 text-center text-sm font-bold text-white focus:outline-none focus:ring-1 focus:ring-indigo-400">
+                <div class="flex items-center gap-1" id="alt-quick-btn-group">
+                  <button type="button" onclick="setAltCount(1)" id="btn-count-1" class="px-2 py-1 bg-slate-900 hover:bg-slate-800 text-[11px] text-slate-300 rounded border border-slate-800">1</button>
+                  <button type="button" onclick="setAltCount(2)" id="btn-count-2" class="px-2 py-1 bg-slate-900 hover:bg-slate-800 text-[11px] text-slate-300 rounded border border-slate-800">2</button>
+                  <button type="button" onclick="setAltCount(3)" id="btn-count-3" class="px-2 py-1 bg-indigo-600 text-[11px] text-white font-bold rounded border border-indigo-500">3</button>
+                  <button type="button" onclick="setAltCount(4)" id="btn-count-4" class="px-2 py-1 bg-slate-900 hover:bg-slate-800 text-[11px] text-slate-300 rounded border border-slate-800">4</button>
+                  <button type="button" onclick="setAltCount(5)" id="btn-count-5" class="px-2 py-1 bg-slate-900 hover:bg-slate-800 text-[11px] text-slate-300 rounded border border-slate-800">5</button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Góp ý định hướng (tùy chọn) -->
+            <div class="md:col-span-5 space-y-1.5">
+              <label for="alt-feedback-input" class="block text-[11px] font-bold text-slate-300">
+                Gợi ý thay đổi (tùy chọn):
+              </label>
+              <input type="text" id="alt-feedback-input" placeholder="VD: Dùng sơ đồ khối 3 bước, đổi sang mô hình trung tâm..." class="w-full bg-slate-900 border border-slate-800 rounded-lg p-2 text-xs text-white placeholder:text-slate-500 focus:outline-none focus:border-indigo-500">
+            </div>
+
+            <!-- Nút gọi AI tạo phương án -->
+            <div class="md:col-span-3">
+              <button id="btn-gen-alts" onclick="generateAlternativesForCurrentScene()" class="w-full py-2.5 px-4 bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 hover:from-indigo-500 hover:via-purple-500 hover:to-pink-500 text-white font-bold text-xs rounded-xl shadow-lg shadow-indigo-600/30 flex items-center justify-center gap-1.5 transition transform active:scale-98 cursor-pointer">
+                <span>⚡ TẠO PHƯƠNG ÁN</span>
+                <span id="btn-gen-alts-tag" class="text-[10px] bg-white/20 px-1.5 py-0.5 rounded font-mono">Tối đa 5</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Loading Spinner khi gọi AI -->
+          <div id="alts-loading-container" class="hidden p-6 bg-slate-900/90 rounded-xl border border-dashed border-indigo-500/50 text-center space-y-3">
+            <div class="w-7 h-7 mx-auto border-3 border-t-indigo-400 border-r-purple-400 border-b-transparent border-l-transparent rounded-full animate-spin"></div>
+            <p class="text-xs text-indigo-300 font-medium" id="alts-loading-text">AI đang phân tích câu thoại và tạo các phương án thị giác khác...</p>
+          </div>
+
+          <!-- Thông báo khi áp dụng thành công -->
+          <div id="alts-success-toast" class="hidden p-3 bg-emerald-950/90 border border-emerald-700/80 rounded-xl text-xs text-emerald-300 flex items-center justify-between">
+            <div class="flex items-center gap-2">
+              <span class="font-bold text-sm">✔</span>
+              <span id="alts-success-msg">Đã thay thế cảnh hiện tại thành công!</span>
+            </div>
+            <button onclick="document.getElementById('alts-success-toast').classList.add('hidden')" class="text-emerald-400 hover:text-white text-xs">✕</button>
+          </div>
+
+          <!-- Container hiển thị các phương án đề xuất -->
+          <div id="alts-results-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 pt-1">
+            <div class="col-span-full py-6 text-center text-slate-500 text-xs border border-dashed border-slate-800 rounded-xl">
+              Chưa có phương án nào được tạo. Hãy chọn số lượng (tối đa 5) và nhấn <b>"TẠO PHƯƠNG ÁN"</b> ở trên.
+            </div>
+          </div>
+        </div>
       </div>
     </section>
 
@@ -360,27 +435,16 @@
           </button>
         </div>
 
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          <div class="space-y-3">
-            <div class="flex items-center justify-between">
-              <span class="text-xs font-bold text-indigo-400 uppercase tracking-wider">1. Handoff Spec JSON:</span>
-              <button onclick="copyToClipboard('spec-export-textarea')" class="px-2.5 py-1 text-xs bg-indigo-950 hover:bg-indigo-900 text-indigo-300 border border-indigo-800 rounded-lg transition">
-                📋 Sao chép JSON
-              </button>
-            </div>
-            <textarea id="spec-export-textarea" rows="16" readonly class="w-full bg-slate-950 border border-slate-800 rounded-xl p-4 text-xs font-mono text-emerald-400 focus:outline-none resize-none"></textarea>
-          </div>
-
-          <div class="space-y-3">
-            <div class="flex items-center justify-between">
-              <span class="text-xs font-bold text-emerald-400 uppercase tracking-wider">2. Báo Cáo Kiểm Định Sổ Quy Ước (Audit Log):</span>
-              <button onclick="copyToClipboard('audit-export-textarea')" class="px-2.5 py-1 text-xs bg-emerald-950 hover:bg-emerald-900 text-emerald-300 border border-emerald-800 rounded-lg transition">
-                📋 Sao chép Báo cáo
-              </button>
-            </div>
-            <textarea id="audit-export-textarea" rows="16" readonly class="w-full bg-slate-950 border border-slate-800 rounded-xl p-4 text-xs font-mono text-slate-300 focus:outline-none resize-none leading-relaxed"></textarea>
-          </div>
+        <!-- Phần khung chỉ có mỗi nút Tải xuống -->
+        <div class="py-24 flex flex-col items-center justify-center bg-slate-950 border border-slate-800 rounded-2xl shadow-inner">
+          <button id="btn-download-pdf" onclick="downloadHandoff()" class="px-10 py-3.5 bg-gradient-to-r from-indigo-600 via-purple-600 to-emerald-600 hover:from-indigo-500 hover:via-purple-500 hover:to-emerald-500 text-white font-bold text-sm rounded-xl shadow-lg shadow-indigo-600/30 flex items-center justify-center gap-2 cursor-pointer transition transform active:scale-95">
+            <span>Tải xuống</span>
+          </button>
         </div>
+
+        <!-- Hidden textareas để giữ logic lưu trữ và JS không bị lỗi -->
+        <textarea id="spec-export-textarea" class="hidden"></textarea>
+        <textarea id="audit-export-textarea" class="hidden"></textarea>
       </div>
     </section>
 
@@ -834,6 +898,12 @@
 
       const pct = ((idx + 1) / activeScenes.length) * 100;
       document.getElementById("player-progress-fill").style.width = `${pct}%`;
+
+      // Cập nhật nhãn cảnh hiện tại trong panel tạo phương án thay thế
+      const altSceneBadge = document.getElementById("alt-current-scene-badge");
+      if (altSceneBadge) {
+        altSceneBadge.innerText = `CẢNH 0${s.cau}`;
+      }
     }
 
     function toggleAnimaticPlay() {
@@ -866,9 +936,244 @@
     }
 
     // ========================================================
+    // TÍNH NĂNG TẠO & CHỌN PHƯƠNG ÁN THAY THẾ (TỐI ĐA 5)
+    // ========================================================
+    let currentAlternatives = [];
+
+    function setAltCount(n) {
+      n = Math.max(1, Math.min(parseInt(n) || 1, 5));
+      const input = document.getElementById("alt-count-input");
+      if (input) input.value = n;
+      for (let i = 1; i <= 5; i++) {
+        const btn = document.getElementById(`btn-count-${i}`);
+        if (btn) {
+          if (i === n) {
+            btn.className = "px-2 py-1 bg-indigo-600 text-[11px] text-white font-bold rounded border border-indigo-500";
+          } else {
+            btn.className = "px-2 py-1 bg-slate-900 hover:bg-slate-800 text-[11px] text-slate-300 rounded border border-slate-800";
+          }
+        }
+      }
+    }
+
+    function validateAltCountInput() {
+      const input = document.getElementById("alt-count-input");
+      if (!input) return;
+      let val = parseInt(input.value) || 1;
+      val = Math.max(1, Math.min(val, 5));
+      setAltCount(val);
+    }
+
+    async function generateAlternativesForCurrentScene() {
+      if (activeScenes.length === 0) {
+        alert("Chưa có cảnh nào để tạo phương án! Hãy quay lại Bước 1 để dựng kịch bản.");
+        return;
+      }
+      const s = activeScenes[animaticIndex];
+      if (!s) return;
+
+      const input = document.getElementById("alt-count-input");
+      let count = parseInt(input ? input.value : 3) || 3;
+      count = Math.max(1, Math.min(count, 5));
+
+      const feedback = (document.getElementById("alt-feedback-input")?.value || "").trim();
+      const loadingBox = document.getElementById("alts-loading-container");
+      const loadingText = document.getElementById("alts-loading-text");
+      const resultsContainer = document.getElementById("alts-results-container");
+      const successToast = document.getElementById("alts-success-toast");
+
+      if (successToast) successToast.classList.add("hidden");
+      if (loadingBox) {
+        loadingBox.classList.remove("hidden");
+        if (loadingText) loadingText.innerText = `AI đang thiết kế ${count} phương án khác cho Cảnh 0${s.cau}...`;
+      }
+
+      try {
+        const payload = {
+          frame_data: {
+            frame_number: s.cau,
+            duration_seconds: s.duration_seconds,
+            timeline: s.chuoiMocTu,
+            script_anchor: s.loiDoc,
+            trigger_word: s.triggerWord,
+            on_screen_text: s.onScreenText,
+            visual_description: s.pedagogicalIntent,
+            visual_symbol: s.visualSymbol
+          },
+          count: count,
+          feedback: feedback,
+          full_script: document.getElementById("script-input-area")?.value || ""
+        };
+
+        const res = await fetch("/api/generate_alternatives", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload)
+        });
+
+        const data = await res.json();
+        if (loadingBox) loadingBox.classList.add("hidden");
+
+        if (!data.success || !data.alternatives || data.alternatives.length === 0) {
+          alert(`Không thể tạo phương án: ${data.error || 'Lỗi từ hệ thống'}`);
+          return;
+        }
+
+        currentAlternatives = data.alternatives;
+        renderAlternativesGrid(currentAlternatives, s.cau);
+
+      } catch (err) {
+        if (loadingBox) loadingBox.classList.add("hidden");
+        alert(`Lỗi kết nối server: ${err.message}. Hãy chắc chắn server app_server.py đang chạy!`);
+      }
+    }
+
+    function renderAlternativesGrid(alts, sceneNum) {
+      const container = document.getElementById("alts-results-container");
+      if (!container) return;
+      container.innerHTML = "";
+
+      alts.forEach((alt, idx) => {
+        const card = document.createElement("div");
+        card.id = `alt-card-${idx}`;
+        card.className = "bg-slate-900 border border-slate-800 hover:border-indigo-600/70 rounded-xl p-3.5 flex flex-col justify-between space-y-3 transition shadow-md group";
+
+        const textLen = alt.on_screen_text ? alt.on_screen_text.length : 0;
+        const charPill = textLen <= 40
+          ? `<span class="px-1.5 py-0.5 rounded text-[10px] bg-emerald-950 text-emerald-300 border border-emerald-800 font-mono font-semibold">${textLen}/40 ký tự</span>`
+          : `<span class="px-1.5 py-0.5 rounded text-[10px] bg-rose-950 text-rose-300 border border-rose-800 font-bold font-mono">⚠️ ${textLen}/40</span>`;
+
+        card.innerHTML = `
+          <div class="space-y-2.5">
+            <div class="flex items-center justify-between text-[11px] pb-1.5 border-b border-slate-800">
+              <span class="font-bold text-indigo-400 font-mono">PHƯƠNG ÁN 0${alt.variant_id || (idx + 1)}</span>
+              <span class="text-emerald-400 font-semibold text-[10px] font-mono">● ${alt.visual_symbol || 'Ý tưởng mới'}</span>
+            </div>
+
+            <div class="text-xs font-semibold text-slate-200 line-clamp-1">
+              ${alt.title || `Phương án thay thế #${idx + 1}`}
+            </div>
+
+            <!-- Khung hình SVG xem trước 16:9 -->
+            <div class="relative w-full aspect-video rounded-lg overflow-hidden border border-slate-800 bg-[#0B0F19] p-2 flex items-center justify-center shadow-inner">
+              <div class="w-full h-full flex items-center justify-center">
+                ${alt.svg_code || '<span class="text-slate-500 text-xs">AI chưa sinh SVG</span>'}
+              </div>
+              <div class="absolute top-2 inset-x-2 flex justify-center pointer-events-none">
+                <span class="px-2 py-0.5 bg-black/80 backdrop-blur-sm border border-indigo-500/40 rounded text-white font-bold text-[10px] text-center shadow line-clamp-1">
+                  ${alt.on_screen_text}
+                </span>
+              </div>
+            </div>
+
+            <!-- Chữ màn hình -->
+            <div class="bg-slate-950 p-2 rounded-lg border border-slate-800 text-[11px] space-y-1">
+              <div class="flex items-center justify-between">
+                <span class="text-[10px] text-slate-500 font-semibold">CHỮ MÀN HÌNH:</span>
+                ${charPill}
+              </div>
+              <p class="font-medium text-slate-100 line-clamp-2">"${alt.on_screen_text}"</p>
+            </div>
+
+            <div class="text-[11px] text-slate-400 leading-snug line-clamp-2">
+              <b class="text-slate-300">Ý sư phạm:</b> ${alt.visual_description}
+            </div>
+          </div>
+
+          <!-- Nút bấm chọn phương án này để thay thế -->
+          <div class="pt-2 border-t border-slate-800">
+            <button onclick="applyAlternative(${idx})" class="w-full py-2 px-3 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white text-xs font-bold rounded-lg shadow transition flex items-center justify-center gap-1.5 cursor-pointer">
+              <span>✔ Chọn phương án này</span>
+            </button>
+          </div>
+        `;
+        container.appendChild(card);
+      });
+    }
+
+    function applyAlternative(altIndex) {
+      if (!currentAlternatives || !currentAlternatives[altIndex]) return;
+      const chosen = currentAlternatives[altIndex];
+      const s = activeScenes[animaticIndex];
+      if (!s) return;
+
+      // Cập nhật cảnh hiện tại bằng phương án đã chọn
+      s.onScreenText = chosen.on_screen_text || s.onScreenText;
+      s.pedagogicalIntent = chosen.visual_description || s.pedagogicalIntent;
+      s.visualSymbol = chosen.visual_symbol || s.visualSymbol;
+      if (chosen.svg_code) {
+        s.svgCode = chosen.svg_code;
+      }
+
+      // Cập nhật ngay màn hình Player
+      updateAnimaticDisplay(animaticIndex);
+
+      // Đồng bộ sang Bảng Duyệt Storyboard (Bước 2)
+      renderStoryboardGrid();
+
+      // Đồng bộ sang Bàn Giao Handoff Spec (Bước 4)
+      updateHandoffExport();
+
+      // Hiển thị thông báo thành công
+      const toast = document.getElementById("alts-success-toast");
+      const msg = document.getElementById("alts-success-msg");
+      if (toast && msg) {
+        msg.innerText = `Đã thay thế Cảnh 0${s.cau} bằng "Phương án 0${chosen.variant_id || (altIndex + 1)}: ${chosen.title || ''}"! Bảng duyệt và bàn giao đã đồng bộ.`;
+        toast.classList.remove("hidden");
+      }
+
+      // Đánh dấu thẻ phương án được chọn
+      currentAlternatives.forEach((_, i) => {
+        const c = document.getElementById(`alt-card-${i}`);
+        if (c) {
+          if (i === altIndex) {
+            c.className = "bg-slate-900 border-2 border-emerald-500 rounded-xl p-3.5 flex flex-col justify-between space-y-3 transition shadow-lg shadow-emerald-950/50";
+            const btn = c.querySelector("button");
+            if (btn) {
+              btn.className = "w-full py-2 px-3 bg-emerald-700 text-white text-xs font-bold rounded-lg shadow flex items-center justify-center gap-1.5 cursor-default";
+              btn.innerHTML = "<span>★ ĐANG ÁP DỤNG</span>";
+            }
+          } else {
+            c.className = "bg-slate-900/60 border border-slate-800 rounded-xl p-3.5 flex flex-col justify-between space-y-3 transition opacity-75";
+            const btn = c.querySelector("button");
+            if (btn) {
+              btn.className = "w-full py-2 px-3 bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-bold rounded-lg shadow transition flex items-center justify-center gap-1.5 cursor-pointer";
+              btn.innerHTML = "<span>Đổi sang phương án này</span>";
+            }
+          }
+        }
+      });
+    }
+
+    // ========================================================
     // BƯỚC 4: HANDOFF EXPORT
     // ========================================================
     function updateHandoffExport() {
+      const allPass = activeScenes.every(s => s.onScreenText && s.onScreenText.length <= 40);
+      const auditText = `=================================================================\n` +
+        `BÁO CÁO KIỂM ĐỊNH SỔ QUY ƯỚC & LƯỚI AN TOÀN (STORYBOARDAI)\n` +
+        `Dự án: Track C · Lesson Studio (Đề C4)\n` +
+        `Nhóm: K4-3B-E403-BotVN (Phạm Đình Hải, Trần Tuấn Hoàng, Nguyễn Văn Đại)\n` +
+        `Mô hình AI: Google Gemini (gemini-flash-lite-latest)\n` +
+        `Thời gian xuất bản: ${new Date().toLocaleString('vi-VN')}\n` +
+        `Tổng số cảnh đã rà soát: ${activeScenes.length} cảnh\n` +
+        `=================================================================\n\n` +
+        `1. LƯỚI VÙNG AN TOÀN (SAFE ZONE GRID):\n` +
+        `   [✔ ĐẠT] x: 80 -> 1840 (Lề an toàn 80px).\n` +
+        `   [✔ ĐẠT] y: 250 -> 960 (Chừa dải trên HUD, dải dưới phụ đề).\n` +
+        `   [${allPass ? '✔ ĐẠT' : '⚠️ CẢNH BÁO'}] Chữ trên màn hình: ${allPass ? '100% cảnh <= 40 ký tự' : 'Có cảnh vi phạm độ dài'}.\n\n` +
+        `2. CHẤT LƯỢNG HÌNH ẢNH (CONCEPT ART ENGINE):\n` +
+        `   [✔ ĐẠT] Độ phân giải cao 16:9, màu sắc điện ảnh, bám sát từng chi tiết bài giảng.\n` +
+        `   [✔ ĐẠT] Không sử dụng hình học đơn điệu, tái hiện chân thực không gian và con người.\n\n` +
+        `3. KIỂM SOÁT ĐẠO ĐỨC & KHÔNG BỊA SỐ LIỆU (CA KHÓ 13 CỦA HẢI):\n` +
+        `   [✔ ĐẠT] Lời đọc không có con số cụ thể -> AI tuyệt đối không tự bịa số liệu ảo.\n\n` +
+        `4. LÁT CẮT SỬA CỤC BỘ (GRANULAR EDIT):\n` +
+        `   [✔ ĐẠT] Sửa 1 câu chỉ cập nhật đúng ảnh phác thảo của câu đó, giữ nguyên các câu khác.\n\n` +
+        `5. AN TOÀN NỘI DUNG SƯ PHẠM (RESPONSIBLE AI & CONTENT GUARDRAIL):\n` +
+        `   [✔ ĐẠT] 100% Cảnh kiểm duyệt: Tuyệt đối không máu me, bạo lực mạnh, không khỏa thân hay cơ thể trần chuồng.\n` +
+        `   [✔ ĐẠT] Chuẩn PG-Clean, nhân vật trang phục lịch sự, an toàn tuyệt đối cho môi trường giáo dục.\n\n` +
+        `KẾT LUẬN: Đủ điều kiện bàn giao cho Motion Designer / Coding Agent dựng video.`;
+
       const handoffSpec = {
         project: "StoryboardAI - Lesson Studio (Track C · C4)",
         team: "K4-3B-E403-BotVN (Phạm Đình Hải, Trần Tuấn Hoàng, Nguyễn Văn Đại)",
@@ -895,39 +1200,189 @@
           imageUrl: s.imageUrl,
           imagePrompt: s.imagePrompt,
           compliance: (s.onScreenText && s.onScreenText.length <= 40) ? "PASS" : "FAIL_OVER_40_CHARS"
-        }))
+        })),
+        complianceAuditReport: auditText
       };
 
       const specBox = document.getElementById("spec-export-textarea");
       if (specBox) specBox.value = JSON.stringify(handoffSpec, null, 2);
 
-      const allPass = activeScenes.every(s => s.onScreenText && s.onScreenText.length <= 40);
-      const auditText = `=================================================================\n` +
-        `BÁO CÁO KIỂM ĐỊNH SỔ QUY ƯỚC & LƯỚI AN TOÀN (STORYBOARDAI)\n` +
-        `Dự án: Track C · Lesson Studio (Đề C4)\n` +
-        `Nhóm: K4-3B-E403-BotVN (Phạm Đình Hải, Trần Tuấn Hoàng, Nguyễn Văn Đại)\n` +
-        `Mô hình AI: Google Gemini (gemini-flash-lite-latest)\n` +
-        `Thời gian xuất bản: ${new Date().toLocaleString('vi-VN')}\n` +
-        `Tổng số cảnh đã rà soát: ${activeScenes.length} cảnh\n` +
-        `=================================================================\n\n` +
-        `1. LƯỚI VÙNG AN TOÀN (SAFE ZONE GRID):\n` +
-        `   [✔ ĐẠT] x: 80 -> 1840 (Lề an toàn 80px).\n` +
-        `   [✔ ĐẠT] y: 250 -> 960 (Chừa dải trên HUD, dải dưới phụ đề).\n` +
-        `   [${allPass ? '✔ ĐẠT' : '⚠️ CẢNH BÁO'}] Chữ trên màn hình: ${allPass ? '100% cảnh <= 40 ký tự' : 'Có cảnh vi phạm độ dài'}.\n\n` +
-        `2. CHẤT LƯỢNG HÌNH ẢNH (CONCEPT ART ENGINE):\n` +
-        `   [✔ ĐẠT] Độ phân giải cao 16:9, màu sắc điện ảnh, bám sát từng chi tiết bài giảng.\n` +
-        `   [✔ ĐẠT] Không sử dụng hình học đơn điệu, tái hiện chân thực không gian và con người.\n\n` +
-        `3. KIỂM SOÁT ĐẠO ĐỨC & KHÔNG BỊA SỐ LIỆU (CA KHÓ 13 CỦA HẢI):\n` +
-        `   [✔ ĐẠT] Lời đọc không có con số cụ thể -> AI tuyệt đối không tự bịa số liệu ảo.\n\n` +
-        `4. LÁT CẮT SỬA CỤC BỘ (GRANULAR EDIT):\n` +
-        `   [✔ ĐẠT] Sửa 1 câu chỉ cập nhật đúng ảnh phác thảo của câu đó, giữ nguyên các câu khác.\n\n` +
-        `5. AN TOÀN NỘI DUNG SƯ PHẠM (RESPONSIBLE AI & CONTENT GUARDRAIL):\n` +
-        `   [✔ ĐẠT] 100% Cảnh kiểm duyệt: Tuyệt đối không máu me, bạo lực mạnh, không khỏa thân hay cơ thể trần chuồng.\n` +
-        `   [✔ ĐẠT] Chuẩn PG-Clean, nhân vật trang phục lịch sự, an toàn tuyệt đối cho môi trường giáo dục.\n\n` +
-        `KẾT LUẬN: Đủ điều kiện bàn giao cho Motion Designer / Coding Agent dựng video.`;
-
       const auditBox = document.getElementById("audit-export-textarea");
       if (auditBox) auditBox.value = auditText;
+    }
+
+    function downloadHandoff() {
+      if (!activeScenes || activeScenes.length === 0) {
+        alert("Chưa có dữ liệu phân cảnh để xuất PDF! Vui lòng nạp kịch bản ở Bước 1 trước.");
+        return;
+      }
+
+      // Sắp xếp các cảnh theo đúng thứ tự (Cảnh 1, Cảnh 2, Cảnh 3...)
+      const sortedScenes = [...activeScenes].sort((a, b) => (parseInt(a.cau) || 0) - (parseInt(b.cau) || 0));
+      const title = currentSceneTitle || "Kịch bản phân cảnh bài giảng";
+      const concept = currentCoreConcept || "Ý niệm sư phạm";
+
+      // Tạo giao diện từng cảnh theo thứ tự
+      const scenesHtml = sortedScenes.map((s) => {
+        const charCount = s.onScreenText ? s.onScreenText.length : 0;
+        const charPill = charCount <= 40 
+          ? `<span style="background: #dcfce7; color: #166534; padding: 2px 8px; border-radius: 4px; font-weight: bold; font-size: 11px; display: inline-block;">${charCount}/40 ký tự (Đạt chuẩn)</span>`
+          : `<span style="background: #ffe4e6; color: #9f1239; padding: 2px 8px; border-radius: 4px; font-weight: bold; font-size: 11px; display: inline-block;">⚠️ ${charCount}/40 ký tự</span>`;
+
+        let svgCode = s.svgCode ? s.svgCode.replace(/max-h-40/g, 'max-h-52') : '<span style="color: #64748b; font-size: 12px;">Chưa có đồ họa SVG</span>';
+
+        return `
+          <div class="pdf-scene-card" style="border: 1.5px solid #cbd5e1; border-radius: 12px; margin-bottom: 24px; overflow: hidden; page-break-inside: avoid; break-inside: avoid; background: #ffffff; box-shadow: 0 1px 4px rgba(0,0,0,0.05);">
+            <!-- Header phân cảnh -->
+            <div style="background: #f1f5f9; padding: 10px 16px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1.5px solid #cbd5e1;">
+              <span style="font-weight: 800; color: #4338ca; font-size: 14px; font-family: monospace; letter-spacing: 0.5px;">CẢNH 0${s.cau}</span>
+              <span style="font-family: monospace; font-size: 11px; color: #475569; font-weight: 600;">Mốc từ: ${s.chuoiMocTu} (${s.duration_seconds || 6} giây)</span>
+            </div>
+
+            <!-- Khung hình minh họa SVG 16:9 -->
+            <div style="background: #0B0F19; width: 100%; height: 210px; display: flex; align-items: center; justify-content: center; position: relative; overflow: hidden;">
+              <div style="width: 90%; height: 90%; display: flex; align-items: center; justify-content: center;">
+                ${svgCode}
+              </div>
+              <div style="position: absolute; top: 8px; left: 50%; transform: translateX(-50%); background: rgba(0,0,0,0.85); color: #ffffff; border: 1px solid rgba(99,102,241,0.6); padding: 4px 14px; border-radius: 6px; font-size: 11px; font-weight: bold; max-width: 85%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                ${s.onScreenText || ''}
+              </div>
+            </div>
+
+            <!-- Chi tiết phân cảnh -->
+            <div style="padding: 14px 16px; display: grid; grid-template-columns: 1fr 1fr; gap: 10px; font-size: 12px; line-height: 1.5; color: #1e293b; background: #ffffff;">
+              <div style="grid-column: span 2;">
+                <div style="font-size: 10px; font-weight: 700; color: #64748b; text-transform: uppercase;">🗣️ Lời đọc bài giảng (Voice-over):</div>
+                <div style="font-style: italic; color: #0f172a; margin-top: 2px;">"${s.loiDoc}"</div>
+              </div>
+
+              <div>
+                <div style="font-size: 10px; font-weight: 700; color: #64748b; text-transform: uppercase;">🔤 Chữ màn hình (On-Screen Text):</div>
+                <div style="font-weight: 700; margin-top: 2px;">"${s.onScreenText}" ${charPill}</div>
+              </div>
+
+              <div>
+                <div style="font-size: 10px; font-weight: 700; color: #64748b; text-transform: uppercase;">🎯 Biểu tượng cốt lõi:</div>
+                <div style="font-weight: 700; color: #4338ca; margin-top: 2px;">${s.visualSymbol || 'Chủ thể'} (Trigger: "${s.triggerWord || 'Key'}")</div>
+              </div>
+
+              <div style="grid-column: span 2;">
+                <div style="font-size: 10px; font-weight: 700; color: #64748b; text-transform: uppercase;">💡 Ý đồ sư phạm:</div>
+                <div style="color: #334155; margin-top: 2px;">${s.pedagogicalIntent || ''}</div>
+              </div>
+            </div>
+          </div>
+        `;
+      }).join('');
+
+      const fullPrintHtml = `
+        <!DOCTYPE html>
+        <html lang="vi">
+        <head>
+          <meta charset="UTF-8">
+          <title>${title} - Storyboard Spec</title>
+          <style>
+            @page {
+              size: A4 portrait;
+              margin: 12mm 10mm;
+            }
+            * {
+              box-sizing: border-box;
+              -webkit-print-color-adjust: exact !important;
+              print-color-adjust: exact !important;
+            }
+            body {
+              font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+              color: #0f172a;
+              background: #ffffff;
+              margin: 0;
+              padding: 0;
+            }
+            @media print {
+              .no-print { display: none !important; }
+              body { background: #ffffff !important; }
+              .pdf-scene-card { page-break-inside: avoid !important; break-inside: avoid !important; }
+            }
+          </style>
+        </head>
+        <body>
+          <!-- Thanh công cụ hỗ trợ người dùng khi xem trước -->
+          <div class="no-print" style="position: sticky; top: 0; z-index: 1000; background: #1e1b4b; color: #ffffff; padding: 12px 24px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 4px 15px rgba(0,0,0,0.3);">
+            <div>
+              <span style="font-weight: 800; font-size: 14px;">📄 Bản xem trước kịch bản phân cảnh PDF (${sortedScenes.length} cảnh sắp xếp theo thứ tự)</span>
+              <span style="font-size: 12px; color: #a5b4fc; margin-left: 12px;">Hộp thoại in đã được mở để bạn lưu file PDF.</span>
+            </div>
+            <div style="display: flex; gap: 10px;">
+              <button onclick="window.print()" style="padding: 8px 18px; background: #10b981; color: white; border: none; border-radius: 8px; font-weight: bold; font-size: 13px; cursor: pointer; box-shadow: 0 2px 8px rgba(16,185,129,0.4);">
+                📥 Lưu thành file PDF (Ctrl + P)
+              </button>
+              <button onclick="window.close()" style="padding: 8px 14px; background: #334155; color: white; border: none; border-radius: 8px; font-size: 13px; cursor: pointer;">
+                ✕ Đóng
+              </button>
+            </div>
+          </div>
+
+          <div style="max-width: 800px; margin: 0 auto; padding: 24px;">
+            <!-- Header Tiêu Đề PDF -->
+            <div style="border-bottom: 2.5px solid #4338ca; padding-bottom: 14px; margin-bottom: 24px;">
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+                <span style="font-size: 11px; font-weight: 800; color: #4338ca; text-transform: uppercase; letter-spacing: 0.8px;">STORYBOARDAI · LESSON STUDIO (TRACK C · C4)</span>
+                <span style="font-size: 10px; color: #64748b;">1920×1080 @ 30fps | Safe Zone Compliant</span>
+              </div>
+              <h1 style="font-size: 22px; font-weight: 800; color: #1e1b4b; margin: 0 0 6px 0;">${title}</h1>
+              <div style="font-size: 12px; color: #475569;">
+                <b>Khái niệm cốt lõi:</b> ${concept} &nbsp;·&nbsp; <b>Tổng số cảnh:</b> ${sortedScenes.length} cảnh sắp xếp theo thứ tự
+              </div>
+            </div>
+
+            <!-- Danh sách các phân cảnh theo thứ tự -->
+            <div>
+              ${scenesHtml}
+            </div>
+
+            <!-- Footer PDF -->
+            <div style="border-top: 1px solid #e2e8f0; padding-top: 12px; margin-top: 24px; text-align: center; font-size: 10px; color: #94a3b8;">
+              Kịch bản được thiết kế từ hệ thống StoryboardAI · Nhóm K4-3B-E403-BotVN (Phạm Đình Hải, Trần Tuấn Hoàng, Nguyễn Văn Đại) · Xuất ngày ${new Date().toLocaleDateString('vi-VN')}
+            </div>
+          </div>
+        </body>
+        </html>
+      `;
+
+      // Mở cửa sổ in PDF chuẩn của trình duyệt (Blink/Chromium Engine)
+      const printWin = window.open('', '_blank');
+      if (printWin) {
+        printWin.document.open();
+        printWin.document.write(fullPrintHtml);
+        printWin.document.close();
+        printWin.focus();
+        setTimeout(() => {
+          printWin.print();
+        }, 350);
+      } else {
+        // Fallback dùng iframe nếu popup bị chặn
+        let iframe = document.getElementById("pdf-print-iframe");
+        if (iframe) iframe.remove();
+        iframe = document.createElement("iframe");
+        iframe.id = "pdf-print-iframe";
+        iframe.style.position = "fixed";
+        iframe.style.right = "0";
+        iframe.style.bottom = "0";
+        iframe.style.width = "0";
+        iframe.style.height = "0";
+        iframe.style.border = "none";
+        document.body.appendChild(iframe);
+
+        const doc = iframe.contentWindow.document;
+        doc.open();
+        doc.write(fullPrintHtml);
+        doc.close();
+
+        setTimeout(() => {
+          iframe.contentWindow.focus();
+          iframe.contentWindow.print();
+        }, 350);
+      }
     }
 
     function copyToClipboard(id) {
