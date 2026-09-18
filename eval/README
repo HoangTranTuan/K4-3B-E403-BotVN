@@ -1,0 +1,46 @@
+# Eval Pack v2 — C4 StoryboardAI (MVP 1.5 ngày)
+
+Bộ này đã được **rút gọn theo đúng flow MVP**:
+
+`Nhập lời đọc → AI phân tích từng câu → xác định ý → đề xuất hình → on-screen text → ảnh phác → storyboard → review 1 scene → sửa riêng scene → export`.
+
+## File
+
+- `golden_set.json`: 20 case chuẩn để chạy tự động/API.
+- `golden_set.csv`: cùng 20 case ở dạng bảng.
+- `input_grid.md`: ma trận 4 lớp khó bắt buộc + cách 20 case bám flow MVP.
+- `eval_results.csv`: template điền PASS/FAIL khi chạy agent.
+
+## Phân bổ 20 case theo chức năng MVP
+
+- **C4-001 → C4-005 — Grounding:** không bịa số, dữ kiện, ngày giờ.
+- **C4-006 → C4-010 — Ambiguity:** biến câu trừu tượng/nhiều ý thành hình dễ hiểu mà không thêm claim.
+- **C4-011 → C4-015 — Visual + On-screen text:** hình đúng ý, chữ ngắn (tối đa 40 ký tự), bỏ yêu cầu ngoài phạm vi.
+- **C4-016 → C4-018 — Consistency:** khái niệm/nhân vật lặp lại giữ cùng quy ước hình ảnh.
+- **C4-019 → C4-020 — Single-scene edit:** sửa đúng scene/trường được yêu cầu, scene khác giữ nguyên.
+
+## 4 lớp User Input Grid vẫn được giữ
+
+1. `source_truth` — nguồn sự thật / không bịa.
+2. `ambiguity` — mơ hồ / thiếu vật thể cụ thể.
+3. `out_of_scope` — logo, người thật, số liệu không có nguồn.
+4. `domain_consistency` — khái niệm lặp lại và sửa cục bộ một scene.
+
+## Cách chấm nhanh CP3
+
+1. Chạy từng case qua agent.
+2. Lưu output JSON (nếu có) vào `eval/outputs/`.
+3. Với mỗi case, đánh từng `pass_criteria` là PASS/FAIL.
+4. `overall = PASS` chỉ khi tất cả tiêu chí của case đều PASS.
+5. Demo tối thiểu 5 case đại diện: **001, 006, 011, 016, 019**.
+
+## Chỉ số nên báo cáo
+
+- **Grounding Pass Rate** = PASS của C4-001..005 / 5.
+- **Ambiguity Pass Rate** = PASS của C4-006..010 / 5.
+- **Visual/Text Pass Rate** = PASS của C4-011..015 / 5.
+- **Consistency Pass Rate** = PASS của C4-016..018 / 3.
+- **Edit Isolation Pass Rate** = PASS của C4-019..020 / 2.
+- **Overall Pass Rate** = số case PASS / 20.
+
+> Với hackathon 1.5 ngày, không cần hệ thống chấm tự động phức tạp. Manual PASS/FAIL có bằng chứng output là đủ để trình bày rõ CP3.
