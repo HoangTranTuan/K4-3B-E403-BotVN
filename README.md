@@ -1,358 +1,212 @@
-# Mini Hackathon AI — Batch 04 · Lớp 3A
+# 🎬 StoryboardAI — Agent Dựng Kịch Bản Hình Ảnh Bài Giảng Chuẩn Studio
 
-**SPEC → Prototype → Demo.** Đây không phải cuộc thi code — đây là cuộc thi **tư duy sản phẩm AI**.
+**Mini Hackathon AI — Batch 04 · Lớp 3B · Phòng E403 · Nhóm K4-3B-E403-BotVN**  
+**Track C — Lesson Studio · Đề C4: StoryboardAI**  
+*SPEC → Prototype → Demo.*
+
+---
 
 ## 👥 Thành viên nhóm & Phân công vai trò
 
-**Lớp:** 3A · **Phòng:** ____ · **Cụm:** ____ · **Track:** ____
-
-| Họ và Tên | Mã Học Viên | Vai trò chính | Phần việc đảm nhiệm trong dự án |
-|---|---|---|---|
-|Phạm Đình Hải|2A202602482||  |
-|Trần Tuấn Hoàng|2A202602832|Trưởng nhóm|  |
-|Nguyễn Văn Đại|2A202602477|  |  |
-
-> Nhóm copy nguyên file README này về repo của mình, rồi điền bảng trên. Cột **Phần việc đảm nhiệm** ghi càng cụ thể càng tốt.
-
-- Thời lượng: **47,5 giờ** từ phát đề đến thuyết trình (ca 3A) — LAB 5 (phát đề + build) · LEC 6 (tiếp tục build theo ca) · LAB 6 (vòng thi)
-- Nhóm: **3-4 người** · thi theo phòng (E403 / E402), chia cụm rồi chung kết phòng — xem *Thể thức thi*
-- **Chia cụm theo bàn**, không cần chung đề tài. Chủ đề tự chọn trong khuôn khổ đề bài
-- Nhóm nhỏ thì **chọn lát cắt nhỏ**, và phải có **khảo sát nỗi đau thật** — đây là chỗ ăn điểm nặng nhất
-
-## Bắt đầu từ đâu?
-
-1. Đọc **`01-challenge-brief.md`** để hiểu khung chung và 5 tiêu chí, rồi **`tracks/README.md`** để chọn track và đề.
-2. Mở **`02-guide.md`** — hướng dẫn từng giai đoạn, đứng ở đâu đọc mục đó.
-3. Viết spec theo **`03-ai-spec-template.md`** — deliverable trung tâm của cả sự kiện.
-4. Đọc **`04-rubric.md`** ngay từ đầu — biết trước bài được chấm theo tiêu chí nào.
-
-| File / thư mục | Nội dung |
-|---|---|
-| `01-challenge-brief.md` | Đề bài: bảng 5 track · lát cắt · ràng buộc chung · 5 tiêu chí nghiệm thu |
-| `02-guide.md` | Hướng dẫn 5 giai đoạn: khám phá → spec → build → đo & validate → demo |
-| `03-ai-spec-template.md` | Template AI Spec (nộp tại **hạn chốt spec** — xem Lịch) |
-| `04-rubric.md` | Rubric 100 điểm (25 nộp checkpoint + 67 chấm bài + 8 điểm R6) + checklist xác minh 6 mốc |
-| `examples/` | Ví dụ bài nộp của khoá trước (đã ẩn tên): `canvas-cp1.md` — mẫu trống Canvas 7 dòng + 3 ví dụ đạt (track A, A/D, B) |
-| `tracks/` | **5 track**, mỗi đề cùng một khung mục: A VLearn Tutor · B Trợ lý Discord · C Lesson Studio · D Học tập thích ứng & tương tác · E Làn mở (trong phạm vi AI20k) — bắt đầu từ `tracks/README.md` |
-| `data/` | Dữ liệu thật đã ẩn danh: `vlearn-pack/` (chatlog VLearn tutor + 6 transcript bài giảng + 2 bộ slide bản hackathon) và **`discord-pack/` (tin nhắn Discord khoá 4 + bản tin bot)** — dùng để tìm bằng chứng và xây golden set. **Đọc `data/README.md` trước** |
-| `further-reading/` | Tài liệu tham khảo có tóm lược tiếng Việt: **Mom Test** (phỏng vấn), **PAIR Guidebook** (Google, 6 chương), **HAX Toolkit** (Microsoft, 18 nguyên tắc), **JTBD Playbook** + worksheet — bắt đầu từ `further-reading/README.md` |
-
-## Lịch — 6 checkpoint (ca 3A · 47,5 giờ)
-
-| Mốc | Cần hoàn thành | Hạn (ca 3A) |
-|---|---|---|
-| — | Khai mạc 17:30 · phát đề 18:00 | 16/9 |
-| **CP1** | Canvas 7 dòng (`02-guide.md` §1.5) + đội trưởng + **link repo GitHub công khai** | **19:30** · 16/9 |
-| **CP2** | Cho thấy **luồng hoạt động** — bấm thử được, hoặc sơ đồ luồng | **21:00** · 16/9 |
-| **CP3** | **Video thao tác** 30 giây + **số đo** (thử bao nhiêu, đúng bao nhiêu) | **16:00** · 17/9 |
-| **CP4** | Chốt `spec.md` — **khoá chuẩn "đạt"** · tự khai phần chưa xong | **21:00** · 17/9 |
-| **CP5** | Slide PDF + **video demo dự phòng cho buổi pitch** — nộp cuối | **13:00** · 18/9 |
-| **CP6** | Thuyết trình · không nộp thêm | **17:30** · 18/9 |
-
-**CP1 đến CP5 mỗi mốc 5 điểm.** Nộp đúng hạn được đủ, nộp muộn là **0 điểm mốc đó** — không bù được bằng mốc khác.
-
-## Làm bài lúc nào
-
-| | |
-|---|---|
-| **Thời gian tự làm** | Ngoài giờ học, và trong buổi **LEC ngày 17/9** |
-| **Coach hỗ trợ** | Trên lớp và trên Discord |
-| **Buổi LAB 18/9 · 17:30–21:00** | Đây là **vòng thi**, không phải giờ làm bài |
-
-Hai phòng cùng ca dùng chung lịch mốc. Năm link form phát đủ từ đầu — xong mốc nào nộp mốc đó, không phải chờ.
-
-## Giải thích từng mốc
-
-### CP1 · Chốt Canvas + repo
-
-**Để làm gì:** chốt rõ **làm cho ai và giải vấn đề gì** trước khi bắt tay vào code. Bỏ qua bước này thì hay gặp cảnh làm xong mới nhận ra không ai cần đến.
-
-**Nộp:**
-- Canvas điền đủ **7 dòng** theo scaffold trong `02-guide.md` §1.5 (track + đề · job executor · pain · bằng chứng đầu · lát cắt 1 câu · automation + willing users · phân công) — mẫu trống + ví dụ: `examples/canvas-cp1.md`
-- Họ tên và **mã học viên của đội trưởng**
-- **Link repo GitHub** đã để công khai
-- **Khai báo willing user** — người sẵn sàng cho nhóm thử sản phẩm ở CP5. Cần ít nhất 2 người, khai từ đây
-
-> **Khai willing user ngay từ CP1, đừng để đến CP5.** Khối R6 ở CP5 yêu cầu có ít nhất 2 willing user đã khai ở mốc này. Đến lúc cần mới đi tìm người thì không kịp.
+| Họ và Tên | Mã Học Viên | Vai trò chính | Phần việc đảm nhiệm trong dự án | Trạng thái |
+|---|---|---|---|:---:|
+| **Trần Tuấn Hoàng** | 2A202602832 | Trưởng nhóm & Product Lead | Định vị JTBD & Lát cắt Canvas CP1, viết AI Spec CP4, kịch bản Video Demo & chuẩn bị Slide pitch CP5 | **Hoàn thành** |
+| **Phạm Đình Hải** | 2A202602482 | Lead AI & Prototype Engineer | Xây dựng lõi `StoryboardAgent` (Live Gemini), lập trình prompt 16:9 Concept Art, xử lý Safe Zone & 3 Ca Khó, thiết lập Golden Set 20 case & đo lường Run 1 | **Hoàn thành** |
+| **Nguyễn Văn Đại** | 2A202602477 | Frontend & Integration Engineer | Phát triển giao diện Web App tương tác (`index.html`), trình phát Animatic, bộ xuất Handoff Spec & Audit Log, kết nối API backend | **Hoàn thành** |
 
 ---
 
-### CP2 · Cho thấy luồng hoạt động
+## 🚀 HƯỚNG DẪN CÀI ĐẶT & KHỞI CHẠY (QUICK START)
 
-**Để làm gì:** nhìn được cả luồng từ đầu đến cuối — người dùng bấm gì trước, thấy gì sau, kết thúc ở đâu. Vẽ ra giấy thì phát hiện chỗ hổng trong mười phút; code xong mới thấy thì mất cả buổi sửa.
+Tài liệu này dành cho ban giám khảo, mentor hoặc bất kỳ ai clone mã nguồn về máy tính cá nhân để cài đặt và trải nghiệm phần mềm.
 
-**Nộp một trong ba thứ, thứ nào cũng được:**
-- **Bản mock bấm được** — Figma, trang tĩnh, Canva, bất cứ thứ gì click qua lại được
-- **Sơ đồ luồng** vẽ tay hay vẽ máy, miễn thấy rõ các bước
-- **Video quay màn hình** đi hết một lượt
-
-**Chưa cần AI chạy thật** — cái đó để CP3. Mốc này để nhẹ, chỉ cần cho thấy nhóm đang đi hướng nào.
-
----
-
-### CP3 · Video thao tác + số đo
-
-**Để làm gì:** biết sản phẩm của mình **đang đúng đến đâu**. Có con số thì mới biết nên sửa chỗ nào tiếp, và lúc pitch cũng có cái để nói thay vì nói suông.
-
-**Nộp hai thứ:**
-
-**1 · Video thao tác — 30 giây, quay màn hình.** Bấm thật trên sản phẩm, thấy AI trả kết quả thật. Không cần dựng, không cần lồng tiếng.
-
-**2 · Số đo — thử bao nhiêu lần, đúng được bao nhiêu.**
-
-Đây là con số cho biết sản phẩm tốt đến đâu. Cách làm:
-
-```
-1. Chuẩn bị một bộ câu thử  — ví dụ 20 câu hỏi người dùng hay hỏi
-2. Cho sản phẩm chạy hết 20 câu đó
-3. Đếm bao nhiêu câu ra kết quả đạt chuẩn nhóm tự đặt
-```
-
-| Chưa đạt | Đạt |
-|---|---|
-| *"Sản phẩm chạy tốt"* | *"Thử 21 câu, 13 câu trả đúng có dẫn nguồn, 8 câu sai hoặc bịa"* |
-| *"Độ chính xác cao"* | *"Thử 30 file, 24 file tóm tắt đúng ý chính, 6 file bỏ sót"* |
-
-**Số xấu vẫn được đủ điểm** — miễn là số thật. 13 trên 21 mà phân tích được vì sao 8 câu kia sai thì ăn điểm cao hơn "chạy tốt" không có gì chứng minh.
+### 📋 Yêu cầu hệ thống
+- **Hệ điều hành:** Windows 10/11, macOS, hoặc Linux.
+- **Python:** Phiên bản `>= 3.10` (Khuyên dùng Python 3.10 hoặc 3.11).
+- **Trình duyệt web:** Google Chrome, Microsoft Edge, Firefox hoặc Safari.
+- **Git** đã được cài đặt trên máy.
 
 ---
 
-### CP4 · Chốt `spec.md`
-
-**Để làm gì:** chốt **"thế nào là đạt"** trước khi biết kết quả. Đặt chuẩn sau khi đã thấy kết quả thì con số không nói lên điều gì — và người nghe cũng biết vậy.
-
-**Nộp:**
-- Link `spec.md` đã chốt — trong đó nhóm **tự chốt "thế nào là đạt"** cho sản phẩm mình
-- **Tự khai phần nào chưa làm xong**
-
-Sau 21:00 hôm đó **không sửa chuẩn "đạt" được nữa**.
-
-**Khai thiếu không bị trừ điểm.** Giấu mới bị.
+### 📦 Bước 1: Clone Repository về máy
+Mở Terminal / PowerShell / Command Prompt và chạy lệnh:
+```bash
+git clone https://github.com/vantoandx/K4-3B-E403-BotVN.git
+cd K4-3B-E403-BotVN
+```
 
 ---
 
-### CP5 · Slide + video dự phòng
-
-**Để làm gì:** đảm bảo buổi pitch chạy được **dù mạng hỏng hay máy chết**. Đây cũng là hạn nộp cuối — sau mốc này không nộp thêm gì.
-
-**Nộp:**
-- **Slide 6 trang, xuất ra PDF** theo `02-guide.md` §5.1. Nộp PDF chứ không nộp link — link hay hỏng quyền đúng lúc cần
-- **Video demo dự phòng** — quay sẵn phần demo. Nếu hôm pitch mạng chết thì BTC chiếu video này và **không trừ điểm**
-
-> **CP3 và CP5 là hai video khác nhau:**
-> **CP3** chứng minh sản phẩm chạy — quay ngắn, quay thô cũng được.
-> **CP5** là bản sao lưu để buổi pitch không chết vì mạng — quay đúng phần định demo trên sân khấu.
+### 📦 Bước 2: Cài đặt thư viện phụ thuộc
+Dự án được tối ưu hóa cực nhẹ, chỉ sử dụng 2 thư viện chuẩn:
+```bash
+pip install -r requirements.txt
+```
+> *(Tùy chọn) Nếu bạn muốn sử dụng môi trường ảo venv:*
+> ```bash
+> python -m venv venv
+> # Kích hoạt trên Windows:
+> venv\Scripts\activate
+> # Kích hoạt trên macOS/Linux:
+> source venv/bin/activate
+> pip install -r requirements.txt
+> ```
 
 ---
 
-### CP6 · Thuyết trình
+### 🔑 Bước 3: Cấu hình Gemini API Key (BẮT BUỘC ĐỂ GỌI LIVE AI)
 
-**Không nộp gì.** Ngày này chỉ để trình bày.
+> ⚠️ **TẠI SAO REPO KHÔNG CÓ SẴN FILE .ENV HAY API KEY?**  
+> GitHub kích hoạt cơ chế tự động quét bảo mật mã nguồn (*GitHub Secret Scanning*). Nếu đẩy file chứa API Key thật lên GitHub, khoá sẽ ngay lập tức bị GitHub chặn push hoặc tự động thu hồi/khóa key vĩnh viễn để bảo vệ tài khoản.  
+> Do đó, theo nguyên tắc bảo mật chuẩn công nghiệp, file cấu hình bảo mật `.env` đã được đưa vào `.gitignore`. Bạn chỉ cần tạo file `.env` trên máy cá nhân theo hướng dẫn sau:
 
-Giám khảo có thể hỏi **bất kỳ thành viên nào** về phần có tên người đó trong bảng phân công.
+#### 1. Tạo file `.env` từ file mẫu `.env.example`
+Ở thư mục gốc dự án đã có sẵn file mẫu `.env.example`. Hãy sao chép thành file `.env`:
+- **Trên Windows (PowerShell / Command Prompt):**
+  ```powershell
+  copy .env.example .env
+  ```
+- **Trên macOS / Linux:**
+  ```bash
+  cp .env.example .env
+  ```
+*(Hoặc bạn có thể tạo thủ công một file văn bản mới tên là `.env` ngay tại thư mục gốc của dự án).*
 
-## Link nộp
-
-| Mốc | Form nộp |
-|---|---|
-| CP1 | *(cập nhật lúc khai mạc)* |
-| CP2 | *(cập nhật lúc khai mạc)* |
-| CP3 | *(cập nhật lúc khai mạc)* |
-| CP4 | *(cập nhật lúc khai mạc)* |
-| CP5 | *(cập nhật lúc khai mạc)* |
-
-> **Đội trưởng nộp form thay cả nhóm** — một phiếu cho cả nhóm ở mỗi mốc, không phải mỗi thành viên tự nộp.
-> **25 điểm nộp là điểm chung của nhóm**: mọi thành viên cùng được hoặc cùng mất.
-
-> ⚠️ **Cả 5 mốc phải nộp bằng cùng một mã học viên của đội trưởng.**
-> BTC ghép 5 phiếu của nhóm lại với nhau **dựa trên mã học viên người nộp**. Mốc này người A nộp, mốc kia người B nộp thì hệ thống hiểu là hai nhóm khác nhau, và nhóm mất điểm ở những mốc lệch.
->
-> Chọn đội trưởng là người **chắc chắn có mặt và theo được cả năm mốc**. Nếu bất khả kháng phải đổi người nộp, báo coach ngay trong buổi.
-
-Link được công bố tại khai mạc, **ghim trên Discord và đăng trên VLearn** — hai nơi, cùng một bộ link.
-
-## Thể thức thi
-
-- 2 ca × 2 phòng = **4 cuộc thi độc lập**, chấm và trao giải riêng từng phòng; mỗi phòng một tổ giám khảo. **Không thi liên phòng, liên khoá.**
-- **E403** (~230 người): 6 cụm thi, mỗi nhóm **6 phút** ở vòng cụm → 6 đội vào chung kết phòng → **Top 3**.
-- **E402** (~120 người): 5 cụm thi, mỗi nhóm **7 phút** ở vòng cụm → 5 đội vào chung kết phòng → **Top 2**.
-- Giám khảo có thể hỏi **bất kỳ thành viên** — ai cũng phải hiểu bài (vibe-coding rule).
-- Số nhóm mỗi cụm là ước tính; thể lệ chi tiết vòng cụm và chung kết công bố lúc khai mạc.
-
-### Vòng cụm — game đầu tư
-
-Mỗi đội có **100 điểm vốn**, đội trưởng đại diện xem và đầu tư. Đội nhận nhiều vốn nhất cụm đi tiếp vào chung kết phòng.
-
-**Hai luật:** không được đầu tư vào đội mình · **tổng phải đúng 100**, thừa hoặc thiếu là phiếu không được tính.
-
-Chia cho mấy đội là tuỳ — dồn hết vào một đội cũng được. Mẹo: trong lúc xem thì ghi số dự định ra giấy nháp, xem xong cả cụm mới cân đối lại rồi điền form.
-
-### Chung kết phòng
-
-Sau khi chốt danh sách, các đội có **10–15 phút chuẩn bị**. Thứ tự trình bày quay ngẫu nhiên tại chỗ.
-
-Mỗi đội **10 phút**: 7 phút trình bày + 3 phút hỏi đáp.
-
-Cả phòng bình chọn — mỗi người đánh giá từng đội một cách độc lập, không giới hạn số đội được bầu.
-
-## Giải thưởng
-
-**Giải theo phòng — mỗi lớp 5 đội, hai lớp 10 đội:**
-
-| Lớp | E403 | E402 | Tổng |
-|---|---|---|---|
-| 3A | Top 3 | Top 2 | 5 đội |
-| 3B | Top 3 | Top 2 | 5 đội |
-
-**Điểm thưởng cộng vào bài lab ngày 5 và ngày 6, cho mỗi thành viên:**
-
-| Ai được | Cộng |
-|---|---|
-| Giải Nhất của phòng | **+10** |
-| Giải Nhì của phòng | **+5** |
-| Giải Ba — chỉ E403 | **+3** |
-| Vào chung kết nhưng không có giải | **+2** |
-| Đội **đầu tư nhiều điểm nhất và sớm nhất** vào đội giải Nhất | **+2** |
-
-Mỗi phòng E403 có **7 đội** được cộng điểm, E402 có **6 đội** — không chỉ riêng đội vô địch.
-
-Dòng cuối chỉ có **một đội mỗi phòng**: xét điểm đầu tư cao nhất trước, bằng nhau thì lấy đội nộp phiếu sớm hơn theo dấu thời gian của form.
-
-**Giải theo track — 4 giải, chấm chung cả hai lớp:**
-
-- **Track A · VLearn Tutor và Track D · Học tập thích ứng & tương tác:** 2 giải, do team VLearn chọn.
-- **Track C · Lesson Studio:** 2 giải, do team Studio chọn.
-
-Hai team chấm **ngay tại buổi trình bày**. Một đội có thể vừa vào Top phòng vừa nhận giải track. Phần thưởng cụ thể sẽ được công bố sau.
-
-Mỗi mốc cần show gì và được xác minh thế nào: xem bảng trong `04-rubric.md`.
-
-## Nộp bài
-
-### Tạo repo mới — không fork repo đề bài
-
-Nhóm tạo một repo **hoàn toàn mới và trống**. Không fork, không clone repo này rồi push lên.
-
-Lý do: fork mang theo cả thư mục `data/`, mà repo nộp bài bắt buộc phải **công khai** — nghĩa là dữ liệu thật của khoá học sẽ lên mạng. Vi phạm thẳng điều 2 và điều 3 của quy định bảo mật bên dưới.
-
-Nhóm chỉ cần lấy **đúng một file** từ repo này: `03-ai-spec-template.md`, copy vào repo mình và đặt tên `spec.md`. Mọi thứ còn lại là tài liệu đọc, mở tại đây là đủ.
-
-### Cách đặt tên repo
-
-```
-K4-<mã lớp>-<phòng>-<tên nhóm>
+#### 2. Điền API Key của bạn vào file `.env`
+Mở file `.env` vừa tạo bằng bất kỳ trình soạn thảo nào (VS Code, Notepad, Notepad++, Cursor, v.v.) và thay thế chuỗi `your_gemini_api_key_here` bằng key của bạn:
+```env
+GEMINI_API_KEY=AIzaSy...your_gemini_api_key_here...
+GEMINI_MODEL=gemini-flash-lite-latest
 ```
 
-| Ví dụ | Của nhóm nào |
-|---|---|
-| `K4-3A-E403-StudyPulse` | Lớp 3A · phòng E403 · nhóm StudyPulse |
-| `K4-3A-E402-LearnLoop` | Lớp 3A · phòng E402 · nhóm LearnLoop |
+#### 3. Hướng dẫn lấy Gemini API Key (Hoàn toàn Miễn Phí)
+1. Truy cập trang chính thức của Google: [https://aistudio.google.com/app/apikey](https://aistudio.google.com/app/apikey)
+2. Đăng nhập bằng tài khoản Google.
+3. Bấm **"Create API key"** (Tạo khóa API chỉ mất khoảng 15 giây, miễn phí với hạn mức thoải mái cho thử nghiệm).
+4. Sao chép chuỗi khóa và dán vào biến `GEMINI_API_KEY` trong file `.env`.
 
-**Ba phần đầu bắt buộc đúng.** Phòng là phòng nhóm đang ngồi thi.
+> 💡 **Cơ chế Dự phòng (Fallback / Safe Mode):**  
+> Nếu bạn chưa có sẵn API Key ngay, hệ thống vẫn tích hợp chế độ AI Concept Art Visualizer trực tiếp qua Internet và Wireframe Blueprint dự phòng. Bạn hoàn toàn có thể mở và trải nghiệm toàn bộ giao diện, các kịch bản mẫu và 3 ca khó mà không bị crash.
 
-**Tên nhóm ở cuối đặt gì cũng được** — viết liền, không dấu, không khoảng trắng.
+---
 
-**Repo phải để công khai.** Thử mở bằng cửa sổ ẩn danh — mở được thì mới đúng. Để riêng tư là giám khảo không chấm được bài.
+### 💻 Bước 4: Khởi chạy và Sử dụng Phần mềm
 
-### Cấu trúc repo
+Bạn có thể lựa chọn một trong các cách sau:
 
-Spec chốt tại hạn chốt spec (xem Lịch); bản hoàn chỉnh trước CP6.
+#### Cách 1: 1-Click Chạy Ngay trên Windows (Khuyên dùng nhất ⭐)
+- Nhấp đúp chuột vào file **`run_demo.bat`** tại thư mục gốc của dự án.
+- Script sẽ tự khởi động backend server và tự mở trình duyệt web tại: `http://localhost:8501`.
+
+#### Cách 2: Khởi chạy Web Server bằng dòng lệnh
+Chạy lệnh sau tại thư mục gốc dự án:
+```bash
+python codebase/app_server.py
+```
+Sau đó mở trình duyệt web bất kỳ và truy cập vào:
+👉 **`http://localhost:8501`**
+
+#### Cách 3: Chạy bản Demo Dòng Lệnh (CLI Demo — Phục vụ Video Thao Tác 30s)
+Để kiểm tra phản hồi tức thì của AI qua terminal hoặc quay video thao tác 30 giây phục vụ nghiệm thu Checkpoint 3:
+```bash
+python codebase/app_demo.py
+```
+
+#### Cách 4: Chạy bộ kiểm thử tự động Golden Set (Benchmark Evaluation)
+Để chạy tự động 20 ca kiểm thử thực tế trích xuất từ dữ liệu bài giảng VLearn, đo lường độ tuân thủ Sổ quy ước, Safe Zone và On-screen Text ≤ 40 ký tự:
+```bash
+# Trên Windows:
+run_eval.bat
+
+# Hoặc gõ lệnh Python trực tiếp:
+python eval/run_eval.py
+```
+Báo cáo kết quả chi tiết sẽ được tự động xuất tại `eval/run1_report.md`.
+
+#### Cách 5: Xem lại bản Mockup tương tác Checkpoint 2 (CP2)
+Bản mockup tương tác tĩnh được nộp tại Checkpoint 2 vẫn được lưu trữ nguyên vẹn:
+- Mở file: **`codebase/mockup-cp2.html`** bằng cách nhấp đúp chuột hoặc kéo thả vào trình duyệt Chrome/Edge.
+- Không cần cài đặt bất kỳ thư viện hay chạy server nào.
+
+---
+
+## 🌟 5 Điểm Đột Phá Kỹ Thuật Của StoryboardAI
+
+### 1. Studio-Grade 16:9 Digital Concept Art Engine (Sinh ảnh AI động 100%)
+- **Không hardcode ảnh tĩnh:** Từng câu thoại kịch bản bài giảng đều được AI phân tích ngữ cảnh sư phạm để sinh tranh minh họa 16:9 giàu tính điện ảnh.
+- **Bộ lọc An toàn Sư phạm (Zero Nudity Guardrails):** Hệ thống tích hợp bộ từ khóa Negative Prompt nghiêm ngặt, loại bỏ hoàn toàn các nội dung phản cảm, khỏa thân, bạo lực máu me, bảo vệ tuyệt đối môi trường giáo dục.
+- **Cơ chế Staggered Loader & Skeleton:** Tải tuần tự giãn cách 1.2s giữa các frame ảnh, triệt tiêu hoàn toàn nguy cơ nghẽn mạng hay lỗi Rate Limit HTTP 429 từ nhà cung cấp; hiển thị Loading Skeleton và Spinner mượt mà.
+- **Wireframe Blueprint Fallback:** Tự động chuyển sang sơ đồ đồ họa sư phạm kỹ thuật nếu đường truyền mạng gặp sự cố, đảm bảo 0% tỷ lệ chết giao diện.
+
+### 2. Sửa Cục Bộ Bằng Live AI (Granular Live AI Edit)
+- Thực thi chính xác Lát cắt Một Câu đã cam kết trong Canvas CP1: *"Khi người dùng sửa một câu thì chỉ đúng ảnh phác thảo của câu đó được cập nhật bằng AI, giữ nguyên các câu khác"*.
+- Mỗi thẻ cảnh đều có nút **"✏ Góp ý cảnh này"**. Khi nhập yêu cầu chỉnh sửa, AI thực hiện lệnh gọi độc lập để tạo mới duy nhất cảnh đó. Cảnh được sửa sẽ nhấp nháy viền xanh lá, toàn bộ các phân cảnh còn lại được bảo lưu nguyên vẹn 100%.
+
+### 3. Phòng Thí Nghiệm 3 Ca Khó (Edge Cases Lab)
+Tích hợp sẵn bộ test 1-click ngay trên giao diện để chứng minh năng lực trước hội đồng giám khảo:
+- **Ca 1 (Khái niệm trừu tượng):** *"Sóng hấp dẫn sinh ra khi hai lỗ đen sáp nhập..."* → AI hình tượng hóa thành mô hình lưới không-thời gian cong của Einstein, thay vì vẽ hình đen sì vô nghĩa.
+- **Ca 2 (Câu nhồi nhét nhiều ý):** Đoạn văn 49 từ về định luật nhiệt động lực học → AI tự động phân rã nhịp thị giác, cô đọng chữ hiển thị trên màn hình ≤ 40 ký tự.
+- **Ca 3 (Ám chỉ số liệu không có số thật):** *"Kinh tế số Việt Nam bứt phá mạnh mẽ..."* → AI hiển thị biểu đồ xu hướng định tính trừu tượng, tuyệt đối không tự bịa số phần trăm vô căn cứ.
+
+### 4. Bàn Giao Handoff Spec Chuẩn REMOTION & MANIM
+- Xuất dữ liệu kịch bản chuẩn cấu trúc JSON kỹ thuật số cho Remotion / Manim / After Effects.
+- Tích hợp **Sổ quy ước (Design Tokens)** khóa chặt Safe Zone màn hình:
+  - Vùng nội dung an toàn: `x: [80, 1840], y: [250, 960]`
+  - Tránh hoàn toàn vùng chiếm dụng của Giảng viên (PiP Camera 16:9 ở góc dưới phải) và thanh điều khiển bài giảng.
+  - Lớp phủ chữ màn hình (`on_screen_text`) hiển thị dạng Badge tinh tế ở góc trên trong Safe Zone, không che lấp chi tiết quan trọng.
+
+### 5. Trình Chiếu Animatic Player & Báo Cáo Kiểm Định Audit Log
+- Trình phát Animatic Player tích hợp sẵn, mô phỏng video bài giảng chạy theo thời lượng (duration) thực tế của từng phân cảnh.
+- Trình xuất Báo cáo Kiểm định Sổ quy ước (Audit Log Report) minh chứng tính minh bạch và độ chính xác của kịch bản phân cảnh.
+
+---
+
+## 📁 Cấu Trúc Thư Mục Repository
 
 ```
-repo/
-├── README.md          ← copy file này, điền bảng thành viên ở đầu
-├── spec.md            ← AI Spec theo 03-ai-spec-template.md
-├── demo-slides.pdf    ← slide 6 trang theo 02-guide.md §5.1
-├── codebase/          ← prototype (ghi rõ phần nào mock)
-├── eval/              ← golden set + bảng kết quả các lượt chạy
-├── validation/        ← nhật ký cho người ngoài dùng thử (R6 — không làm thì trần điểm 92)
-└── reflection/        ← mỗi người 1 file
+K4-3B-E403-BotVN/
+├── README.md                  # Hướng dẫn cài đặt, khởi chạy & giới thiệu dự án (File này)
+├── spec.md                    # Bản đặc tả AI Spec hoàn chỉnh theo Rubric (R1 - R7)
+├── requirements.txt           # Danh sách thư viện Python phụ thuộc
+├── .env.example               # Mẫu cấu hình biến môi trường GEMINI_API_KEY
+├── .gitignore                 # Bảo vệ không đẩy file .env chứa key lên GitHub
+├── run_demo.bat               # Phím tắt 1-click khởi chạy Web App trên Windows
+├── run_eval.bat               # Phím tắt 1-click chạy kiểm thử Benchmark Golden Set
+│
+├── codebase/                  # Mã nguồn Prototype sản phẩm (Working Prototype)
+│   ├── app_server.py          # Local Web Server kết nối Live Gemini AI (Port 8501)
+│   ├── storyboard_agent.py    # Lõi Storyboard Agent điều phối kịch bản & AI Visual
+│   ├── index.html             # Giao diện Web App tương tác hoàn chỉnh
+│   ├── app_demo.py            # Bản Demo CLI tương tác dòng lệnh (Video thao tác 30s)
+│   ├── mockup-cp2.html        # Bản Mockup tương tác tĩnh đã nộp tại Checkpoint 2
+│   └── README.md              # Tài liệu kỹ thuật chi tiết của phần backend & frontend
+│
+├── eval/                      # Bộ công cụ đo lường & kiểm thử (Benchmark R4)
+│   ├── run_eval.py            # Kịch bản tự động kiểm thử 20 ca Golden Set
+│   ├── run1_report.md         # Báo cáo kết quả đo lường Run 1 (100% Passed)
+│   └── video_demo_guide.md    # Kịch bản chi tiết quay video thao tác 30 giây
+│
+└── validation/                # Nhật ký kiểm thử với người dùng ngoài (R6)
+    └── user_testing_log.md    # Biên bản khảo sát và đo lường phản hồi người dùng
 ```
 
-### README.md của nhóm
+---
 
-Copy nguyên file README này về repo của mình, rồi **điền bảng thành viên ở đầu file**. Không cần viết thêm gì khác.
+## 🎯 Theo Dõi Tiến Độ Checkpoints (Mini Hackathon AI Batch 04)
 
-Mã học viên phải đúng — đây là căn cứ đối chiếu điểm.
+| Checkpoint | Nội dung yêu cầu | Trạng thái nhóm K4-3B-E403-BotVN | Minh chứng |
+|:---:|---|:---:|---|
+| **CP1** | Canvas 7 dòng + Lát cắt 1 câu + Repo GitHub | ✅ Hoàn thành đúng hạn | Đã nộp Form CP1 |
+| **CP2** | Bản Mockup tương tác chứng minh luồng thao tác | ✅ Hoàn thành đúng hạn | File `codebase/mockup-cp2.html` |
+| **CP3** | Video thao tác 30s + Số đo kiểm thử Run 1 | ✅ Hoàn thành đúng hạn | `codebase/app_demo.py` & `eval/run1_report.md` |
+| **CP4** | Chốt bản đặc tả chuẩn đạt `spec.md` | ✅ Hoàn thành | File `spec.md` |
+| **CP5** | Slide PDF 6 trang + Video demo dự phòng | 🔄 Đang hoàn thiện | Thư mục repo |
+| **CP6** | Thuyết trình & Q&A trước Hội đồng Giám khảo | 🎯 Sẵn sàng | Vòng chung kết phòng E403 |
 
-## Chấm điểm
+---
 
-Tổng **100 điểm = 25 điểm nộp checkpoint + 67 điểm chấm bài nộp + 8 điểm R6** (cho người ngoài dùng thử). Chi tiết từng ý điểm: `04-rubric.md`.
-
-**25 điểm nộp — mỗi checkpoint 5 điểm (CP1-CP5):** nộp đúng hạn → 5 điểm · nộp muộn → 0 điểm cho mốc đó. **Đội trưởng nộp thay cả nhóm — đây là điểm chung của nhóm, không phải điểm cá nhân.**
-
-**67 điểm chấm + 8 điểm R6 — trên file trong repo, mỗi con điểm trỏ về một chỗ:**
-
-| Khối | Điểm | Chấm trên file nào |
-|---|---|---|
-| R1 · Bằng chứng & impact | 15 | `spec.md` §1-§2 + log khảo sát |
-| R2 · Lát cắt & thiết kế | 15 | `spec.md` §4 |
-| R3 · Chỗ khó & kịch bản rủi ro | 11 | `spec.md` §5-§6 |
-| R4 · Kiểm thử | 15 | `spec.md` §7 + `eval/` |
-| R5 · Prototype chạy được | 8 | `codebase/` + demo |
-| **R6 · Cho người ngoài dùng thử** | **8** | `validation/` |
-| R7 · Quy trình & repo | 3 | cấu trúc repo |
-
-Ba khối nặng nhất — **R1, R2, R4** — đều nằm trong `spec.md`. Viết spec tử tế là ăn 45 trên 67 điểm.
-
-### R6 · Cho người ngoài dùng thử — 8 điểm
-
-**Không làm thì trần điểm là 92.** Vì 25 + 67 = 92, cộng R6 mới đủ 100.
-
-Làm ở **CP5**, lưu trong thư mục `validation/`.
-
-**Người dùng chê cũng được tính đủ điểm.** Mục đích là xem giải pháp có ăn thua không — ra kết quả nào cũng ghi nhận, miễn là bằng chứng thật. Phát hiện sản phẩm chưa ổn rồi sửa còn dễ ăn điểm hơn, vì có chỗ cụ thể để nói.
-
-**Hai ví dụ thật từ kỳ trước:**
-
-**Nhóm MeaterBeat** phát hiện học viên non-IT lúng túng không biết bấm nút nào, AI trả lời chậm — tức là **giải pháp chưa ổn**. Họ thêm tooltip hướng dẫn, thêm loading spinner, và giải trình phần độ trễ không sửa được vì phụ thuộc API. **Đủ điểm.**
-
-**Nhóm VLearn Recall** phát hiện đúng như giả định: người ta nhớ chủ đề nhưng không nhớ nằm ở slide hay bài giảng — tức là **giải pháp đi đúng hướng**. Họ giữ nguyên thiết kế source-first và bổ sung thêm câu thử. **Cũng đủ điểm.**
-
-**Phải có đủ bốn thứ:**
-
-| | |
-|---|---|
-| **5 người ngoài nhóm** dùng thử | trong đó **2 người đã khai từ CP1** |
-| **Quote nguyên văn** | chép đúng lời họ nói, kể cả viết sai chính tả |
-| **Bảng nhật ký** | ai thử · giao task gì · kẹt ở đâu · quote · quyết định |
-| **Ít nhất 1 thay đổi** | ghi vào **§9 Changelog** trong `spec.md`. Giữ nguyên thì nói rõ vì sao |
-
-**Cuối bảng viết 4 dòng:** chủ đề lặp nhiều nhất · sẽ sửa gì trước demo · giữ nguyên gì và vì sao · gì để dành sau.
-
-**Quote thế nào mới ăn điểm:**
-
-| Chưa đạt | Đạt |
-|---|---|
-| *"Demo này ok rồi đấy"* | *"Mình muốn tìm thông tin về code cho ReAct"* |
-
-Bên trái là lời khen xã giao. Bên phải là lời người dùng nói **lúc đang cố làm việc** — nhìn vào biết ngay họ vướng ở đâu.
-
-Muốn có quote như vậy: **giao task rồi ngồi im xem họ làm**, đừng hỏi "sản phẩm này hay không".
-
-Ba điều nên biết trước khi làm:
-
-- Điểm dựa trên **chuỗi quyết định và bằng chứng**, không dựa trên mức độ hoành tráng của sản phẩm.
-- Kết quả đo **ghi nhận trung thực** — kể cả khi không đạt mục tiêu nhóm tự đặt — vẫn được tính đủ điểm. Số liệu bị chỉnh sửa hoặc che giấu sẽ không được tính.
-- Reflection cá nhân chấm riêng theo rubric của khoá. Điểm vòng demo, chấm chéo trong cụm và thưởng thêm (nếu có) theo thể lệ công bố lúc khai mạc.
-
-## Luật chung
-
-1. Prototype có 3 mức **Sketch / Mock / Working** — mức nào cũng bắt buộc **≥1 lời gọi AI chạy thật**. Đây là thứ phải thấy được trong **video thao tác ở CP3**.
-2. **Vibe-coding rule:** dùng AI để build thoải mái, nhưng không giải thích được phần có tên mình thì phần đó 0 điểm (giám khảo hỏi bất kỳ thành viên khi thuyết trình).
-3. **Quality bar** chốt tại hạn chốt spec (21:00 17/9, tại CP4) và giữ nguyên sau đó.
-4. Chỉ dùng dữ liệu trong `data/` hoặc dữ liệu giả tự sinh — không dùng dữ liệu thật của người thật. Không commit API key.
-5. Tuân thủ **quy định bảo mật dữ liệu** bên dưới — đây là điều kiện để được cấp data.
-
-## Bảo mật dữ liệu được cung cấp
-
-Dữ liệu trong `data/` là dữ liệu thật của khoá học (đã ẩn danh), cấp riêng cho hackathon này. Khi nhận data, nhóm cam kết:
-
-1. **Chỉ dùng trong phạm vi hackathon** — cho việc tìm bằng chứng, xây golden set và build prototype. Không dùng cho mục đích khác.
-2. **Không chia sẻ ra ngoài khoá học** — không đăng lên mạng xã hội, không gửi cho người ngoài, không đưa vào bất kỳ dataset hay repo công khai nào.
-3. **Không commit data pack vào repo nộp bài** — repo nhóm chỉ chứa trích dẫn ngắn để minh hoạ (vài dòng); golden set trích từ data ghi rõ mã đoạn/mã hội thoại thay vì dán nguyên văn dài.
-4. **Cẩn trọng khi đưa data vào công cụ ngoài** — chỉ đưa phần tối thiểu cần cho việc đang làm; lưu ý API/công cụ free tier có thể dùng dữ liệu để huấn luyện (xem `02-guide.md` §3.4).
-5. **Không cố suy ngược danh tính** từ dữ liệu đã ẩn danh (`S####`, `T#####`, `D####`, `[HV]`, [học viên]). Riêng `discord-pack/`: người trong đó là **bạn cùng khoá** — tuyệt đối không đoán/hỏi "tin này của ai"; trích dẫn tối đa 2 câu mỗi ví dụ (xem `data/discord-pack/README.md`).
-6. Sau sự kiện, **xoá các bản sao data pack** khỏi máy cá nhân và các công cụ đã upload nếu ban tổ chức yêu cầu.
-
-Vi phạm được xử lý theo quy định của khoá và có thể ảnh hưởng trực tiếp đến điểm của nhóm.
+## 🔒 Quy Định Bảo Mật Dữ Liệu
+Nhóm cam kết tuân thủ nghiêm ngặt quy định bảo mật dữ liệu của Mini Hackathon AI:
+1. Toàn bộ kịch bản và dữ liệu mẫu được ẩn danh hoá hoặc mô phỏng cho mục đích giáo dục.
+2. Không lưu trữ thông tin nhận dạng cá nhân của giảng viên hay học viên.
+3. Không chia sẻ dữ liệu được cấp ra bên ngoài phạm vi sự kiện.

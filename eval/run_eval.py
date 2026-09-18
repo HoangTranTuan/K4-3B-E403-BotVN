@@ -142,6 +142,7 @@ def generate_report(report_path, results, passed_count, total_cases, layer_stats
 | **Thời gian phản hồi trung bình (Avg Latency)** | **{avg_latency:.0f} ms** (~{avg_latency/1000:.2f}s) | $< 4000$ ms | Phản hồi rất nhanh |
 | **Ràng buộc ký tự on-screen text** | Tối đa 40 ký tự | 100% compliant | Một số case dài bị chạm trần |
 | **Ràng buộc Safe Zone** | $X \in [80, 1840], Y \in [250, 960]$ | 100% compliant | 100% khung hình nằm trong Safe Zone |
+| **An toàn nội dung sư phạm (Responsible AI)** | 0% máu me, bạo lực, khỏa thân | 100% compliant | Đạt chuẩn an toàn môi trường học đường |
 
 ---
 

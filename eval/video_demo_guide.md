@@ -33,9 +33,14 @@
 
 ---
 
-## 3. Tùy Chọn Demo Giao Diện Web (Nếu Muốn Quay Bản Web)
-- Mở file `codebase/mockup-cp2.html` trên trình duyệt Chrome/Edge.
-- Thao tác 4 bước: Dán kịch bản -> AI Live Parse -> Phân cảnh tương tác -> Xuất đặc tả Handoff.
+## 3. Demo Giao Diện Web Trực Tiếp (Khuyên dùng khi quay video)
+1. Khởi chạy server bằng cách nhấp đúp file `run_demo.bat` (hoặc lệnh `python codebase/app_server.py`).
+2. Trình duyệt tự động mở tại `http://localhost:8501`.
+3. Thao tác 4 bước:
+   - **Bước 1 (Nhập kịch bản):** Dán kịch bản bài giảng bất kỳ (hoặc bấm nút chọn mẫu).
+   - **Bước 2 (Bảng duyệt AI thật):** AI phân cảnh với tranh vẽ Concept Art 16:9 sắc nét, chữ màn hình $\le 40$ ký tự, hợp chuẩn Safe Zone. Thử bấm *"✏ Góp ý cảnh này"* để chứng minh tính năng Granular Live Edit.
+   - **Bước 3 (Animatic):** Bấm Play xem luồng chạy theo dòng thời gian.
+   - **Bước 4 (Handoff):** Xuất đặc tả kỹ thuật JSON cho Remotion và Báo cáo kiểm định Audit Log.
 
 ---
-*Kịch bản được tối ưu để quay đúng 30 giây chuẩn tiêu chí Checkpoint 3.*
+*Kịch bản được tối ưu để quay 30 - 45 giây thể hiện trọn vẹn sức mạnh AI thật chuẩn tiêu chí Checkpoint 3.*
