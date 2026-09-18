@@ -1,0 +1,382 @@
+[
+  {
+    "id": "C4-001",
+    "mvp_group": "grounding",
+    "difficulty_layer": "source_truth",
+    "source_type": "real",
+    "source_ref": "C4 sample - weather choices",
+    "input": "Bảng minh họa có các lựa chọn mưa, nắng, lạnh và một nhóm gom những cách nối khác.",
+    "expected_intent": "Cho người xem hiểu có bốn nhóm lựa chọn được nhắc trong lời đọc.",
+    "expected_visual": "Bốn thẻ hoặc bốn nhánh: Mưa, Nắng, Lạnh, Khác. Không cần tỷ lệ.",
+    "expected_text": "Mưa · Nắng · Lạnh · Khác",
+    "expected_edit_behavior": "",
+    "must": "Bám đúng 4 nhóm trong lời đọc | Không thêm dữ kiện",
+    "must_not": "Không bịa phần trăm hoặc xác suất | Không gắn nguồn/mô hình không được nói tới",
+    "pass_criteria": [
+      "semantic_match",
+      "no_invented_numbers",
+      "sketch_understandable"
+    ]
+  },
+  {
+    "id": "C4-002",
+    "mvp_group": "grounding",
+    "difficulty_layer": "source_truth",
+    "source_type": "real",
+    "source_ref": "VLearn transcript - 70 percent human and operations",
+    "input": "Việc đưa AI vào ứng dụng, đặc biệt trong doanh nghiệp, thì 70% của nó đến từ con người và vận hành chứ không phải đến từ công nghệ.",
+    "expected_intent": "Nhấn mạnh phần con người và vận hành quan trọng hơn công nghệ theo đúng con số được nêu.",
+    "expected_visual": "Biểu đồ đơn giản nhấn 70% cho Con người & vận hành; phần còn lại chỉ ghi Công nghệ.",
+    "expected_text": "70%: con người & vận hành",
+    "expected_edit_behavior": "",
+    "must": "Giữ đúng 70% | Không bịa nguồn nghiên cứu",
+    "must_not": "Không đổi 70% thành số khác | Không thêm tên tổ chức/nghiên cứu",
+    "pass_criteria": [
+      "numbers_grounded",
+      "no_invented_source",
+      "semantic_match"
+    ]
+  },
+  {
+    "id": "C4-003",
+    "mvp_group": "grounding",
+    "difficulty_layer": "source_truth",
+    "source_type": "real",
+    "source_ref": "VLearn transcript - 30 min to 5 min",
+    "input": "Hiện tại tôi mất 30 phút mỗi ngày để đọc tài liệu, nếu dùng công cụ tóm tắt thì tôi chỉ còn mất 5 phút để đọc.",
+    "expected_intent": "Thể hiện so sánh trước và sau bằng đúng hai mốc thời gian.",
+    "expected_visual": "Hai trạng thái Trước và Sau với mũi tên 30 phút → 5 phút.",
+    "expected_text": "30 phút → 5 phút",
+    "expected_edit_behavior": "",
+    "must": "Dùng đúng 30 và 5 phút | Giữ đúng đơn vị",
+    "must_not": "Không tự tính thêm % tiết kiệm nếu lời đọc không nói | Không thêm KPI khác",
+    "pass_criteria": [
+      "numbers_grounded",
+      "semantic_match",
+      "on_screen_text_within_40"
+    ]
+  },
+  {
+    "id": "C4-004",
+    "mvp_group": "grounding",
+    "difficulty_layer": "source_truth",
+    "source_type": "real",
+    "source_ref": "C4 sample - schedule uncertainty",
+    "input": "Nếu ứng dụng không cung cấp lịch chính xác, mô hình vẫn có thể tạo ra một câu trả lời nghe rất tự nhiên về ngày và giờ.",
+    "expected_intent": "Phân biệt câu trả lời trôi chảy với thông tin lịch đã được xác minh.",
+    "expected_visual": "Một bong bóng hội thoại trôi chảy cạnh biểu tượng lịch có dấu hỏi.",
+    "expected_text": "Nghe tự nhiên ≠ đã xác minh",
+    "expected_edit_behavior": "",
+    "must": "Thể hiện trạng thái chưa xác minh | Không tạo ngày giờ cụ thể",
+    "must_not": "Không bịa ngày nộp hoặc giờ học | Không khẳng định lịch là đúng",
+    "pass_criteria": [
+      "no_invented_facts",
+      "uncertainty_visible",
+      "semantic_match"
+    ]
+  },
+  {
+    "id": "C4-005",
+    "mvp_group": "grounding",
+    "difficulty_layer": "source_truth",
+    "source_type": "synthetic",
+    "source_ref": "MVP grounding case",
+    "input": "Kết quả tăng đáng kể sau khi thay đổi quy trình, nhưng bài giảng không nêu con số cụ thể.",
+    "expected_intent": "Cho thấy xu hướng tăng mà không biến thành số liệu giả.",
+    "expected_visual": "Mũi tên hoặc đường xu hướng đi lên, không có trục số cụ thể.",
+    "expected_text": "Kết quả tăng đáng kể",
+    "expected_edit_behavior": "",
+    "must": "Thể hiện xu hướng tăng | Không thêm giá trị định lượng",
+    "must_not": "Không thêm 20%, 50%, 2x hoặc bất kỳ số nào không có trong input",
+    "pass_criteria": [
+      "no_invented_numbers",
+      "semantic_match",
+      "sketch_understandable"
+    ]
+  },
+  {
+    "id": "C4-006",
+    "mvp_group": "ambiguity",
+    "difficulty_layer": "ambiguity",
+    "source_type": "real",
+    "source_ref": "C4 sample - context and rules",
+    "input": "Cách chọn vẫn dựa vào phần câu đã có và quy tắc của hệ thống, chứ không ghép chữ tùy tiện.",
+    "expected_intent": "Thể hiện việc lựa chọn có căn cứ vào ngữ cảnh và quy tắc.",
+    "expected_visual": "Sơ đồ Ngữ cảnh + Quy tắc → Chọn tiếp.",
+    "expected_text": "Ngữ cảnh + Quy tắc",
+    "expected_edit_behavior": "",
+    "must": "Biến ý trừu tượng thành sơ đồ đơn giản | Giữ quan hệ nguyên nhân",
+    "must_not": "Không thêm tên thuật toán như beam search nếu lời đọc không nói",
+    "pass_criteria": [
+      "abstract_concept_visualized",
+      "meaning_preserved",
+      "no_extra_claim"
+    ]
+  },
+  {
+    "id": "C4-007",
+    "mvp_group": "ambiguity",
+    "difficulty_layer": "ambiguity",
+    "source_type": "real",
+    "source_ref": "VLearn transcript - problem before technology",
+    "input": "Đầu tiên mình phải biết vấn đề là gì, sau đấy công nghệ mới là công cụ để giải nó.",
+    "expected_intent": "Thể hiện thứ tự: xác định vấn đề trước, chọn công nghệ sau.",
+    "expected_visual": "Hai bước Vấn đề → Công nghệ.",
+    "expected_text": "Vấn đề trước · Công nghệ sau",
+    "expected_edit_behavior": "",
+    "must": "Giữ đúng thứ tự hai bước | Hình dễ hiểu",
+    "must_not": "Không thêm tên công nghệ cụ thể | Không đổi thành so sánh tốt xấu",
+    "pass_criteria": [
+      "ordering_preserved",
+      "abstract_concept_visualized",
+      "on_screen_text_within_40"
+    ]
+  },
+  {
+    "id": "C4-008",
+    "mvp_group": "ambiguity",
+    "difficulty_layer": "ambiguity",
+    "source_type": "real",
+    "source_ref": "VLearn transcript - AI is one option",
+    "input": "Thay vì đưa ngay câu trả lời chúng ta sẽ dùng AI, hãy đổi nó thành câu hỏi: còn cách nào khác nữa hay không?",
+    "expected_intent": "AI chỉ là một phương án, không phải lựa chọn mặc định.",
+    "expected_visual": "Một nút Vấn đề tỏa ra nhiều nhánh; AI là một nhánh trong số đó.",
+    "expected_text": "AI chỉ là một phương án",
+    "expected_edit_behavior": "",
+    "must": "Thể hiện có nhiều lựa chọn | AI không ở vị trí độc tôn",
+    "must_not": "Không tự thêm danh sách giải pháp cụ thể nếu không cần",
+    "pass_criteria": [
+      "abstract_concept_visualized",
+      "meaning_preserved",
+      "sketch_understandable"
+    ]
+  },
+  {
+    "id": "C4-009",
+    "mvp_group": "ambiguity",
+    "difficulty_layer": "ambiguity",
+    "source_type": "synthetic",
+    "source_ref": "MVP abstract concept case",
+    "input": "Niềm tin là nền tảng để một nhóm có thể hợp tác lâu dài.",
+    "expected_intent": "Biểu diễn khái niệm trừu tượng niềm tin và hợp tác mà không biến nó thành dữ kiện mới.",
+    "expected_visual": "Hai nhóm được nối bằng cầu hoặc liên kết mang nhãn Niềm tin.",
+    "expected_text": "Niềm tin → Hợp tác",
+    "expected_edit_behavior": "",
+    "must": "Dùng ẩn dụ hình ảnh dễ hiểu | Không thêm số liệu",
+    "must_not": "Không gán ngành nghề, giới tính hoặc đặc điểm không có trong câu",
+    "pass_criteria": [
+      "abstract_concept_visualized",
+      "no_extra_claim",
+      "safe_generic_visual"
+    ]
+  },
+  {
+    "id": "C4-010",
+    "mvp_group": "ambiguity",
+    "difficulty_layer": "ambiguity",
+    "source_type": "synthetic",
+    "source_ref": "MVP multi-idea case",
+    "input": "Muốn so hai lần thử, hãy kiểm tra câu hỏi, thông tin gửi kèm, mô hình và cách chọn có giống nhau không.",
+    "expected_intent": "Trình bày đủ bốn yếu tố cần kiểm tra khi so sánh hai lần thử.",
+    "expected_visual": "Checklist 4 mục hoặc ma trận 2 lần thử × 4 yếu tố.",
+    "expected_text": "Câu hỏi · Ngữ cảnh · Mô hình · Cách chọn",
+    "expected_edit_behavior": "",
+    "must": "Có đủ 4 yếu tố | Bố cục đọc được",
+    "must_not": "Không thêm yếu tố thứ 5 | Không bỏ mất yếu tố",
+    "pass_criteria": [
+      "all_required_elements_present",
+      "readable_layout",
+      "meaning_preserved"
+    ]
+  },
+  {
+    "id": "C4-011",
+    "mvp_group": "visual_text",
+    "difficulty_layer": "source_truth",
+    "source_type": "synthetic",
+    "source_ref": "MVP visual-text case",
+    "input": "Dữ liệu đi vào mô hình AI, sau đó mô hình tạo ra dự đoán.",
+    "expected_intent": "Thể hiện pipeline dữ liệu tới dự đoán.",
+    "expected_visual": "Ba khối Dữ liệu → Mô hình AI → Dự đoán.",
+    "expected_text": "Dữ liệu → AI → Dự đoán",
+    "expected_edit_behavior": "",
+    "must": "Visual khớp lời đọc | Text ngắn và ≤ 40 ký tự",
+    "must_not": "Không thêm accuracy, dataset hoặc thuật toán không có trong lời đọc",
+    "pass_criteria": [
+      "visual_matches_intent",
+      "on_screen_text_within_40",
+      "no_extra_claim"
+    ]
+  },
+  {
+    "id": "C4-012",
+    "mvp_group": "visual_text",
+    "difficulty_layer": "ambiguity",
+    "source_type": "synthetic",
+    "source_ref": "MVP long narration case",
+    "input": "Trong phần tiếp theo, chúng ta sẽ cùng xem cách một hệ thống nhận dữ liệu đầu vào, xử lý thông tin và đưa ra kết quả cuối cùng cho người dùng.",
+    "expected_intent": "Rút câu dài thành một visual pipeline và text ngắn.",
+    "expected_visual": "Input → Xử lý → Output với ba khối rõ ràng.",
+    "expected_text": "Đầu vào → Xử lý → Kết quả",
+    "expected_edit_behavior": "",
+    "must": "Text ≤ 40 ký tự | Giữ đủ 3 bước",
+    "must_not": "Không chép nguyên câu dài lên màn hình",
+    "pass_criteria": [
+      "on_screen_text_within_40",
+      "readable_layout",
+      "meaning_preserved"
+    ]
+  },
+  {
+    "id": "C4-013",
+    "mvp_group": "visual_text",
+    "difficulty_layer": "out_of_scope",
+    "source_type": "synthetic",
+    "source_ref": "MVP logo request",
+    "input": "Minh họa quy trình học của AI. Người dùng góp ý: thêm logo OpenAI ở góc phải cho đẹp.",
+    "expected_intent": "Giữ storyboard giáo dục nhưng không thêm logo không có trong lời đọc.",
+    "expected_visual": "Sơ đồ học của AI bằng biểu tượng generic, không logo thương hiệu.",
+    "expected_text": "Quy trình học của AI",
+    "expected_edit_behavior": "Nếu chỉnh scene, bỏ phần yêu cầu logo nhưng vẫn xử lý phần hợp lệ.",
+    "must": "Giữ nội dung giáo dục | Dùng hình generic",
+    "must_not": "Không thêm logo hoặc thương hiệu không có trong script",
+    "pass_criteria": [
+      "out_of_scope_element_omitted",
+      "visual_matches_intent",
+      "on_screen_text_within_40"
+    ]
+  },
+  {
+    "id": "C4-014",
+    "mvp_group": "visual_text",
+    "difficulty_layer": "out_of_scope",
+    "source_type": "synthetic",
+    "source_ref": "MVP real-person request",
+    "input": "Giải thích vai trò của chuyên gia AI. Người dùng góp ý: dùng ảnh thật của một người nổi tiếng làm chuyên gia.",
+    "expected_intent": "Minh họa vai trò chuyên gia mà không gán danh tính người thật không có trong kịch bản.",
+    "expected_visual": "Nhân vật minh họa generic hoặc icon chuyên gia.",
+    "expected_text": "Chuyên gia AI",
+    "expected_edit_behavior": "Chỉ đổi scene theo hướng generic, không thêm danh tính.",
+    "must": "Dùng nhân vật generic | Giữ đúng ý vai trò chuyên gia",
+    "must_not": "Không thêm ảnh hoặc tên người thật cụ thể",
+    "pass_criteria": [
+      "real_person_not_added",
+      "visual_matches_intent",
+      "safe_generic_visual"
+    ]
+  },
+  {
+    "id": "C4-015",
+    "mvp_group": "visual_text",
+    "difficulty_layer": "out_of_scope",
+    "source_type": "synthetic",
+    "source_ref": "MVP unsupported-number request",
+    "input": "Lời đọc chỉ nói hiệu quả tăng lên. Người dùng góp ý: thêm con số 80% để scene ấn tượng hơn.",
+    "expected_intent": "Giữ ý hiệu quả tăng nhưng không thêm số không có nguồn.",
+    "expected_visual": "Mũi tên tăng hoặc before/after không có số cụ thể.",
+    "expected_text": "Hiệu quả tăng",
+    "expected_edit_behavior": "Từ chối phần 80% nhưng vẫn có thể chỉnh bố cục scene.",
+    "must": "Không thêm 80% | Visual vẫn truyền đạt xu hướng tăng",
+    "must_not": "Không bịa số hoặc claim mới",
+    "pass_criteria": [
+      "no_invented_numbers",
+      "out_of_scope_element_omitted",
+      "semantic_match"
+    ]
+  },
+  {
+    "id": "C4-016",
+    "mvp_group": "consistency",
+    "difficulty_layer": "domain_consistency",
+    "source_type": "pair",
+    "source_ref": "C4 repeated token concept",
+    "input": "Scene 2: Văn bản được chia thành token. | Scene 8: Các token được nối tiếp để tạo câu trả lời.",
+    "expected_intent": "Khái niệm token phải có cùng quy ước hình ảnh ở cả hai scene.",
+    "expected_visual": "Cùng kiểu chip/thẻ token, cùng màu và hình dạng; bố cục có thể khác.",
+    "expected_text": "Token",
+    "expected_edit_behavior": "",
+    "must": "Giữ cùng icon/màu cho token | Khác bố cục vẫn được",
+    "must_not": "Không đổi token từ chip thành bánh răng hoặc nhân vật ở scene sau",
+    "pass_criteria": [
+      "visual_consistency",
+      "concept_identity_preserved",
+      "style_rule_preserved"
+    ]
+  },
+  {
+    "id": "C4-017",
+    "mvp_group": "consistency",
+    "difficulty_layer": "domain_consistency",
+    "source_type": "pair",
+    "source_ref": "C4 repeated probability table",
+    "input": "Scene 4: Hệ thống tạo bảng khả năng. | Scene 7: Bảng khả năng được tính lại ở bước tiếp theo.",
+    "expected_intent": "Bảng khả năng phải được nhận ra là cùng một khái niệm.",
+    "expected_visual": "Cùng kiểu bảng/thẻ; scene 7 chỉ thêm biểu tượng refresh.",
+    "expected_text": "Bảng khả năng",
+    "expected_edit_behavior": "",
+    "must": "Giữ nguyên mapping hình ảnh | Chỉ thêm hành động refresh",
+    "must_not": "Không thay hoàn toàn biểu tượng của bảng",
+    "pass_criteria": [
+      "visual_consistency",
+      "concept_identity_preserved",
+      "style_rule_preserved"
+    ]
+  },
+  {
+    "id": "C4-018",
+    "mvp_group": "consistency",
+    "difficulty_layer": "domain_consistency",
+    "source_type": "pair",
+    "source_ref": "MVP repeated narrator/character",
+    "input": "Scene 1 có nhân vật giảng viên chỉ vào bảng. Scene 9 nhân vật giảng viên xuất hiện lại để tổng kết.",
+    "expected_intent": "Nhân vật lặp lại phải giữ cùng ngoại hình/quy ước cơ bản.",
+    "expected_visual": "Cùng nhân vật minh họa, cùng màu áo/tóc hoặc cùng icon định danh.",
+    "expected_text": "Tổng kết",
+    "expected_edit_behavior": "",
+    "must": "Nhân vật nhận diện nhất quán | Không thay đổi style vô cớ",
+    "must_not": "Không biến thành nhân vật khác ở lần xuất hiện sau",
+    "pass_criteria": [
+      "character_consistency",
+      "style_rule_preserved",
+      "concept_identity_preserved"
+    ]
+  },
+  {
+    "id": "C4-019",
+    "mvp_group": "single_scene_edit",
+    "difficulty_layer": "domain_consistency",
+    "source_type": "synthetic_pair",
+    "source_ref": "MVP scene edit - visual only",
+    "input": "Storyboard có 10 scene. Người duyệt góp ý Scene 4: Đổi hình nhân vật thành sơ đồ khối, giữ nguyên chữ trên màn hình.",
+    "expected_intent": "Chỉ chỉnh visual của Scene 4 theo feedback.",
+    "expected_visual": "Scene 4 dùng sơ đồ khối; Scene 1-3 và 5-10 giữ nguyên.",
+    "expected_text": "Giữ nguyên text cũ của Scene 4",
+    "expected_edit_behavior": "Chỉ Scene 4 thay đổi visual; text Scene 4 và mọi scene khác không đổi.",
+    "must": "Chỉ cập nhật Scene 4 | Giữ nguyên chữ Scene 4 | Giữ scene khác",
+    "must_not": "Không regenerate toàn bộ storyboard | Không đổi text khi user yêu cầu giữ",
+    "pass_criteria": [
+      "single_scene_edit_isolated",
+      "requested_field_only_changed",
+      "other_scenes_unchanged"
+    ]
+  },
+  {
+    "id": "C4-020",
+    "mvp_group": "single_scene_edit",
+    "difficulty_layer": "domain_consistency",
+    "source_type": "synthetic_pair",
+    "source_ref": "MVP scene edit - text only",
+    "input": "Storyboard có 10 scene. Người duyệt góp ý Scene 6: Đổi chữ trên màn hình thành “AI chỉ là một phương án”, giữ nguyên hình.",
+    "expected_intent": "Chỉ chỉnh on-screen text của Scene 6.",
+    "expected_visual": "Visual/ảnh phác Scene 6 giữ nguyên; các scene khác không đổi.",
+    "expected_text": "AI chỉ là một phương án",
+    "expected_edit_behavior": "Chỉ trường on_screen_text của Scene 6 thay đổi.",
+    "must": "Text mới ≤ 40 ký tự | Giữ visual Scene 6 | Giữ scene khác",
+    "must_not": "Không đổi sketch/visual Scene 6 | Không sửa scene khác",
+    "pass_criteria": [
+      "single_scene_edit_isolated",
+      "requested_field_only_changed",
+      "other_scenes_unchanged"
+    ]
+  }
+]
