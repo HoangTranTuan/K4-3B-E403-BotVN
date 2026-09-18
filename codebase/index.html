@@ -206,7 +206,7 @@
               <ul class="text-slate-400 space-y-1.5 text-[11px]">
                 <li class="flex items-start gap-1.5">
                   <span class="text-indigo-400">•</span>
-                  <span><b>Phong cách:</b> Vibrant 2D Anime Editorial Illustration / Cinematic Concept Art.</span>
+                  <span><b>Phong cách:</b> Sơ đồ khối phẳng (Flat Flowchart), Infographic, Corporate UI/UX Diagram. Nền trắng/sáng, icon kỷ hà đơn giản, tuyệt đối không tả thực.</span>
                 </li>
                 <li class="flex items-start gap-1.5">
                   <span class="text-indigo-400">•</span>
@@ -293,7 +293,7 @@
           <div class="flex items-center gap-1.5 bg-slate-950 px-2.5 py-1 rounded-lg border border-slate-800">
             <span class="text-[11px] text-slate-400">Hiển thị:</span>
             <select id="visual-mode-select" onchange="changeVisualMode(this.value)" class="bg-transparent text-xs text-indigo-300 font-semibold focus:outline-none cursor-pointer">
-              <option value="concept" class="bg-slate-900 text-white">🎨 Concept Art 16:9</option>
+              <option value="concept" class="bg-slate-900 text-white">📊 Sơ đồ / Infographic 16:9</option>
               <option value="wireframe" class="bg-slate-900 text-indigo-300">📐 Wireframe Blueprint (0% Token)</option>
             </select>
           </div>
@@ -470,6 +470,16 @@
           <div id="modal-scene-desc" class="text-slate-300 text-[11px]">...</div>
         </div>
 
+        <!-- BẮT ĐẦU THÊM: Dropdown chọn phong cách -->
+        <div class="space-y-1">
+          <label class="block text-[11px] font-bold text-indigo-300">Phong cách hình ảnh (Bảo toàn ý nghĩa):</label>
+          <select id="modal-style-select" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-xs text-white focus:outline-none focus:border-indigo-500 cursor-pointer">
+            <option value="Mặc định (Sơ đồ khối phẳng)">🎨 Giữ nguyên Style hiện tại (Sơ đồ khối phẳng)</option>
+            <option value="Phác thảo vẽ tay (Hand-drawn)">✏️ Đổi sang Phác thảo vẽ tay (Nét đứt, không màu nền)</option>
+          </select>
+        </div>
+        <!-- KẾT THÚC THÊM -->
+
         <div class="space-y-1">
           <label class="block text-[11px] font-bold text-amber-400">Yêu cầu góp ý chỉnh sửa (Feedback cho AI):</label>
           <textarea id="modal-feedback-input" rows="3" class="w-full bg-slate-950 border border-slate-700 rounded-xl p-3 text-xs text-white focus:outline-none focus:border-indigo-500 leading-relaxed resize-none" placeholder="VD: Thêm cận cảnh micro cổ điển và ánh nắng vàng lịch sử rực rỡ hơn..."></textarea>
@@ -550,50 +560,6 @@
       document.getElementById("char-counter-input").innerText = `${words} từ (${val.length} ký tự)`;
     }
 
-    function handleImageLoaded(imgEl, cau) {
-      imgEl.dataset.loaded = "true";
-      imgEl.classList.remove("opacity-0");
-      imgEl.classList.add("opacity-100");
-      const loader = document.getElementById(`loader-${cau}`);
-      if (loader) {
-        loader.style.opacity = "0";
-        loader.style.transition = "opacity 0.3s ease";
-        setTimeout(() => { loader.style.display = "none"; }, 300);
-      }
-    }
-
-    function handleImageError(imgEl, cau) {
-      const s = activeScenes.find(x => x.cau == cau);
-      const loader = document.getElementById(`loader-${cau}`);
-      if (loader) loader.style.display = "none";
-
-      if (!imgEl.dataset.retryCount) {
-        imgEl.dataset.retryCount = "1";
-        // Thử lại 1 lần với truy vấn ngắn gọn trực diện theo đúng biểu tượng chủ thể của phân cảnh đó
-        const symbolText = s ? encodeURIComponent(s.visualSymbol + " clean educational scientific concept art 16:9") : "concept art";
-        imgEl.src = `https://image.pollinations.ai/prompt/${symbolText}?negative=nudity%2C%20naked%2C%20sensual%2C%20suggestive%2C%20female%20curves%2C%20cleavage%2C%20skintight%2C%20sexy%2C%20nsfw%2C%20erotic%2C%20violence%2C%20blood&width=1024&height=576&nologo=true&seed=${Math.floor(Math.random() * 100000)}&safe=true`;
-        return;
-      }
-      // Nếu thiết bị mất mạng hoặc GPU quá tải, hiển thị khung Wireframe Blueprint sư phạm chứa đúng thông tin cảnh đó (không bao giờ gán ảnh sai lệch)
-      const wrapper = document.getElementById(`img-wrapper-${cau}`) || imgEl.parentElement;
-      if (wrapper) {
-        wrapper.innerHTML = `
-          <div class="w-full h-full bg-slate-950 flex flex-col items-center justify-center p-4 text-center border border-indigo-900/60 rounded-xl space-y-2 select-none">
-            <div class="w-10 h-10 rounded-xl bg-indigo-950/80 border border-indigo-500/50 flex items-center justify-center text-lg shadow-lg">🎯</div>
-            <div class="text-xs font-bold text-indigo-300 font-mono">[ ${s ? s.visualSymbol : 'Chủ thể phân cảnh'} ]</div>
-            <div class="text-[10px] text-slate-400 max-w-[220px] line-clamp-2">${s ? s.pedagogicalIntent : ''}</div>
-            <span class="text-[9px] px-2 py-0.5 bg-slate-900 border border-slate-800 rounded text-amber-400 font-mono">Bản vẽ thiết kế khung hình (Wireframe)</span>
-          </div>
-          <!-- Chữ màn hình đặt tinh tế nửa trên Safe Zone -->
-          <div class="absolute top-3 inset-x-3 flex justify-center pointer-events-none z-20">
-            <span class="px-2.5 py-1 bg-black/80 backdrop-blur-sm border border-indigo-500/50 rounded-lg text-white font-bold text-[11px] text-center shadow-lg line-clamp-1">
-              ${s ? s.onScreenText : ''}
-            </span>
-          </div>
-        `;
-      }
-    }
-
     function selectStep(stepNum) {
       currentStep = stepNum;
       for (let i = 1; i <= 4; i++) {
@@ -663,8 +629,8 @@
           onScreenText: f.on_screen_text || "",
           pedagogicalIntent: f.visual_description || "",
           visualSymbol: f.visual_symbol || "Chủ thể chính",
-          imageUrl: f.image_url || `https://image.pollinations.ai/prompt/${encodeURIComponent((f.visual_symbol || 'educational science art') + ' 16:9')}?negative=nudity%2C%20naked%2C%20sensual%2C%20suggestive%2C%20female%20curves%2C%20skintight%2C%20sexy%2C%20nsfw%2C%20erotic%2C%20violence%2C%20blood&width=1024&height=576&nologo=true&seed=${Date.now() + idx}&safe=true`,
-          imagePrompt: f.image_prompt || ""
+          svgCode: f.svg_code || "",
+          imageUrl: ""
         }));
 
         document.getElementById("ai-scene-title").innerText = currentSceneTitle;
@@ -720,21 +686,12 @@
               <div class="relative w-full aspect-video rounded-xl overflow-hidden border border-slate-800 bg-slate-950 shadow-inner flex items-center justify-center group" id="img-wrapper-${s.cau}">
                 
                 <!-- Loading Skeleton / Shimmer & Spinner (Xóa bỏ hoàn toàn màn hình đen) -->
-                <div id="loader-${s.cau}" class="absolute inset-0 flex flex-col items-center justify-center bg-slate-950/95 z-10 space-y-2 select-none">
-                  <div class="relative flex items-center justify-center">
-                    <div class="w-8 h-8 rounded-full border-2 border-indigo-500/30 border-t-indigo-400 animate-spin"></div>
-                    <span class="absolute text-xs">🎨</span>
+                <!-- Đồ họa Sơ đồ Node trực tiếp bằng SVG -->
+                <div class="absolute inset-0 w-full h-full bg-[#0B0F19] flex items-center justify-center p-6 z-0">
+                  <div class="relative w-full h-full border border-dashed border-slate-700/60 rounded-xl flex items-center justify-center shadow-inner">
+                    ${s.svgCode || '<span class="text-slate-500 text-xs">AI chưa tạo SVG</span>'}
                   </div>
-                  <span class="text-[10px] font-mono text-indigo-300 font-medium tracking-wide animate-pulse">AI đang tạo tác Cảnh 0${s.cau}...</span>
-                  <span class="text-[9px] text-slate-500 font-mono">Đang tạo tranh Concept Art 16:9</span>
                 </div>
-
-                <img id="scene-img-${s.cau}"
-                     data-src="${s.imageUrl}" 
-                     alt="${s.pedagogicalIntent}" 
-                     class="w-full h-full object-cover object-center opacity-0 transition-opacity duration-500 group-hover:scale-105" 
-                     onload="handleImageLoaded(this, '${s.cau}')"
-                     onerror="handleImageError(this, '${s.cau}')"/>
                 
                 <!-- Chữ màn hình đặt tinh tế nửa trên Safe Zone -->
                 <div class="absolute top-3 inset-x-3 flex justify-center pointer-events-none z-20">
@@ -814,28 +771,6 @@
 
         container.appendChild(card);
       });
-
-      // Tải ảnh theo cơ chế tuần tự giãn cách (Staggered Loader) để chống nghẽn mạng và tránh lỗi 429 Too Many Requests
-      if (visualMode === 'concept') {
-        activeScenes.forEach((s, idx) => {
-          const delay = idx * 1200; // Giãn cách 1.2s giữa các phân cảnh
-          setTimeout(() => {
-            const imgEl = document.getElementById(`scene-img-${s.cau}`);
-            if (imgEl && !imgEl.dataset.started) {
-              imgEl.dataset.started = "true";
-              imgEl.src = imgEl.dataset.src;
-
-              // Watchdog timer: Nếu quá 15s mà ảnh chưa tải xong (do GPU bận), tự động kích hoạt fallback
-              setTimeout(() => {
-                if (imgEl && imgEl.classList.contains("opacity-0") && !imgEl.dataset.loaded) {
-                  console.warn(`[Watchdog Timeout] Cảnh 0${s.cau} vượt quá 15s. Kích hoạt fallback.`);
-                  handleImageError(imgEl, s.cau);
-                }
-              }, 15000);
-            }
-          }, delay);
-        });
-      }
     }
 
     // ========================================================
@@ -885,7 +820,8 @@
             image_prompt: s.imagePrompt
           },
           feedback: feedback,
-          full_script: document.getElementById("script-input-area").value
+          full_script: document.getElementById("script-input-area").value,
+          target_style: document.getElementById("modal-style-select").value
         };
 
         const res = await fetch("/api/edit_frame", {
@@ -907,8 +843,9 @@
         s.pedagogicalIntent = uf.visual_description || s.pedagogicalIntent;
         s.visualSymbol = uf.visual_symbol || s.visualSymbol;
         s.triggerWord = uf.trigger_word || s.triggerWord;
-        s.imageUrl = uf.image_url || s.imageUrl;
-        s.imagePrompt = uf.image_prompt || s.imagePrompt;
+        
+        // DÒNG QUAN TRỌNG NHẤT BỊ THIẾU: Cập nhật lại code SVG do AI vừa sinh ra
+        s.svgCode = uf.svg_code || s.svgCode; 
 
         renderStoryboardGrid();
 
@@ -943,16 +880,13 @@
       const s = activeScenes[idx];
       if (!s) return;
 
-      const screenContent = visualMode === 'concept'
-        ? `<img src="${s.imageUrl}" alt="${s.pedagogicalIntent}" class="w-full h-full object-cover object-center" onerror="handleImageError(this, '${s.cau}')"/>`
-        : `<div class="w-full h-full bg-slate-950 flex flex-col items-center justify-center space-y-2 border border-indigo-900/60 p-6 select-none">
-             <div class="w-16 h-16 rounded-2xl border border-indigo-500/60 bg-indigo-950/60 flex items-center justify-center shadow-xl">
-               <span class="text-3xl">🎯</span>
-             </div>
-             <span class="text-base font-bold text-indigo-300 font-mono">[ ${s.visualSymbol} ]</span>
-             <span class="text-xs text-slate-400 italic text-center max-w-md">${s.pedagogicalIntent}</span>
-             <span class="text-[10px] font-mono text-emerald-400 border border-emerald-900 bg-emerald-950/40 px-2 py-0.5 rounded">WIREFRAME BLUEPRINT (0% TOKEN)</span>
-           </div>`;
+      const screenContent = `
+        <div class="w-full h-full bg-[#0B0F19] flex flex-col items-center justify-center p-12">
+          <div class="relative w-full h-full max-w-3xl border-2 border-dashed border-slate-700/60 rounded-3xl flex items-center justify-center p-8 bg-[#0B0F19]/50 shadow-2xl shadow-purple-900/10">
+             <!-- Inject SVG của AI và ghi đè class để phóng to trong player -->
+             ${s.svgCode ? s.svgCode.replace('max-h-40', 'max-h-64') : '<span class="text-slate-500">AI chưa tạo SVG</span>'}
+          </div>
+        </div>`;
 
       document.getElementById("player-screen-content").innerHTML = screenContent;
       document.getElementById("player-overlay-text").innerText = s.onScreenText;

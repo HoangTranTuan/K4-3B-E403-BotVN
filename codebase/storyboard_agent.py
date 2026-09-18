@@ -34,35 +34,29 @@ except ImportError:
 
 DEFAULT_MODEL = os.environ.get('GEMINI_MODEL', 'gemini-flash-lite-latest')
 
-STYLEBOOK_SYSTEM_PROMPT = """Bạn là Senior Art Director & Storyboard Architect cho nền tảng Lesson Studio (Đề C4).
-Nhiệm vụ của bạn là chuyển hóa kịch bản bài giảng thành kịch bản phân cảnh hình ảnh với ẢNH MINH HỌA CONCEPT ART ĐIỆN ẢNH SƯ PHẠM 100% (Chuẩn mực giáo dục học đường, đồ họa khoa học hiện đại, sắc nét).
+STYLEBOOK_SYSTEM_PROMPT = """Bạn là Senior Art Director & Storyboard Architect cho nền tảng Lesson Studio.
+Nhiệm vụ của bạn là chuyển hóa kịch bản bài giảng thành kịch bản phân cảnh với ĐỒ HỌA SƠ ĐỒ KHỐI PHẲNG (Minimalist Flat Vector, Infographic, Flowchart, UI/UX Diagram) 100% tinh gọn, trực quan, loại bỏ hoàn toàn các chi tiết rườm rà.
 
 QUY CHUẨN QUAN TRỌNG:
 1. [RÀNG BUỘC KÝ TỰ] 'on_screen_text' TUYỆT ĐỐI KHÔNG QUÁ 40 KÝ TỰ (len <= 40). Chữ cô đọng, súc tích.
 2. [VÙNG AN TOÀN - SAFE ZONE] Tọa độ x: [80, 1840], y: [250, 960].
 3. [NGHIÊM CẤM ẢO GIÁC - CA KHÓ 13 CỦA HẢI]: Không tự ý bịa số liệu % hoặc thống kê nếu kịch bản chỉ có tính định tính.
-4. [TẠO DỰNG Ý NIỆM HÌNH ẢNH SỐNG ĐỘNG - LINH HOẠT THEO ĐÚNG SẮC THÁI CỦA TỪNG CÂU VÀ NGỮ CẢNH CỤ THỂ]:
-   - Với mỗi cảnh, bạn PHẢI VIẾT một câu 'image_prompt' tiếng Anh cực kỳ chi tiết, sống động theo phong cách nghệ thuật:
-     "Clean modern educational digital concept art of [mô tả chi tiết chủ thể thực tế, bối cảnh, ánh sáng, góc máy], professional scientific editorial illustration style, masterpiece, 16:9 aspect ratio, family-friendly educational concept art, professional academic presentation"
-   - TUYỆT ĐỐI KHÔNG DẬP KHUÔN CÙNG MỘT HÌNH ẢNH CHO CÙNG MỘT TỪ KHÓA:
-     * Mỗi lần tạo ảnh, mỗi phân cảnh trong kịch bản PHẢI LÀ MỘT BỨC TRANH ĐỘC BẢN, phản ánh chính xác sắc thái, khía cạnh chuyên sâu và thời không của câu nói đó:
-     * Ví dụ với "AI / Trí tuệ nhân tạo":
-       + Nếu nói về "AI phát triển / Bản chất AI": Phải vẽ các dàn máy chủ siêu máy tính hiện đại phát sáng, mạng nơ-ron không gian 3D kết nối các nút dữ liệu, vi mạch bán dẫn tinh xảo (glowing 3D neural network topology, futuristic data center server racks, glowing semiconductor microchips, data visualization streams, no human figures, pure technology). CẤM TIỆT vẽ hình dáng người hay robot nữ/nam!
-       + Nếu nói về "Toán học / Nền tảng của AI": Phải vẽ các công thức vi tích phân phát sáng, ma trận đại số tuyến tính 3 chiều, không gian hình học vector đan xen các nút mạng nơ-ron rực rỡ (glowing mathematical calculus equations, linear algebra matrices in 3D coordinate space, geometric vector fields intertwined with luminous neural nodes, no people).
-       + Nếu nói về "AI trong y tế": Bác sĩ đeo khẩu trang mặc áo blouse trắng rộng rãi cùng mô hình chẩn đoán 3D, bản đồ phân tử sinh học.
-       + Nếu nói về "AI trong nông nghiệp / môi trường": Drone tự hành bay qua cánh đồng xanh, cảm biến thông minh.
-       + Nếu nói về "Kỹ sư / Nhân lực công nghệ": Kỹ sư mặc áo sơ mi công sở lịch sự hoặc áo lab rộng rãi làm việc trước màn hình hiển thị code.
-     * Ví dụ với "Ba Đình / Địa danh":
-       + Nếu nói về "Năm 1945 / Tuyên ngôn": Bác Hồ đứng trên bục gỗ phát biểu trước biển người dân và cờ đỏ sao vàng lịch sử dưới nắng thu Ba Đình.
-       + Nếu nói về "Quảng trường Ba Đình đêm pháo hoa / ngày lễ": Toàn cảnh Quảng trường Ba Đình rực rỡ dưới bầu trời đêm ngập tràn pháo hoa đa sắc màu, người dân hân hoan vẫy cờ.
-       + Nếu nói về "Lăng Bác / Buổi sáng / Thượng cờ": Lăng Chủ tịch uy nghiêm trong ánh bình minh mờ sương, tiêu binh bồng súng trang nghiêm, hàng tre ngà rì rào.
-     * Với kịch bản nhiều phân cảnh (multi-frame): Mỗi cảnh phải thể hiện một góc nhìn/chủ thể tiếp nối mới mẻ, KHÔNG lặp lại cùng một góc máy hay mô tả hình ảnh giữa các cảnh!
-   - NGUYÊN TẮC VÀNG VỀ ĐỒNG NHẤT THỊ GIÁC (DIRECT SUBJECT FOCUS - NGHIÊM CẤM TỰ BỊA LỚP HỌC):
-     * Hình ảnh PHẢI TẢ ĐÚNG VÀ TRỰC DIỆN CHỦ THỂ CỐT LÕI của câu nói:
-       + Nói về "lửa / nghịch lửa / cẩn thận với lửa": Phải vẽ NGỌN LỬA CHÁY RỰC SÁNG, ĐỐNG LỬA TRẠI BỐC KHÓI, TÀN LỬA ĐỎ CAM RỰC RỠ hoặc BIỂN CẢNH BÁO NGUY CƠ CHÁY NỔ (bright burning campfire flames, crackling fire embers, dramatic smoke, caution fire hazard warning sign). CẤM TIỆT vẽ lớp học hay phòng học!
-       + Nói về "đại dương / cá voi / sinh vật biển": Phải vẽ lòng đại dương xanh thẳm lung linh. CẤM vẽ lớp học!
-       + Nói về "núi lửa / thiên nhiên hoang dã": Phải vẽ đúng khung cảnh thiên nhiên hùng vĩ. CẤM vẽ lớp học!
-     * LƯU Ý ĐẶC BIỆT: Trừ khi kịch bản nhắc đến "lớp học, trường học, giáo viên, học sinh", NGHIÊM CẤM TỰ Ý CHÈN các từ "classroom, school, teacher, students listening" vào câu image_prompt!
+4. [TẠO DỰNG ĐỒ HỌA SVG ĐỘNG]:
+   - Với mỗi cảnh, bạn PHẢI tự viết mã code SVG (Scalable Vector Graphics) trực tiếp vào trường 'svg_code' để vẽ ra sơ đồ logic tương ứng với câu giảng.
+   - [ĐẶC BIỆT - XỬ LÝ CÂU TRỪU TƯỢNG]: Nếu câu giảng mang tính trừu tượng/triết lý (không có vật thể thực tế), KHÔNG cố vẽ hình đồ vật cụ thể. Hãy dùng các Node hình học cơ bản (tròn, vuông, tam giác) và đường nối đứt nét để biểu diễn logic.
+   - Nguyên tắc code SVG:
+     * Luôn dùng thẻ mở: `<svg class="w-full h-full max-h-40" viewBox="0 0 600 200" xmlns="http://www.w3.org/2000/svg">`
+     * KHÔNG vẽ màu nền (background) cho SVG vì giao diện đã có nền tối.
+     * BẢNG MÀU BẮT BUỘC:
+       + Màu đường nối/mũi tên (<line>, <path>): stroke="#475569", stroke-width="3"
+       + Node chính quan trọng nhất: <circle> hoặc <rect> với fill="#4c1d95" (tím), stroke="#7c3aed"
+       + Node phụ/hỗ trợ: fill="#0B0F19" (trong suốt nền tối), stroke="#0ea5e9" (xanh dương) hoặc "#10b981" (xanh ngọc)
+       + Chữ trong Node (<text>): fill="#ffffff", font-family="sans-serif", font-weight="bold", text-anchor="middle"
+   - AI TỰ QUYẾT ĐỊNH CẤU TRÚC:
+     * Nếu là liệt kê: Vẽ 3 hình tròn xếp ngang nối nhau.
+     * Nếu là trung tâm: Vẽ 1 hình to ở giữa, các hình nhỏ xoay quanh.
+     * Nếu là so sánh/cấu trúc: Vẽ hình chữ nhật (<rect>) thay vì hình tròn (<circle>).
+     * Phải đặt text ngắn gọn (2-3 từ) vào giữa các Node bằng thẻ <text>.
 5. [QUY CHUẨN AN TOÀN SƯ PHẠM TUYỆT ĐỐI - ZERO TOLERANCE VỚI YẾU TỐ NHẠY CẢM, GỢI DỤC, KHỎA THÂN]:
    - MÔI TRƯỜNG HỌC ĐƯỜNG CHUẨN MỰC: Tuyệt đối không để lọt bất kỳ hình ảnh nhạy cảm, gợi dục, đường cong cơ thể hở hang hay khỏa thân nào.
    - PHÂN ĐỊNH RÕ RÀNG:
@@ -74,11 +68,18 @@ QUY CHUẨN QUAN TRỌNG:
        + TUYỆT ĐỐI CẤM trang phục bó sát (skintight, bodysuit, spandex), CẤM vẽ đường cong cơ thể, vòng một hay hông eo gợi cảm.
    - TUYỆT ĐỐI KHÔNG CHÈN TỪ "nudity, nude, nsfw, gore, blood" VÀO CÂU POSITIVE PROMPT (kể cả đi kèm chữ 'no'): Việc chèn các từ này vào positive prompt sẽ khiến AI khuếch tán kích hoạt vẽ cơ thể người nhạy cảm. Luôn kết thúc prompt bằng cụm từ an toàn: "family-friendly educational concept art, professional academic presentation, clean technical illustration".
 6. [SVG CODE DỰ PHÒNG]: Mã SVG đơn giản phòng khi offline.
+7. [TÍNH NHẤT QUÁN THỊ GIÁC - SỔ QUY ƯỚC XUYÊN SUỐT VIDEO]:
+   - Hệ thống BẮT BUỘC phải tự lập một "Sổ quy ước hình ảnh" (global_visual_dictionary) cho các khái niệm hoặc chủ thể lặp lại nhiều lần trong kịch bản.
+   - NGUYÊN TẮC BẢO TOÀN: Nếu một khái niệm (VD: 'Token', 'Mô hình AI', 'Dữ liệu') được quy ước ở Cảnh 1 là hình chữ nhật viền xanh (<rect stroke="#0ea5e9">), thì khi khái niệm này xuất hiện lại ở các Cảnh sau, BẮT BUỘC phải sử dụng lại đúng hình khối và màu sắc đó. Tuyệt đối không tự ý đổi sang hình tròn hay đổi màu khác để đảm bảo tính nhất quán 100%.
 
 ĐỊNH DẠNG ĐẦU RA BẮT BUỘC (JSON):
 {
   "scene_title": "Tiêu đề phân cảnh",
   "core_concept": "Ý niệm sư phạm cốt lõi",
+  "global_visual_dictionary": {
+    "Tên_khái_niệm_chính_1": "Mô tả quy ước hình thù và màu sắc SVG (VD: <rect fill='#4c1d95'>)",
+    "Tên_khái_niệm_chính_2": "Mô tả quy ước hình thù và màu sắc SVG..."
+  },
   "frames": [
     {
       "frame_number": 1,
@@ -86,10 +87,10 @@ QUY CHUẨN QUAN TRỌNG:
       "timeline": "00:00.000 - 00:06.000",
       "script_anchor": "Câu trích dẫn trong bài giảng",
       "trigger_word": "Từ then chốt kích hoạt hình ảnh",
-      "visual_description": "Mô tả chi tiết ý sư phạm cần thấy",
-      "visual_symbol": "Tên chủ thể chính",
+      "visual_description": "Mô tả chi tiết ý sư phạm cần thấy (Lưu ý: Bám sát global_visual_dictionary)",
+      "visual_symbol": "Từ khóa trung tâm (tối đa 2 từ)",
+      "svg_code": "<svg class=\"w-full h-full max-h-40\" viewBox=\"0 0 600 200\" xmlns=\"http://www.w3.org/2000/svg\">...các thẻ vòng lặp từ global_visual_dictionary...</svg>",
       "on_screen_text": "Chữ cô đọng tối đa 40 ký tự",
-      "image_prompt": "Vibrant educational digital concept art of ..., 16:9",
       "safe_zone": { "x": 960, "y": 540, "width": 800, "height": 400, "compliant": true }
     }
   ],
@@ -97,7 +98,8 @@ QUY CHUẨN QUAN TRỌNG:
     "all_text_under_40": true,
     "safe_zone_compliant": true,
     "no_hallucination": true,
-    "safety_content_compliant": true
+    "safety_content_compliant": true,
+    "visual_consistency_maintained": true
   }
 }
 """
@@ -148,7 +150,7 @@ class StoryboardAgent:
             # Gắn image_url thông minh động 100% cho từng frame
             if parsed_json and "frames" in parsed_json:
                 for idx, f in enumerate(parsed_json["frames"]):
-                    f["image_url"] = self._resolve_image_url(f, script_text, frame_idx=idx)
+                    f["image_url"] = ""
 
         except Exception as e:
             latency_ms = int((time.time() - start_time) * 1000)
@@ -164,7 +166,7 @@ class StoryboardAgent:
             "error": error_msg
         }
 
-    def edit_single_frame(self, frame_data: Dict[str, Any], feedback: str, full_script: str = "") -> Dict[str, Any]:
+    def edit_single_frame(self, frame_data: Dict[str, Any], feedback: str, full_script: str = "", target_style: str = "Mặc định (Sơ đồ khối phẳng)") -> Dict[str, Any]:
         prompt = f"""Bạn là Senior Art Director. Người dùng yêu cầu chỉnh sửa DUY NHẤT một cảnh phân cảnh.
 
 THÔNG TIN CẢNH #{frame_data.get('frame_number', 1)}:
@@ -172,15 +174,20 @@ THÔNG TIN CẢNH #{frame_data.get('frame_number', 1)}:
 - Chữ màn hình cũ: "{frame_data.get('on_screen_text', '')}"
 - Ý trực quan cũ: "{frame_data.get('visual_description', '')}"
 
+PHONG CÁCH YÊU CẦU (TARGET STYLE): {target_style}
+
 GÓP Ý CỦA NGƯỜI DUYỆT:
 \"\"\"
 {feedback}
 \"\"\"
 
-YÊU CẦU:
-1. Viết lại câu 'image_prompt' tiếng Anh cực kỳ chi tiết theo đúng góp ý của người duyệt (phong cách Vibrant educational digital concept art, anime editorial illustration style, 16:9).
+YÊU CẦU BẮT BUỘC:
+1. Viết lại mã code 'svg_code' tạo sơ đồ logic phản ánh ĐÚNG góp ý và PHONG CÁCH YÊU CẦU.
+   - Nếu phong cách là "Mặc định (Sơ đồ khối phẳng)": Dùng màu fill đậm (#4c1d95), nét liền.
+   - Nếu phong cách là "Phác thảo vẽ tay (Hand-drawn)": BỎ HẾT màu fill (fill="none" hoặc fill="#0B0F19"), chỉ dùng màu viền (stroke="#ffffff" hoặc "#0ea5e9"), BẮT BUỘC thêm thuộc tính `stroke-dasharray="5,5"` vào các thẻ <circle>, <rect>, <path>, <line> để tạo hiệu ứng nét đứt vẽ tay.
+   - QUAN TRỌNG: Dù đổi phong cách, TUYỆT ĐỐI GIỮ NGUYÊN cấu trúc ý nghĩa sư phạm và text trên hình.
 2. 'on_screen_text' tối đa 40 ký tự (len <= 40).
-3. TUYỆT ĐỐI AN TOÀN SƯ PHẠM: Không vẽ máu me, bạo lực ghê rợn, khỏa thân hay cơ thể trần chuồng nhạy cảm (luôn chèn 'family-friendly, fully clothed, no gore, no violence, no nudity').
+3. TUYỆT ĐỐI AN TOÀN SƯ PHẠM.
 4. Trả về DUY NHẤT JSON hợp lệ:
 {{
   "frame_number": {frame_data.get('frame_number', 1)},
@@ -189,9 +196,9 @@ YÊU CẦU:
   "script_anchor": "{frame_data.get('script_anchor', '')}",
   "trigger_word": "{frame_data.get('trigger_word', 'Key')}",
   "visual_description": "Mô tả chi tiết hình ảnh mới",
-  "visual_symbol": "Tên chủ thể mới",
+  "visual_symbol": "Từ khóa trung tâm (2 từ)",
+  "svg_code": "<svg class=\"w-full h-full max-h-40\" viewBox=\"0 0 600 200\" xmlns=\"http://www.w3.org/2000/svg\">...</svg>",
   "on_screen_text": "Chữ màn hình mới <= 40 ký tự",
-  "image_prompt": "Vibrant educational digital concept art of ..., 16:9",
   "safe_zone": {{ "x": 960, "y": 540, "width": 800, "height": 400, "compliant": true }}
 }}
 """
@@ -215,7 +222,7 @@ YÊU CẦU:
             if clean_text.endswith('```'):
                 clean_text = clean_text[:-3]
             parsed = json.loads(clean_text.strip())
-            parsed["image_url"] = self._resolve_image_url(parsed, feedback, frame_idx=parsed.get("frame_number", 1))
+            parsed["image_url"] = ""
             return {
                 "success": True,
                 "latency_ms": int((time.time() - start_time) * 1000),
@@ -260,28 +267,10 @@ YÊU CẦU:
                 clean_p += ", no people, no human figures, pure technology and scientific data visualization"
 
         # 4. Bổ sung các guardrails khẳng định an toàn sư phạm
-        safety_tokens = ", family-friendly educational concept art, professional academic presentation, clean technical illustration"
+        safety_tokens = ", flat 2d vector infographic, corporate flowchart diagram, minimalist, clean technical diagram illustration"
         if "family-friendly" not in clean_p.lower():
             clean_p = clean_p.strip().rstrip(",") + safety_tokens
         return clean_p.strip()
-
-    def _resolve_image_url(self, frame: Dict[str, Any], context_text: str = "", frame_idx: int = 0) -> str:
-        """Sinh URL ảnh AI điện ảnh động 100% (Pollinations AI) với Negative Prompt kiểm duyệt triệt để nhạy cảm / khỏa thân."""
-        raw_prompt = frame.get("image_prompt") or f"Clean modern educational digital concept art of {frame.get('visual_description', 'educational lesson')}, professional scientific editorial illustration style, masterpiece, 16:9 aspect ratio"
-        # Bắt buộc đi qua màng lọc an toàn sư phạm (Content Safety Guardrail)
-        safe_prompt = self.sanitize_image_prompt(raw_prompt)
-        frame["image_prompt"] = safe_prompt
-
-        encoded = urllib.parse.quote(safe_prompt)
-        # Bộ Negative Prompt chuẩn học đường tuyệt đối ngăn chặn khỏa thân, đường cong gợi cảm hay bạo lực
-        negative_prompt = "nudity, naked, sensual, suggestive, female curves, breasts, cleavage, revealing clothing, skintight, bodysuit, sexy, nsfw, erotic, violence, blood, gore, horrific, distorted body"
-        encoded_neg = urllib.parse.quote(negative_prompt)
-
-        # Sinh seed ngẫu nhiên độc nhất dựa trên timestamp mili-giây, số thứ tự cảnh và nội dung prompt
-        frame_num = frame.get("frame_number", frame_idx + 1)
-        unique_seed = int(time.time() * 1000 + frame_num * 3571 + abs(hash(safe_prompt))) % 1000000
-        # Tối ưu kích thước 1024x576 chuẩn 16:9 sắc nét, kèm negative prompt và safe=true
-        return f"https://image.pollinations.ai/prompt/{encoded}?negative={encoded_neg}&width=1024&height=576&nologo=true&seed={unique_seed}&safe=true"
 
     def validate_storyboard(self, result_data: Dict[str, Any], raw_script: str) -> Dict[str, Any]:
         report = {
