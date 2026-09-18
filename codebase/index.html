@@ -110,7 +110,7 @@
     <!-- BƯỚC 1: NẠP KỊCH BẢN & MẪU BÀI GIẢNG ĐIỂN HÌNH          -->
     <!-- ======================================================== -->
     <section id="step-view-1" class="space-y-6">
-      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+      <div class="flex flex-col gap-6">
         
         <!-- Left: Input Script (7 cols) -->
         <div class="lg:col-span-7 bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl space-y-4">
@@ -136,42 +136,6 @@
             </div>
           </div>
 
-          <!-- MẪU BÀI GIẢNG THỬ NGHIỆM NHANH (TÙY CHỌN, KHÔNG BẮT BUỘC) -->
-          <div class="bg-slate-950/80 p-3 rounded-xl border border-slate-800 space-y-2">
-            <div class="flex items-center justify-between">
-              <span class="text-[11px] font-semibold text-slate-300 flex items-center gap-1.5">
-                <span>💡</span> <span>Hoặc bấm chọn nhanh mẫu thử nghiệm (Tùy chọn - không bắt buộc):</span>
-              </span>
-              <span class="text-[10px] text-slate-500 font-mono">1-Click Fill</span>
-            </div>
-            <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs">
-              <button type="button" onclick="loadSampleText('badinh')" class="p-2 bg-slate-900 hover:bg-slate-800 text-left border border-slate-800 hover:border-red-500 rounded-lg transition space-y-0.5">
-                <div class="font-bold text-red-400 text-[11px] flex items-center gap-1">
-                  <span>🇻🇳</span> <span>Ba Đình 1945</span>
-                </div>
-                <div class="text-[9px] text-slate-500 truncate">Tuyên ngôn Độc lập</div>
-              </button>
-              <button type="button" onclick="loadSampleText('ai_robot')" class="p-2 bg-slate-900 hover:bg-slate-800 text-left border border-slate-800 hover:border-cyan-500 rounded-lg transition space-y-0.5">
-                <div class="font-bold text-cyan-300 text-[11px] flex items-center gap-1">
-                  <span>🤖</span> <span>AI & Đô Thị</span>
-                </div>
-                <div class="text-[9px] text-slate-500 truncate">Mẫu ảnh chuẩn Studio</div>
-              </button>
-              <button type="button" onclick="loadSampleText('gravity')" class="p-2 bg-slate-900 hover:bg-slate-800 text-left border border-slate-800 hover:border-purple-500 rounded-lg transition space-y-0.5">
-                <div class="font-bold text-purple-300 text-[11px] flex items-center gap-1">
-                  <span>🌌</span> <span>Sóng Hấp Dẫn</span>
-                </div>
-                <div class="text-[9px] text-slate-500 truncate">Lỗ đen vũ trụ</div>
-              </button>
-              <button type="button" onclick="loadSampleText('caching')" class="p-2 bg-slate-900 hover:bg-slate-800 text-left border border-slate-800 hover:border-amber-500 rounded-lg transition space-y-0.5">
-                <div class="font-bold text-amber-300 text-[11px] flex items-center gap-1">
-                  <span>⚡</span> <span>Server & Cache</span>
-                </div>
-                <div class="text-[9px] text-slate-500 truncate">Hạ tầng dữ liệu</div>
-              </button>
-            </div>
-          </div>
-
           <div class="p-3 bg-slate-950 rounded-xl border border-slate-800/80 flex flex-wrap items-center justify-between text-xs text-slate-400">
             <span id="script-stats-badge">Trạng thái: Sẵn sàng dựng Concept Art</span>
             <div class="flex items-center gap-3 text-[11px]">
@@ -188,83 +152,57 @@
         </div>
 
         <!-- Right: Stylebook Rules (5 cols) -->
-        <div class="lg:col-span-5 bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl space-y-4 flex flex-col justify-between">
-          <div class="space-y-4">
-            <div class="pb-3 border-b border-slate-800 flex items-center justify-between">
-              <div>
-                <h2 class="text-base font-semibold text-white flex items-center gap-2">
-                  <span>🎨 Sổ Quy Ước Hình Ảnh (Stylebook)</span>
-                </h2>
-                <p class="text-xs text-slate-400 mt-0.5">Khóa nhất quán chất lượng & tỷ lệ suốt toàn bộ video.</p>
-              </div>
-              <span class="px-2 py-0.5 text-[10px] bg-indigo-950 text-indigo-300 border border-indigo-800 rounded font-mono font-semibold">Quy chuẩn chốt</span>
+        <!-- Sổ Quy Ước Hình Ảnh (Thanh bấm thu gọn) -->
+        <div class="w-full bg-slate-900 border border-slate-800 rounded-2xl p-4 shadow-xl">
+          
+          <!-- Thanh tiêu đề (Click để mở/đóng) -->
+          <button onclick="toggleStylebook()" class="w-full flex items-center justify-between text-left focus:outline-none group">
+            <div>
+              <h2 class="text-base font-semibold text-white group-hover:text-indigo-400 transition-colors flex items-center gap-2">
+                <span>🎨 Sổ Quy Ước Hình Ảnh (Stylebook)</span>
+              </h2>
+              <p class="text-xs text-slate-400 mt-0.5">Khóa nhất quán chất lượng & tỷ lệ suốt toàn bộ video. Bấm vào đây để xem chi tiết.</p>
             </div>
+            <div class="flex items-center gap-3">
+              <span class="px-2 py-0.5 text-[10px] bg-indigo-950 text-indigo-300 border border-indigo-800 rounded font-mono font-semibold">Quy chuẩn chốt</span>
+              <!-- Icon mũi tên chỉ xuống -->
+              <svg id="stylebook-icon" class="w-5 h-5 text-slate-400 transform transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+              </svg>
+            </div>
+          </button>
 
-            <!-- Bảng màu ngữ nghĩa -->
+          <!-- Nội dung chi tiết (Mặc định được ẩn bằng class "hidden") -->
+          <div id="stylebook-content" class="hidden mt-5 space-y-4 border-t border-slate-800 pt-5">
+            
+            <!-- 1. Tiêu chuẩn nghệ thuật -->
             <div class="bg-slate-950 p-3.5 rounded-xl border border-slate-800 space-y-2 text-xs">
               <div class="text-[11px] font-bold text-indigo-400 uppercase tracking-wider">1. Tiêu chuẩn nghệ thuật (Art Direction):</div>
               <ul class="text-slate-400 space-y-1.5 text-[11px]">
-                <li class="flex items-start gap-1.5">
-                  <span class="text-indigo-400">•</span>
-                  <span><b>Phong cách:</b> Sơ đồ khối phẳng (Flat Flowchart), Infographic, Corporate UI/UX Diagram. Nền trắng/sáng, icon kỷ hà đơn giản, tuyệt đối không tả thực.</span>
-                </li>
-                <li class="flex items-start gap-1.5">
-                  <span class="text-indigo-400">•</span>
-                  <span><b>Tỷ lệ khung hình:</b> Chuẩn <b>16:9 (1920×1080)</b>, ánh sáng điện ảnh, chi tiết sắc nét.</span>
-                </li>
+                <li class="flex items-start gap-1.5"><span class="text-indigo-400">•</span><span><b>Phong cách:</b> Sơ đồ khối phẳng (Flat Flowchart), Infographic, Corporate UI/UX Diagram. Nền trắng/sáng, icon kỷ hà đơn giản, tuyệt đối không tả thực.</span></li>
+                <li class="flex items-start gap-1.5"><span class="text-indigo-400">•</span><span><b>Tỷ lệ khung hình:</b> Chuẩn <b>16:9 (1920×1080)</b>, ánh sáng điện ảnh, chi tiết sắc nét.</span></li>
               </ul>
             </div>
 
-            <!-- Quy ước biểu tượng -->
+            <!-- 2. Ràng buộc kỹ thuật -->
             <div class="bg-slate-950 p-3.5 rounded-xl border border-slate-800 space-y-2 text-xs">
               <div class="text-[11px] font-bold text-indigo-400 uppercase tracking-wider">2. Ràng buộc kỹ thuật & nhận thức:</div>
               <ul class="text-slate-400 space-y-1.5 text-[11px]">
-                <li class="flex items-start gap-1.5">
-                  <span class="text-indigo-400">•</span>
-                  <span><b>Chữ màn hình:</b> TUYỆT ĐỐI KHÔNG QUÁ <b>40 ký tự</b> (tránh quá tải nhận thức).</span>
-                </li>
-                <li class="flex items-start gap-1.5">
-                  <span class="text-indigo-400">•</span>
-                  <span><b>Vùng an toàn (Safe Zone):</b> $X \in [80, 1840], Y \in [250, 960]$ (chừa HUD và phụ đề).</span>
-                </li>
-                <li class="flex items-start gap-1.5">
-                  <span class="text-indigo-400">•</span>
-                  <span><b>Chống bịa số liệu (Ca khó 13):</b> Không tự ý bịa số % nếu kịch bản chỉ nói định tính.</span>
-                </li>
+                <li class="flex items-start gap-1.5"><span class="text-indigo-400">•</span><span><b>Chữ màn hình:</b> TUYỆT ĐỐI KHÔNG QUÁ <b>40 ký tự</b> (tránh quá tải nhận thức).</span></li>
+                <li class="flex items-start gap-1.5"><span class="text-indigo-400">•</span><span><b>Vùng an toàn (Safe Zone):</b> $X \in [80, 1840], Y \in [250, 960]$ (chừa HUD và phụ đề).</span></li>
+                <li class="flex items-start gap-1.5"><span class="text-indigo-400">•</span><span><b>Chống bịa số liệu:</b> Không tự ý bịa số % nếu kịch bản chỉ nói định tính.</span></li>
               </ul>
             </div>
 
-            <!-- Quy chuẩn An toàn sư phạm (Responsible AI) -->
+            <!-- 3. An toàn sư phạm -->
             <div class="bg-slate-950 p-3.5 rounded-xl border border-rose-900/50 space-y-2 text-xs">
-              <div class="text-[11px] font-bold text-rose-400 uppercase tracking-wider flex items-center gap-1.5">
-                <span>🛡️</span> <span>3. An Toàn Sư Phạm (Content Guardrails):</span>
-              </div>
+              <div class="text-[11px] font-bold text-rose-400 uppercase tracking-wider flex items-center gap-1.5"><span>🛡️</span> <span>3. An Toàn Sư Phạm (Content Guardrails):</span></div>
               <ul class="text-slate-400 space-y-1.5 text-[11px]">
-                <li class="flex items-start gap-1.5">
-                  <span class="text-rose-400">•</span>
-                  <span><b>Nghiêm cấm máu me, bạo lực mạnh:</b> Cấm hình ảnh thương tích, chém giết, xác chết. Lịch sử chuyển hóa thành cờ, bản đồ, di tích và tượng đài.</span>
-                </li>
-                <li class="flex items-start gap-1.5">
-                  <span class="text-rose-400">•</span>
-                  <span><b>Nghiêm cấm cơ thể trần chuồng / nhạy cảm:</b> Nhân vật luôn mặc trang phục lịch sự, đầy đủ. Sinh học/y tế dùng sơ đồ giải phẫu 3D cách điệu.</span>
-                </li>
-                <li class="flex items-start gap-1.5">
-                  <span class="text-emerald-400">•</span>
-                  <span><b>Chuẩn PG-Clean:</b> 100% an toàn cho lớp học và học sinh mọi lứa tuổi.</span>
-                </li>
+                <li class="flex items-start gap-1.5"><span class="text-rose-400">•</span><span><b>Nghiêm cấm máu me, bạo lực mạnh:</b> Cấm hình ảnh thương tích, chém giết, xác chết. Lịch sử chuyển hóa thành cờ, bản đồ, di tích và tượng đài.</span></li>
+                <li class="flex items-start gap-1.5"><span class="text-rose-400">•</span><span><b>Nghiêm cấm cơ thể trần chuồng / nhạy cảm:</b> Nhân vật luôn mặc trang phục lịch sự, đầy đủ. Sinh học/y tế dùng sơ đồ giải phẫu 3D cách điệu.</span></li>
+                <li class="flex items-start gap-1.5"><span class="text-emerald-400">•</span><span><b>Chuẩn PG-Clean:</b> 100% an toàn cho lớp học và học sinh mọi lứa tuổi.</span></li>
               </ul>
             </div>
-
-            <div class="p-3 bg-indigo-950/30 border border-indigo-800/40 rounded-xl text-indigo-300 text-[11px] flex items-center gap-2">
-              <span>🖼️</span>
-              <span><b>Đồ Họa Thực Tế:</b> Tái hiện chân thực con người, công trình, biểu tượng lịch sử và khoa học.</span>
-            </div>
-          </div>
-
-          <div class="p-3 bg-slate-950 border border-slate-800 rounded-xl text-xs flex items-center justify-between">
-            <span class="text-slate-400">Lát cắt Cam kết CP1:</span>
-            <span class="font-mono text-emerald-400 font-bold">Granular Edit Ready</span>
-          </div>
         </div>
 
       </div>
@@ -998,6 +936,21 @@
         el.select();
         navigator.clipboard.writeText(el.value);
         alert("Đã sao chép vào bộ nhớ tạm!");
+      }
+    }
+
+    function toggleStylebook() {
+      const content = document.getElementById("stylebook-content");
+      const icon = document.getElementById("stylebook-icon");
+      
+      if (content.classList.contains("hidden")) {
+        // Mở ra: xóa class hidden và lật ngược mũi tên
+        content.classList.remove("hidden");
+        icon.classList.add("rotate-180");
+      } else {
+        // Thu gọn: thêm lại class hidden và trả mũi tên về ban đầu
+        content.classList.add("hidden");
+        icon.classList.remove("rotate-180");
       }
     }
   </script>

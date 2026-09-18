@@ -36,10 +36,16 @@ def run_evaluation():
     with open(golden_set_path, "r", encoding="utf-8") as f:
         golden_data = json.load(f)
 
-    test_cases = golden_data.get("test_cases", [])
+    if isinstance(golden_data, list):
+        test_cases = golden_data
+    elif isinstance(golden_data, dict):
+        test_cases = golden_data.get("test_cases", [])
+    else:
+        raise ValueError("golden_set.json phải là một danh sách hoặc object chứa khóa 'test_cases'.")
+
     total_cases = len(test_cases)
     print(f"==================================================")
-    print(f" BẮT ĐẦU CHẠY KIỂM THỬ SƠ BỘ (RUN 1) - 20 CASES")
+    print(f" BẮT ĐẦU CHẠY KIỂM THỬ SƠ BỘ (RUN 1) - {total_cases} CASES")
     print(f" Model: gemini-flash-lite-latest (Live Gemini API)")
     print(f" Thời gian bắt đầu: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
     print(f"==================================================\n")
@@ -56,8 +62,10 @@ def run_evaluation():
 
     for idx, tc in enumerate(test_cases):
         tc_id = tc["id"]
-        layer = tc["layer"]
-        input_text = tc["input_text"]
+        layer = f"{tc.get('mvp_group', 'unknown')}: {tc.get('difficulty_layer', 'unknown')}"
+        input_text = tc["input"]
+        complexity = tc.get("complexity", tc.get("difficulty_layer", "medium"))
+        intent = tc.get("intent", tc.get("expected_intent", ""))
         print(f"[{idx+1}/{total_cases}] Đang chạy {tc_id} ({layer})...", end=" ", flush=True)
 
         if layer not in layer_stats:
@@ -85,9 +93,9 @@ def run_evaluation():
             "timestamp": datetime.now().isoformat(),
             "test_case_id": tc_id,
             "layer": layer,
-            "complexity": tc.get("complexity", "medium"),
+            "complexity": complexity,
             "input_text": input_text,
-            "intent": tc.get("intent", ""),
+            "intent": intent,
             "raw_prompt": gen_res.get("raw_prompt", ""),
             "raw_response": gen_res.get("raw_response", ""),
             "parsed_storyboard": gen_res.get("storyboard"),
@@ -135,13 +143,13 @@ def generate_report(report_path, results, passed_count, total_cases, layer_stats
 
 | Chỉ số đo lường | Giá trị thực tế Run 1 | Mục tiêu Quality Bar CP4 | Trạng thái |
 |---|---|---|---|
-| **Tổng số case kiểm thử (Golden Set)** | **{total_cases}** cases | $\ge 20$ cases | Đạt chuẩn số lượng |
+| **Tổng số case kiểm thử (Golden Set)** | **{total_cases}** cases | $\\ge 20$ cases | Đạt chuẩn số lượng |
 | **Số ca ĐẠT (Pass)** | **{passed_count}** cases | — | — |
 | **Số ca KHÔNG ĐẠT (Fail)** | **{failed_count}** cases | — | Phân tích chi tiết bên dưới |
-| **Tỷ lệ vượt qua (Pass Rate)** | **{pass_rate:.1f}%** ({passed_count}/{total_cases}) | $\ge 70\%$ | **ĐẠT CHUẨN SƠ BỘ CP3** |
+| **Tỷ lệ vượt qua (Pass Rate)** | **{pass_rate:.1f}%** ({passed_count}/{total_cases}) | $\\ge 70\\%$ | **ĐẠT CHUẨN SƠ BỘ CP3** |
 | **Thời gian phản hồi trung bình (Avg Latency)** | **{avg_latency:.0f} ms** (~{avg_latency/1000:.2f}s) | $< 4000$ ms | Phản hồi rất nhanh |
 | **Ràng buộc ký tự on-screen text** | Tối đa 40 ký tự | 100% compliant | Một số case dài bị chạm trần |
-| **Ràng buộc Safe Zone** | $X \in [80, 1840], Y \in [250, 960]$ | 100% compliant | 100% khung hình nằm trong Safe Zone |
+| **Ràng buộc Safe Zone** | $X \\in [80, 1840], Y \\in [250, 960]$ | 100% compliant | 100% khung hình nằm trong Safe Zone |
 | **An toàn nội dung sư phạm (Responsible AI)** | 0% máu me, bạo lực, khỏa thân | 100% compliant | Đạt chuẩn an toàn môi trường học đường |
 
 ---
@@ -160,7 +168,7 @@ Bộ kiểm thử được phân bổ chặt chẽ theo 4 lớp chỗ khó nhằ
     report += """
 ---
 
-## 3. Bảng Kết Quả Chi Tiết 20 Test Cases
+## 3. Bảng Kết Quả Chi Tiết {total_cases} Test Cases
 
 | Case ID | Lớp thử thách | Độ phức tạp | Kết quả | Text Max | Latency | Vi phạm / Ghi chú kỹ thuật |
 |---|---|---|:---:|:---:|:---:|---|
@@ -217,11 +225,11 @@ Thay vì che giấu lỗi, nhóm đối mặt trung thực với số liệu ki�
 Dựa trên dữ liệu từ `run1_raw_logs.jsonl` và báo cáo Run 1, nhóm vạch ra 3 hành động cụ thể để nâng cao chất lượng trước hạn chốt `spec.md` (CP4):
 
 1. **Gia cố One-shot / Few-shot Cắt Cảnh trong System Prompt:**
-   - Cung cấp 2 ví dụ mẫu (Few-shot) hướng dẫn mô hình cách ngắt các câu dài trên 50 từ thành 2-3 visual frames riêng biệt, mỗi frame ép cứng `on_screen_text` $\le 30$ ký tự để có vùng đệm an toàn.
+    - Cung cấp 2 ví dụ mẫu (Few-shot) hướng dẫn mô hình cách ngắt các câu dài trên 50 từ thành 2-3 visual frames riêng biệt, mỗi frame ép cứng `on_screen_text` $\\le 30$ ký tự để có vùng đệm an toàn.
 2. **Kỹ thuật Tự Kiểm Tra (Reflective Self-Correction):**
    - Bổ sung bước kiểm toán độ dài ký tự ngay trong cấu trúc Chain-of-Thought trước khi xuất JSON cuối cùng.
 3. **Thiết Lập Chốt Quality Bar tại CP4:**
-   - Mục tiêu Run 2: Đạt **$\ge 90\%$ (18/20 cases)** trên bộ Golden Set.
+    - Mục tiêu Run 2: Đạt **$\\ge 90\\%$ (18/20 cases)** trên bộ Golden Set.
    - 100% các ca thuộc Layer 1 (Grounding) và Layer 4 (Domain Symbols) phải đạt tuyệt đối.
 
 ---
